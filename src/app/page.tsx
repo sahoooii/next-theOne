@@ -1,22 +1,19 @@
 'use client';
 
-import { Button } from '@heroui/react';
 import Link from 'next/link';
 import { FaRegSmile } from 'react-icons/fa';
 
 export default function Home() {
 	return (
-		<div className='p-10 space-y-4'>
-			<h1 className='text-3xl font-bold'>HeroUI Test</h1>
-			<Button
-				as={Link}
+		<div className='space-y-4 p-10'>
+			<h1 className='text-3xl font-bold'>Next Match</h1>
+			<Link
 				href='/members'
-				color='primary'
-				variant='bordered'
-				startContent={<FaRegSmile size={20} />}
+				className='inline-flex items-center gap-2 rounded-md border border-purple-500 px-4 py-2 text-sm font-medium text-purple-500 transition hover:bg-purple-500/20'
 			>
-				Click Me
-			</Button>
+				<FaRegSmile size={20} />
+				<span>Members へ移動</span>
+			</Link>
 		</div>
 	);
 }
