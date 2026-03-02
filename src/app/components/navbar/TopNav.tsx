@@ -1,15 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { GiMatchTip } from 'react-icons/gi';
 import Link from 'next/link';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { IoMdPeople } from 'react-icons/io';
+import { IoMdPeople, IoIosLogIn } from 'react-icons/io';
+import { IoListSharp, IoPersonAddOutline } from 'react-icons/io5';
+import { TiMessages } from 'react-icons/ti';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 const linkStyle = 'text-xl uppercase transition hover:text-gray-300';
+const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3';
 
 const TopNav = () => {
+	const [open, setOpen] = useState(false);
+
 	return (
 		<nav className='w-full bg-gradient-to-r from-purple-400 to-purple-700 text-white'>
 			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-6'>
@@ -25,13 +32,8 @@ const TopNav = () => {
 					</div>
 				</Link>
 				{/* 🔥 中央ナビ（デスクトップのみ） */}
-				{/* Add icon @mobile ver. */}
-				<div className='hidden md:flex items-center gap-8'>
-					<Link
-						href='/members'
-						className={`${linkStyle} flex items-center gap-2`}
-					>
-						<IoMdPeople size={28} className='lg:hidden' />
+				<div className='hidden lg:flex items-center gap-8'>
+					<Link href='/members' className={`${linkStyle}`}>
 						Members
 					</Link>
 					<Link href='/lists' className={`${linkStyle}`}>
@@ -41,8 +43,8 @@ const TopNav = () => {
 						Messages
 					</Link>
 				</div>
-				{/* 🔥 右側（デスクトップのみ） */}{' '}
-				<div className='hidden md:flex items-center gap-4'>
+				{/* 🔥 右側（デスクトップのみ） */}
+				<div className='hidden lg:flex items-center gap-4'>
 					<Button
 						asChild
 						variant='link'
@@ -50,7 +52,6 @@ const TopNav = () => {
 					>
 						<Link href='/login'>Login</Link>
 					</Button>
-
 					<Button
 						asChild
 						variant='link'
@@ -60,31 +61,66 @@ const TopNav = () => {
 					</Button>
 				</div>
 				{/* 🔥 モバイル用ハンバーガー */}
-				<div className='md:hidden'>
-					<Sheet>
+				<div className='lg:hidden'>
+					<Sheet open={open} onOpenChange={setOpen}>
 						<SheetTrigger asChild>
-							<Button variant='ghost' className='text-white h-14 w-14'>
-								<Menu size={30} />
+							<Button
+								variant='ghost'
+								className='text-white p-4'
+								aria-label='Open menu'
+							>
+								<Menu className='w-8 h-8' />
 							</Button>
 						</SheetTrigger>
 
 						<SheetContent side='right' className='bg-purple-700 text-white'>
+							<SheetHeader>
+								<VisuallyHidden>
+									<SheetTitle>Mobile navigation menu</SheetTitle>
+								</VisuallyHidden>
+							</SheetHeader>
+
 							<div className='mt-10 flex flex-col gap-6 text-lg'>
-								<Link href='/members' className='hover:text-gray-300'>
+								<Link
+									href='/members'
+									className={`${linkStyleMobile}`}
+									onClick={() => setOpen(false)}
+								>
+									<IoMdPeople size={28} />
 									Members
 								</Link>
-								<Link href='/lists' className='hover:text-gray-300'>
+								<Link
+									href='/lists'
+									className={`${linkStyleMobile}`}
+									onClick={() => setOpen(false)}
+								>
+									<IoListSharp size={28} />
 									Lists
 								</Link>
-								<Link href='/messages' className='hover:text-gray-300'>
+								<Link
+									href='/messages'
+									className={`${linkStyleMobile}`}
+									onClick={() => setOpen(false)}
+								>
+									<TiMessages size={28} />
 									Messages
 								</Link>
 
 								<div className='border-t border-white/30 pt-6 flex flex-col gap-4'>
-									<Link href='/login' className='hover:text-gray-300'>
+									<Link
+										href='/login'
+										className={`${linkStyleMobile}`}
+										onClick={() => setOpen(false)}
+									>
+										<IoIosLogIn size={28} />
 										Login
 									</Link>
-									<Link href='/register' className='hover:text-gray-300'>
+									<Link
+										href='/register'
+										className={`${linkStyleMobile}`}
+										onClick={() => setOpen(false)}
+									>
+										<IoPersonAddOutline size={28} />
 										Register
 									</Link>
 								</div>
