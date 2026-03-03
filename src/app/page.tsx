@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FaRegSmile } from 'react-icons/fa';
 
@@ -14,6 +15,7 @@ export default function Home() {
 				<FaRegSmile size={20} />
 				<span>Members へ移動</span>
 			</Link>
+			<Button className='bg-primary'>Hi</Button>
 		</div>
 	);
 }
