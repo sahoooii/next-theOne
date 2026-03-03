@@ -2,65 +2,95 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { GiMatchTip } from 'react-icons/gi';
 import Link from 'next/link';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet';
+import { usePathname } from 'next/navigation';
+import {
+	Sheet,
+	SheetContent,
+	SheetTrigger,
+	SheetTitle,
+	SheetHeader,
+} from '@/components/ui/sheet';
+import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
+import { GiMatchTip } from 'react-icons/gi';
 import { IoMdPeople, IoIosLogIn } from 'react-icons/io';
 import { IoListSharp, IoPersonAddOutline } from 'react-icons/io5';
 import { TiMessages } from 'react-icons/ti';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-const linkStyle = 'text-xl uppercase transition hover:text-gray-300';
-const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3';
+const linkStyleLg = 'text-xl uppercase transition hover:text-gray-300 font-sans';
+const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3 font-sans';
+
+const links = [
+	{ href: '/members', label: 'Members' },
+	{ href: '/lists', label: 'Lists' },
+	{ href: '/messages', label: 'Messages' },
+];
 
 const TopNav = () => {
+	// For hamburger menu button
 	const [open, setOpen] = useState(false);
+
+	const pathname = usePathname();
 
 	return (
 		<nav className='w-full bg-gradient-to-r from-purple-400 to-purple-700 text-white'>
 			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-6'>
-				{/* 🔥 左：ロゴ */}
+				{/* Left：Logo */}
 				<Link
 					href='/'
 					className='flex items-center gap-3 hover:opacity-40 transition duration-300'
 				>
 					<GiMatchTip size={40} className='text-gray-200' />
-					<div className='flex text-3xl font-bold'>
+					<div className='flex text-3xl font-bold font-display tracking-wider'>
 						<span className='text-gray-900'>Next</span>
 						<span className='text-gray-200'>Match</span>
 					</div>
 				</Link>
-				{/* 🔥 中央ナビ（デスクトップのみ） */}
-				<div className='hidden lg:flex items-center gap-8'>
-					<Link href='/members' className={`${linkStyle}`}>
-						Members
-					</Link>
-					<Link href='/lists' className={`${linkStyle}`}>
-						Lists
-					</Link>
-					<Link href='/messages' className={`${linkStyle}`}>
-						Messages
-					</Link>
+				{/* Center Nav（Only desktop） */}
+				<div className='hidden lg:flex items-center gap-8 relative'>
+					{links.map((link) => {
+						const isActive = pathname === link.href;
+						return (
+							<Link
+								key={link.href}
+								href={link.href}
+								className='relative px-3 py-2 text-white'
+							>
+								{isActive && (
+									<motion.div
+										layoutId='active-nav'
+										className='absolute inset-0 bg-white/20 rounded-md'
+										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+										whileTap={{ scale: 0.95 }}
+									/>
+								)}
+								<span className={`${linkStyleLg} relative z-10`}>
+									{link.label}
+								</span>
+							</Link>
+						);
+					})}
 				</div>
-				{/* 🔥 右側（デスクトップのみ） */}
+				{/* Right side（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-4'>
 					<Button
 						asChild
-						variant='link'
-						className='text-white text-lg hover:bg-white/20'
+						variant='ghost'
+						className='ttext-white text-lg hover:bg-white/10 rounded-md px-4'
 					>
 						<Link href='/login'>Login</Link>
 					</Button>
 					<Button
 						asChild
-						variant='link'
-						className='text-white text-lg hover:bg-white/20'
+						variant='ghost'
+						className='text-white text-lg hover:bg-white/10 rounded-md px-4'
 					>
 						<Link href='/register'>Register</Link>
 					</Button>
 				</div>
-				{/* 🔥 モバイル用ハンバーガー */}
+				{/* Mobile hamburger menuー */}
 				<div className='lg:hidden'>
 					<Sheet open={open} onOpenChange={setOpen}>
 						<SheetTrigger asChild>
