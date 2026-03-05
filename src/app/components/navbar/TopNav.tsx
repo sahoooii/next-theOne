@@ -19,8 +19,9 @@ import { IoListSharp, IoPersonAddOutline } from 'react-icons/io5';
 import { TiMessages } from 'react-icons/ti';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-const linkStyleLg = 'text-xl uppercase transition hover:text-gray-300 font-sans';
-const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3 font-sans';
+const linkStyleLg =
+	'text-xl uppercase transition hover:text-gray-300 font-semibold tracking-wide';
+const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3';
 
 const links = [
 	{ href: '/members', label: 'Members' },
@@ -43,10 +44,12 @@ const TopNav = () => {
 					className='flex items-center gap-3 hover:opacity-40 transition duration-300'
 				>
 					<GiMatchTip size={40} className='text-gray-200' />
-					<div className='flex text-3xl font-bold font-display tracking-wider'>
-						<span className='text-gray-900'>Next</span>
-						<span className='text-gray-200'>Match</span>
-					</div>
+					<h1 className='font-display text-4xl font-semibold tracking-[0.15em]'>
+						<span className='text-white'>Next</span>
+						<span className='bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent ml-1'>
+							Match
+						</span>
+					</h1>
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
