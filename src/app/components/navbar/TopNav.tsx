@@ -13,15 +13,15 @@ import {
 } from '@/components/ui/sheet';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
-import { GiMatchTip } from 'react-icons/gi';
 import { IoMdPeople, IoIosLogIn } from 'react-icons/io';
-import { IoListSharp, IoPersonAddOutline } from 'react-icons/io5';
+import { IoListSharp, IoSparkles } from 'react-icons/io5';
 import { TiMessages } from 'react-icons/ti';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 const linkStyleLg =
-	'text-xl uppercase transition hover:text-gray-300 font-semibold tracking-wide';
-const linkStyleMobile = 'hover:text-gray-300 flex items-center gap-3';
+	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
+const linkStyleMobile =
+	'flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition font-medium';
 
 const links = [
 	{ href: '/members', label: 'Members' },
@@ -36,62 +36,71 @@ const TopNav = () => {
 	const pathname = usePathname();
 
 	return (
-		<nav className='w-full bg-gradient-to-r from-purple-400 to-purple-700 text-white'>
-			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-6'>
+		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
+			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4'>
 				{/* Left：Logo */}
 				<Link
 					href='/'
-					className='flex items-center gap-3 hover:opacity-40 transition duration-300'
+					className='flex items-center gap-3 hover:scale-[1.02] transition duration-300'
 				>
-					<GiMatchTip size={40} className='text-gray-200' />
-					<h1 className='font-display text-4xl font-semibold tracking-[0.15em]'>
-						<span className='text-white'>Next</span>
-						<span className='bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent ml-1'>
-							Match
-						</span>
-					</h1>
+					<div className='flex items-center gap-3'>
+						<IoSparkles className='text-purple-200 w-7 h-7 drop-shadow-[0_0_6px_rgba(216,180,254,0.7)]' />
+						<h1 className='font-display text-4xl tracking-[0.18em] font-semibold'>
+							<span className='text-white'>The</span>
+							<span className='bg-gradient-to-r from-purple-200 to-pink-200 bg-clip-text text-transparent ml-1'>
+								One
+							</span>
+						</h1>
+					</div>
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
 					{links.map((link) => {
 						const isActive = pathname === link.href;
+
 						return (
 							<Link
 								key={link.href}
 								href={link.href}
-								className='relative px-3 py-2 text-white'
+								className='relative px-3 py-2 text-white group'
 							>
-								{isActive && (
-									<motion.div
-										layoutId='active-nav'
-										className='absolute inset-0 bg-white/20 rounded-md'
-										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-										whileTap={{ scale: 0.95 }}
-									/>
-								)}
 								<span className={`${linkStyleLg} relative z-10`}>
 									{link.label}
 								</span>
+
+								{/* hover underline */}
+								{!isActive && (
+									<span className='absolute left-0 -bottom-1 h-[2px] w-full bg-purple-300 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center' />
+								)}
+
+								{/* active underline */}
+								{isActive && (
+									<motion.span
+										layoutId='active-nav'
+										className='absolute left-0 -bottom-1 h-[2px] w-full bg-primary'
+										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+									/>
+								)}
 							</Link>
 						);
 					})}
 				</div>
 				{/* Right side（Only desktop） */}
-				<div className='hidden lg:flex items-center gap-4'>
-					<Button
-						asChild
-						variant='ghost'
-						className='ttext-white text-lg hover:bg-white/10 rounded-md px-4'
+				<div className='hidden lg:flex items-center gap-6'>
+					<Link
+						href='/login'
+						className='relative px-3 py-2 text-white group text-lg font-semibold'
 					>
-						<Link href='/login'>Login</Link>
-					</Button>
-					<Button
-						asChild
-						variant='ghost'
-						className='text-white text-lg hover:bg-white/10 rounded-md px-4'
+						Login
+						<span className='absolute left-0 -bottom-1 h-[2px] w-full bg-purple-300 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300' />
+					</Link>
+
+					<Link
+						href='/register'
+						className='rounded-md bg-primary px-4 py-2 text-white font-semibold hover:bg-primary/90 transition'
 					>
-						<Link href='/register'>Register</Link>
-					</Button>
+						Register
+					</Link>
 				</div>
 				{/* Mobile hamburger menuー */}
 				<div className='lg:hidden'>
@@ -106,7 +115,10 @@ const TopNav = () => {
 							</Button>
 						</SheetTrigger>
 
-						<SheetContent side='right' className='bg-purple-700 text-white'>
+						<SheetContent
+							side='right'
+							className=' bg-purple-950/95 backdrop-blur-xl border-l border-white/10 text-white'
+						>
 							<SheetHeader>
 								<VisuallyHidden>
 									<SheetTitle>Mobile navigation menu</SheetTitle>
@@ -138,22 +150,19 @@ const TopNav = () => {
 									<TiMessages size={28} />
 									Messages
 								</Link>
-
-								<div className='border-t border-white/30 pt-6 flex flex-col gap-4'>
+								<div className='border-t border-white/10 pt-6 flex flex-col gap-4'>
 									<Link
 										href='/login'
-										className={`${linkStyleMobile}`}
-										onClick={() => setOpen(false)}
+										className='flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition'
 									>
-										<IoIosLogIn size={28} />
+										<IoIosLogIn size={26} />
 										Login
 									</Link>
+
 									<Link
 										href='/register'
-										className={`${linkStyleMobile}`}
-										onClick={() => setOpen(false)}
+										className='flex items-center justify-center rounded-lg bg-primary px-4 py-3 font-semibold hover:bg-primary/90 transition'
 									>
-										<IoPersonAddOutline size={28} />
 										Register
 									</Link>
 								</div>
