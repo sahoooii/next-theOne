@@ -3,6 +3,7 @@ import './globals.css';
 import TopNav from './components/navbar/TopNav';
 import { Providers } from './components/Providers';
 import { Inter, Cormorant } from 'next/font/google';
+import BottomNav from './components/navbar/BottomNav';
 
 export const metadata: Metadata = {
 	title: 'Next Match',
@@ -31,6 +32,7 @@ export default function RootLayout({
 				<Providers>
 					<TopNav />
 					{children}
+					<BottomNav />
 				</Providers>
 			</body>
 		</html>
