@@ -13,21 +13,13 @@ import {
 } from '@/components/ui/sheet';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
-import { IoMdPeople, IoIosLogIn } from 'react-icons/io';
-import { IoListSharp, IoSparkles } from 'react-icons/io5';
-import { TiMessages } from 'react-icons/ti';
+import { IoIosLogIn } from 'react-icons/io';
+import { IoSparkles } from 'react-icons/io5';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { navMenu } from './navMenu';
 
 const linkStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
-const linkStyleMobile =
-	'flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition font-medium';
-
-const links = [
-	{ href: '/members', label: 'Members' },
-	{ href: '/lists', label: 'Lists' },
-	{ href: '/messages', label: 'Messages' },
-];
 
 const TopNav = () => {
 	// For hamburger menu button
@@ -55,7 +47,7 @@ const TopNav = () => {
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
-					{links.map((link) => {
+					{navMenu.map((link) => {
 						const isActive = pathname === link.href;
 
 						return (
@@ -126,30 +118,6 @@ const TopNav = () => {
 							</SheetHeader>
 
 							<div className='mt-10 flex flex-col gap-6 text-lg'>
-								<Link
-									href='/members'
-									className={`${linkStyleMobile}`}
-									onClick={() => setOpen(false)}
-								>
-									<IoMdPeople size={28} />
-									Members
-								</Link>
-								<Link
-									href='/lists'
-									className={`${linkStyleMobile}`}
-									onClick={() => setOpen(false)}
-								>
-									<IoListSharp size={28} />
-									Lists
-								</Link>
-								<Link
-									href='/messages'
-									className={`${linkStyleMobile}`}
-									onClick={() => setOpen(false)}
-								>
-									<TiMessages size={28} />
-									Messages
-								</Link>
 								<div className='border-t border-white/10 pt-6 flex flex-col gap-4'>
 									<Link
 										href='/login'
