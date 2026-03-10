@@ -3,9 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { navMenu } from './navMenu';
+import { navLinks } from './navLinks';
 
 const BottomNav = () => {
+	// After add auth
+	// navLinks.filter((link) => {
+	// 	if (link.auth === 'user') return session;
+	// 	if (link.auth === 'guest') return !session;
+	// 	return true;
+	// });
 	const pathname = usePathname();
 
 	return (
@@ -21,8 +27,9 @@ const BottomNav = () => {
         shadow-lg
       '
 			>
-				{navMenu.map((link) => {
+				{navLinks.map((link) => {
 					const Icon = link.icon;
+					if (!Icon) return null
 					const isActive = pathname === link.href;
 
 					return (

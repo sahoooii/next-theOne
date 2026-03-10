@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import TopNav from './components/navbar/TopNav';
+import TopNav from './components/navigation/TopNav';
 import { Providers } from './components/Providers';
 import { Inter, Cormorant } from 'next/font/google';
-import BottomNav from './components/navbar/BottomNav';
+import BottomNav from './components/navigation/BottomNav';
 
 export const metadata: Metadata = {
 	title: 'Next Match',
