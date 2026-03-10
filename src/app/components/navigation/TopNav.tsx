@@ -1,30 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-	Sheet,
-	SheetContent,
-	SheetTrigger,
-	SheetTitle,
-	SheetHeader,
-} from '@/components/ui/sheet';
 import { motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
-import { IoIosLogIn } from 'react-icons/io';
 import { IoSparkles } from 'react-icons/io5';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { navMenu } from './navMenu';
+import { navLinks } from './navLinks';
+import MobileMenu from './MobileMenu';
 
 const linkStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
 
 const TopNav = () => {
-	// For hamburger menu button
-	const [open, setOpen] = useState(false);
-
 	const pathname = usePathname();
 
 	return (
@@ -47,7 +33,7 @@ const TopNav = () => {
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
-					{navMenu.map((link) => {
+					{navLinks.map((link) => {
 						const isActive = pathname === link.href;
 
 						return (
@@ -95,49 +81,7 @@ const TopNav = () => {
 					</Link>
 				</div>
 				{/* Mobile hamburger menuー */}
-				<div className='lg:hidden'>
-					<Sheet open={open} onOpenChange={setOpen}>
-						<SheetTrigger asChild>
-							<Button
-								variant='ghost'
-								className='text-white p-4'
-								aria-label='Open menu'
-							>
-								<Menu className='w-8 h-8' />
-							</Button>
-						</SheetTrigger>
-
-						<SheetContent
-							side='right'
-							className=' bg-purple-950/95 backdrop-blur-xl border-l border-white/10 text-white'
-						>
-							<SheetHeader>
-								<VisuallyHidden>
-									<SheetTitle>Mobile navigation menu</SheetTitle>
-								</VisuallyHidden>
-							</SheetHeader>
-
-							<div className='mt-10 flex flex-col gap-6 text-lg'>
-								<div className='border-t border-white/10 pt-6 flex flex-col gap-4'>
-									<Link
-										href='/login'
-										className='flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition'
-									>
-										<IoIosLogIn size={26} />
-										Login
-									</Link>
-
-									<Link
-										href='/register'
-										className='flex items-center justify-center rounded-lg bg-primary px-4 py-3 font-semibold hover:bg-primary/90 transition'
-									>
-										Register
-									</Link>
-								</div>
-							</div>
-						</SheetContent>
-					</Sheet>
-				</div>
+				<MobileMenu />
 			</div>
 		</nav>
 	);
