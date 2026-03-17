@@ -31,7 +31,7 @@ export default function RootLayout({
 			<body className='font-sans'>
 				<Providers>
 					<TopNav />
-					{children}
+					<main className='container mx-auto p-10'>{children}</main>
 					<BottomNav />
 				</Providers>
 			</body>
