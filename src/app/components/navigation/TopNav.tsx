@@ -55,7 +55,7 @@ const TopNav = () => {
 								{isActive && (
 									<motion.span
 										layoutId='active-nav'
-										className='absolute left-0 -bottom-1 h-[2px] w-full bg-primary'
+										className='absolute left-0 -bottom-1 h-[2px] w-full bg-purple-300'
 										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
 									/>
 								)}

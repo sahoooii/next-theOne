@@ -5,7 +5,7 @@ import { FaRegSmile } from 'react-icons/fa';
 
 export default function Home() {
 	return (
-		<div className='space-y-4 p-10'>
+		<div className='space-y-4'>
 			<h1 className='text-3xl font-bold'>Next Match</h1>
 			<Link
 				href='/members'
