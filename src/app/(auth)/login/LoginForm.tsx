@@ -12,10 +12,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GiBigDiamondRing } from 'react-icons/gi';
+import { useForm } from 'react-hook-form';
 
 const LoginForm = () => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isValid },
+	} = useForm();
+
+	const onSubmit = (data: any) => {
+		console.log(data);
+	};
+
 	return (
-		<Card className='w-full max-w-sm mx-auto  mt-8 sm:mt-20 border-none shadow-xl bg-background/80 backdrop-blur'>
+		<Card className='w-full max-w-sm mx-auto border-none shadow-xl bg-background/80 backdrop-blur'>
 			<CardHeader className='space-y-4 text-center'>
 				<div className='mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-primary/10'>
 					<GiBigDiamondRing size={28} className='text-primary drop-shadow-sm' />
@@ -30,15 +41,17 @@ const LoginForm = () => {
 			</CardHeader>
 
 			<CardContent>
-				<form className='space-y-5'>
+				<form className='space-y-5' onSubmit={handleSubmit(onSubmit)}>
 					<div className='space-y-2'>
 						<Label htmlFor='email'>Email</Label>
 						<Input
 							id='email'
 							type='email'
-							placeholder='you@example.com'
-							required
+							placeholder='email@example.com'
 							className='h-11'
+							{...register('email', { required: 'Email is required' })}
+							// isInValid={!!errors.email}
+							// errorMessage={errors.email?.message as string}
 						/>
 					</div>
 
@@ -53,12 +66,20 @@ const LoginForm = () => {
 							</a>
 						</div>
 
-						<Input id='password' type='password' required className='h-11' />
+						<Input
+							id='password'
+							type='password'
+							className='h-11'
+							{...register('password', { required: 'Password is required' })}
+							// isInValid={!!errors.password}
+							// errorMessage={errors.password?.message as string}
+						/>
 					</div>
 
 					<Button
 						type='submit'
 						className='w-full h-11 text-base font-medium mt-2'
+						// isDisabled={!isValid}
 					>
 						Sign in
 					</Button>

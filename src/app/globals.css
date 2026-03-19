@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+	.vertical-center {
+		height: calc(100vh - 80px);
+	}
+}
+
 @layer base {
 	:root {
 		--background: 0 0% 100%;

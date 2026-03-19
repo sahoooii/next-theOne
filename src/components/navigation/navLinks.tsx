@@ -21,4 +21,5 @@ export const navLinks: NavLink[] = [
 		icon: IoPersonCircleOutline,
 		auth: 'user',
 	},
+	{ href: '/login', label: 'Login' },
 ];
