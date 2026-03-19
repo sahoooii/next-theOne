@@ -15,7 +15,7 @@ import { GiBigDiamondRing } from 'react-icons/gi';
 
 const LoginForm = () => {
 	return (
-		<Card className='w-full max-w-sm mx-auto  mt-8 sm:mt-20 border-none shadow-xl bg-background/80 backdrop-blur'>
+		<Card className='w-full max-w-sm mx-auto border-none shadow-xl bg-background/80 backdrop-blur'>
 			<CardHeader className='space-y-4 text-center'>
 				<div className='mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-primary/10'>
 					<GiBigDiamondRing size={28} className='text-primary drop-shadow-sm' />
@@ -36,7 +36,7 @@ const LoginForm = () => {
 						<Input
 							id='email'
 							type='email'
-							placeholder='you@example.com'
+							placeholder='email@example.com'
 							required
 							className='h-11'
 						/>
