@@ -1,5 +1,10 @@
 'use client';
 
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { loginSchema, LoginSchema } from '@/lib/schema/loginSchema';
+
 import {
 	Card,
 	CardContent,
@@ -8,20 +13,30 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { GiBigDiamondRing } from 'react-icons/gi';
-import { useForm } from 'react-hook-form';
 
 const LoginForm = () => {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isValid },
-	} = useForm();
+	const form = useForm<LoginSchema>({
+		resolver: zodResolver(loginSchema),
+		mode: 'onTouched',
+		defaultValues: {
+			email: '',
+			password: '',
+		},
+	});
 
-	const onSubmit = (data: any) => {
+	const onSubmit = (data: LoginSchema) => {
 		console.log(data);
 	};
 
@@ -41,49 +56,62 @@ const LoginForm = () => {
 			</CardHeader>
 
 			<CardContent>
-				<form className='space-y-5' onSubmit={handleSubmit(onSubmit)}>
-					<div className='space-y-2'>
-						<Label htmlFor='email'>Email</Label>
-						<Input
-							id='email'
-							type='email'
-							placeholder='email@example.com'
-							className='h-11'
-							{...register('email', { required: 'Email is required' })}
-							// isInValid={!!errors.email}
-							// errorMessage={errors.email?.message as string}
+				<Form {...form}>
+					<form className='space-y-5' onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name='email'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+
+									<FormControl>
+										<Input
+											type='email'
+											placeholder='email@example.com'
+											className='h-11'
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage className='text-sm text-red-500' />
+								</FormItem>
+							)}
 						/>
-					</div>
 
-					<div className='space-y-2'>
-						<div className='flex items-center justify-between'>
-							<Label htmlFor='password'>Password</Label>
-							<a
-								href='#'
-								className='text-sm text-muted-foreground hover:text-primary transition'
-							>
-								Forgot password?
-							</a>
-						</div>
+						{/* Password */}
+						<FormField
+							control={form.control}
+							name='password'
+							render={({ field }) => (
+								<FormItem>
+									<div className='flex items-center justify-between'>
+										<FormLabel>Password</FormLabel>
+										<a
+											href='#'
+											className='text-sm text-muted-foreground hover:text-primary transition'
+										>
+											Forgot password?
+										</a>
+									</div>
 
-						<Input
-							id='password'
-							type='password'
-							className='h-11'
-							{...register('password', { required: 'Password is required' })}
-							// isInValid={!!errors.password}
-							// errorMessage={errors.password?.message as string}
+									<FormControl>
+										<Input type='password' className='h-11' {...field} />
+									</FormControl>
+
+									<FormMessage className='text-sm text-red-500' />
+								</FormItem>
+							)}
 						/>
-					</div>
 
-					<Button
-						type='submit'
-						className='w-full h-11 text-base font-medium mt-2'
-						// isDisabled={!isValid}
-					>
-						Sign in
-					</Button>
-				</form>
+						<Button
+							type='submit'
+							className='w-full h-11 text-base font-medium mt-2'
+							disabled={!form.formState.isValid}
+						>
+							Sign in
+						</Button>
+					</form>
+				</Form>
 			</CardContent>
 
 			<CardFooter className='flex flex-col gap-4'>
