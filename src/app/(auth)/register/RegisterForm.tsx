@@ -2,8 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { loginSchema, LoginSchema } from '@/lib/schema/loginSchema';
+import { registerSchema, RegisterSchema } from '@/lib/schema/registerForm';
 
 import {
 	Card,
@@ -27,17 +26,18 @@ import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import Link from 'next/link';
 
-const LoginForm = () => {
-	const form = useForm<LoginSchema>({
-		resolver: zodResolver(loginSchema),
+const RegisterForm = () => {
+	const form = useForm<RegisterSchema>({
+		resolver: zodResolver(registerSchema),
 		mode: 'onTouched',
 		defaultValues: {
+			name: '',
 			email: '',
 			password: '',
 		},
 	});
 
-	const onSubmit = (data: LoginSchema) => {
+	const onSubmit = (data: RegisterSchema) => {
 		console.log(data);
 	};
 
@@ -49,9 +49,11 @@ const LoginForm = () => {
 				</div>
 
 				<div>
-					<CardTitle className='text-2xl font-semibold'>Welcome back</CardTitle>
+					<CardTitle className='text-2xl font-semibold'>
+						Welcome to The One
+					</CardTitle>
 					<CardDescription className='text-muted-foreground'>
-						Sign in to continue your journey
+						Register to your journey
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -59,6 +61,27 @@ const LoginForm = () => {
 			<CardContent>
 				<Form {...form}>
 					<form className='space-y-5' onSubmit={form.handleSubmit(onSubmit)}>
+						{/* Name */}
+						<FormField
+							control={form.control}
+							name='name'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+
+									<FormControl>
+										<Input
+											type='text'
+											placeholder='Type your name'
+											className='h-11'
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage className='text-sm text-red-500' />
+								</FormItem>
+							)}
+						/>
+						{/* Email */}
 						<FormField
 							control={form.control}
 							name='email'
@@ -85,14 +108,8 @@ const LoginForm = () => {
 							name='password'
 							render={({ field }) => (
 								<FormItem>
-									<div className='flex items-center justify-between'>
+									<div>
 										<FormLabel>Password</FormLabel>
-										<a
-											href='#'
-											className='text-sm text-muted-foreground hover:text-primary transition'
-										>
-											Forgot password?
-										</a>
 									</div>
 
 									<FormControl>
@@ -109,7 +126,7 @@ const LoginForm = () => {
 							className='w-full h-11 text-base font-medium mt-2'
 							disabled={!form.formState.isValid}
 						>
-							Sign in
+							Register
 						</Button>
 					</form>
 				</Form>
@@ -126,13 +143,12 @@ const LoginForm = () => {
 				</div>
 
 				<Button variant='outline' className='w-full h-11'>
-					Continue with Google
+					Register with Google
 				</Button>
-
 				<p className='text-sm text-muted-foreground text-center'>
-					Don’t have an account?{' '}
-					<Link href='/register' className='text-primary hover:underline'>
-						Sign up
+					Already have an account?{' '}
+					<Link href='/login' className='text-primary hover:underline'>
+						Sign in
 					</Link>
 				</p>
 			</CardFooter>
@@ -140,4 +156,4 @@ const LoginForm = () => {
 	);
 };
 
-export default LoginForm;
+export default RegisterForm;
