@@ -25,6 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
+import Link from 'next/link';
 
 const LoginForm = () => {
 	const form = useForm<LoginSchema>({
@@ -130,9 +131,9 @@ const LoginForm = () => {
 
 				<p className='text-sm text-muted-foreground text-center'>
 					Don’t have an account?{' '}
-					<a href='#' className='text-primary hover:underline'>
+					<Link href='/register' className='text-primary hover:underline'>
 						Sign up
-					</a>
+					</Link>
 				</p>
 			</CardFooter>
 		</Card>

@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
+import Link from 'next/link';
 
 const RegisterForm = () => {
 	const form = useForm<RegisterSchema>({
@@ -144,6 +145,12 @@ const RegisterForm = () => {
 				<Button variant='outline' className='w-full h-11'>
 					Register with Google
 				</Button>
+				<p className='text-sm text-muted-foreground text-center'>
+					Already have an account?{' '}
+					<Link href='/login' className='text-primary hover:underline'>
+						Sign in
+					</Link>
+				</p>
 			</CardFooter>
 		</Card>
 	);
