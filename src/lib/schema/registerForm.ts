@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// 実際にチェックするルール
+// 実際にチェックするルール(runtime)
 export const registerSchema = z.object({
 	name: z.string().min(3, { message: 'Name must be at least 3 characters' }),
 	email: z.string().refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
@@ -11,5 +11,5 @@ export const registerSchema = z.object({
 		.min(6, { message: 'Password must be at least 6 characters' }),
 });
 
-// 設計図(型)
+// 設計図(型)(compile時)
 export type RegisterSchema = z.infer<typeof registerSchema>;
