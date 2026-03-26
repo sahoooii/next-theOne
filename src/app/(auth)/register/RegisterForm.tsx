@@ -25,10 +25,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import Link from 'next/link';
+import { registerUser } from '@/app/actions/authActions';
 
 const RegisterForm = () => {
 	const form = useForm<RegisterSchema>({
-		resolver: zodResolver(registerSchema),
+		// resolver: zodResolver(registerSchema),
 		mode: 'onTouched',
 		defaultValues: {
 			name: '',
@@ -37,8 +38,9 @@ const RegisterForm = () => {
 		},
 	});
 
-	const onSubmit = (data: RegisterSchema) => {
-		console.log(data);
+	const onSubmit = async (data: RegisterSchema) => {
+		const result = await registerUser(data);
+		console.log(result);
 	};
 
 	return (
