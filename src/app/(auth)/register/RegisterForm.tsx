@@ -26,8 +26,13 @@ import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import Link from 'next/link';
 import { registerUser } from '@/app/actions/authActions';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const RegisterForm = () => {
+	// For entire of server error
+	const [formError, setFormError] = useState('');
+
 	const form = useForm<RegisterSchema>({
 		// resolver: zodResolver(registerSchema),
 		mode: 'onTouched',
@@ -40,7 +45,22 @@ const RegisterForm = () => {
 
 	const onSubmit = async (data: RegisterSchema) => {
 		const result = await registerUser(data);
-		console.log(result);
+
+		if (result.status === 'success') {
+			console.log('User registered successfully');
+		} else {
+			// For entire of server error
+			if (typeof result.error === 'string') {
+				setFormError(result.error);
+			} else {
+				// For field error
+				Object.entries(result.error).forEach(([field, message]) => {
+					form.setError(field as keyof RegisterSchema, {
+						message,
+					});
+				});
+			}
+		}
 	};
 
 	return (
@@ -103,7 +123,6 @@ const RegisterForm = () => {
 								</FormItem>
 							)}
 						/>
-
 						{/* Password */}
 						<FormField
 							control={form.control}
@@ -123,11 +142,19 @@ const RegisterForm = () => {
 							)}
 						/>
 
+						{/* For entire of server error */}
+						{formError && (
+							<p className='text-red-500 text-sm'>{formError}</p>
+						)}
+
 						<Button
 							type='submit'
 							className='w-full h-11 text-base font-medium mt-2'
-							disabled={!form.formState.isValid}
+							disabled={!form.formState.isValid || form.formState.isSubmitting}
 						>
+							{form.formState.isSubmitting && (
+								<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+							)}
 							Register
 						</Button>
 					</form>
