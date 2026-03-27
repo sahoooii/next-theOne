@@ -26,8 +26,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import Link from 'next/link';
+import { signInUser } from '@/app/actions/authActions';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 const LoginForm = () => {
+	const router = useRouter();
+
 	const form = useForm<LoginSchema>({
 		resolver: zodResolver(loginSchema),
 		mode: 'onTouched',
@@ -37,8 +42,14 @@ const LoginForm = () => {
 		},
 	});
 
-	const onSubmit = (data: LoginSchema) => {
-		console.log(data);
+	const onSubmit = async (data: LoginSchema) => {
+		const result = await signInUser(data);
+
+		if (result.status === 'success') {
+			router.push('/members');
+		} else {
+			console.log(result.error);
+		}
 	};
 
 	return (
@@ -107,8 +118,11 @@ const LoginForm = () => {
 						<Button
 							type='submit'
 							className='w-full h-11 text-base font-medium mt-2'
-							disabled={!form.formState.isValid}
+							disabled={!form.formState.isValid || form.formState.isSubmitting}
 						>
+							{form.formState.isSubmitting && (
+								<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+							)}
 							Sign in
 						</Button>
 					</form>
