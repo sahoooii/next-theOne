@@ -34,7 +34,7 @@ const RegisterForm = () => {
 	const [formError, setFormError] = useState('');
 
 	const form = useForm<RegisterSchema>({
-		// resolver: zodResolver(registerSchema),
+		resolver: zodResolver(registerSchema),
 		mode: 'onTouched',
 		defaultValues: {
 			name: '',
