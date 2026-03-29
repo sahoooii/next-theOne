@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { signInUser } from '@/app/actions/authActions';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 const LoginForm = () => {
 	const router = useRouter();
@@ -48,7 +49,7 @@ const LoginForm = () => {
 		if (result.status === 'success') {
 			router.push('/members');
 		} else {
-			console.log(result.error);
+			showToast(result.error as string, 'error');
 		}
 	};
 
