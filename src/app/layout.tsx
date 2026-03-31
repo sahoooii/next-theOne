@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Providers from '@/components/Providers';
 import { Inter, Cormorant } from 'next/font/google';
-import BottomNav from '@/components/navigation/BottomNav';
 import TopNav from '@/components/navigation/TopNav';
 import { Toaster } from 'sonner';
+import BottomNavWrapper from '@/components/navigation/BottomNavWrapper';
 
 export const metadata: Metadata = {
 	title: 'The One',
@@ -34,7 +34,7 @@ export default function RootLayout({
 					<TopNav />
 					<main className='container mx-auto p-10'>{children}</main>
 					<Toaster position='bottom-right' />
-					<BottomNav />
+					<BottomNavWrapper />
 				</Providers>
 			</body>
 		</html>

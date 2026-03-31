@@ -48,6 +48,9 @@ const LoginForm = () => {
 
 		if (result.status === 'success') {
 			router.push('/members');
+			router.refresh();
+
+			showToast('Welcome back to your journey', 'success');
 		} else {
 			showToast(result.error as string, 'error');
 		}

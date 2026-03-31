@@ -5,14 +5,14 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { navLinks } from './navLinks';
 
-const BottomNav = () => {
-	// After add auth
-	// navLinks.filter((link) => {
-	// 	if (link.auth === 'user') return session;
-	// 	if (link.auth === 'guest') return !session;
-	// 	return true;
-	// });
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Users } from 'lucide-react';
+import { Session } from 'next-auth';
+
+const BottomNavClient = ({ session }: { session: Session | null }) => {
 	const pathname = usePathname();
+
+	const userLinks = navLinks.filter((link) => link.auth === 'user');
 
 	return (
 		<div className='lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50'>
@@ -27,9 +27,9 @@ const BottomNav = () => {
         shadow-lg
       '
 			>
-				{navLinks.map((link) => {
+				{userLinks.map((link) => {
 					const Icon = link.icon;
-					if (!Icon) return null
+					if (!Icon) return null;
 					const isActive = pathname === link.href;
 
 					return (
@@ -56,7 +56,6 @@ const BottomNav = () => {
 									}}
 								/>
 							)}
-
 							<motion.div whileTap={{ scale: 0.85 }} className='relative z-10'>
 								<Icon
 									className={`w-6 h-6 transition-colors
@@ -70,9 +69,47 @@ const BottomNav = () => {
 						</Link>
 					);
 				})}
+				{/* Profile Edit */}
+				<Link
+					href='/profile/edit'
+					className='relative flex items-center justify-center w-12 h-12'
+				>
+					{pathname === '/profile/edit' && (
+						<motion.div
+							layoutId='active-pill'
+							className='
+        absolute
+        w-14 h-14
+        rounded-full
+        bg-primary/30
+        shadow-[0_0_20px_rgba(168,85,247,0.5)]
+        blur-[1px]
+				ring-2 ring-purple-400/60
+      '
+							transition={{
+								type: 'spring',
+								stiffness: 250,
+								damping: 25,
+							}}
+						/>
+					)}
+
+					<motion.div
+						whileTap={{ scale: 0.85 }}
+						animate={{ scale: pathname === '/profile/edit' ? 1.1 : 1 }}
+						className='relative z-10'
+					>
+						<Avatar className='w-8 h-8 ring-1 ring-white/20'>
+							<AvatarImage src={session?.user?.image || ''} />
+							<AvatarFallback>
+								{session?.user?.name?.charAt(0) || <Users />}
+							</AvatarFallback>
+						</Avatar>
+					</motion.div>
+				</Link>
 			</div>
 		</div>
 	);
 };
 
-export default BottomNav;
+export default BottomNavClient;

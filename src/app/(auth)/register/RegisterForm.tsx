@@ -28,8 +28,13 @@ import Link from 'next/link';
 import { registerUser } from '@/app/actions/authActions';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { showToast } from '@/lib/toast';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 const RegisterForm = () => {
+	const router = useRouter();
+
 	// For entire of server error
 	const [formError, setFormError] = useState('');
 
@@ -46,8 +51,18 @@ const RegisterForm = () => {
 	const onSubmit = async (data: RegisterSchema) => {
 		const result = await registerUser(data);
 
+		// After register account, then user login
 		if (result.status === 'success') {
-			console.log('User registered successfully');
+			await signIn('credentials', {
+				email: data.email,
+				password: data.password,
+				redirect: false,
+			});
+
+			router.push('/members');
+			router.refresh();
+
+			showToast('User registered successfully', 'success');
 		} else {
 			// For entire of server error
 			if (typeof result.error === 'string') {
@@ -143,9 +158,7 @@ const RegisterForm = () => {
 						/>
 
 						{/* For entire of server error */}
-						{formError && (
-							<p className='text-red-500 text-sm'>{formError}</p>
-						)}
+						{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 						<Button
 							type='submit'
