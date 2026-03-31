@@ -128,6 +128,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 							</Link>
 						</>
 					) : (
+						// Separate file
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<button className='focus:outline-none'>
