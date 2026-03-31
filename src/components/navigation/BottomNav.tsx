@@ -6,12 +6,6 @@ import { motion } from 'framer-motion';
 import { navLinks } from './navLinks';
 
 const BottomNav = () => {
-	// After add auth
-	// navLinks.filter((link) => {
-	// 	if (link.auth === 'user') return session;
-	// 	if (link.auth === 'guest') return !session;
-	// 	return true;
-	// });
 	const pathname = usePathname();
 
 	return (
