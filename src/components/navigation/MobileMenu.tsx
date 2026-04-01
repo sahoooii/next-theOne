@@ -43,7 +43,7 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 				>
 					<SheetTitle className='sr-only'>Mobile navigation menu</SheetTitle>
 					<div className='mt-8 flex flex-col gap-6'>
-						{/* 🔥 User Info */}
+						{/* User Info */}
 						{session && (
 							<div className='flex items-center gap-4 px-4 pb-4 border-b border-white/10'>
 								<Avatar className='h-12 w-12 ring-2 ring-purple-400/40'>
@@ -62,7 +62,7 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 							</div>
 						)}
 
-						{/* 🔥 Menu */}
+						{/* Menu */}
 						<div className='flex flex-col gap-2 px-2'>
 							{!session ? (
 								<>
