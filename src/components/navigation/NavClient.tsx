@@ -2,22 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { motion } from 'framer-motion';
 import { navLinks } from './navLinks';
 import MobileMenu from './MobileMenu';
-import {
-	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import DropdownMenuDeskTop from './DropdownMenuDeskTop';
 
 import { IoSparkles } from 'react-icons/io5';
-import { Users } from 'lucide-react';
-
 
 const linkStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
@@ -35,7 +26,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 		return false;
 	});
 
-	// For main nav menu
+	// For main nav menu ex: Members, Lists, Messages
 	const leftLinks = filteredLinks.filter((link) => link.label !== 'Login');
 	// For a login menu
 	const rightLinks = filteredLinks.filter((link) => link.label === 'Login');
@@ -43,7 +34,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 	return (
 		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
 			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4'>
-				{/* Left：Logo */}
+				{/* Left：Brand Logo */}
 				<Link
 					href='/'
 					className='flex items-center gap-3 hover:scale-[1.02] transition duration-300'
@@ -119,7 +110,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 									</Link>
 								);
 							})}
-
+							{/* Register Button */}
 							<Link
 								href='/register'
 								className='rounded-md bg-primary px-4 py-2 text-white font-semibold hover:bg-primary/90 transition'
@@ -128,61 +119,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 							</Link>
 						</>
 					) : (
-						// Separate file
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<button className='focus:outline-none'>
-									<Avatar
-										className='
-          cursor-pointer
-          transition-all duration-300
-          hover:scale-105
-          hover:ring-2 hover:ring-purple-400/60
-          hover:shadow-[0_0_12px_rgba(168,85,247,0.6)]
-        '
-									>
-										<AvatarImage src={session.user?.image || ''} />
-
-										<AvatarFallback className='bg-purple-500/20 text-white'>
-											{session.user?.name?.charAt(0) || <Users size={18} />}
-										</AvatarFallback>
-									</Avatar>
-								</button>
-							</DropdownMenuTrigger>
-
-							<DropdownMenuContent
-								align='end'
-								className='
-    w-52
-    bg-purple-950/95
-    backdrop-blur-xl
-    border border-white/10
-    shadow-[0_10px_40px_rgba(0,0,0,0.6)]
-    animate-in fade-in zoom-in-95
-  '
-							>
-								{/* User info */}
-								<div className='px-3 py-2 border-b border-white/10'>
-									<p className='text-sm text-white font-medium'>
-										{session.user?.name || 'User'}
-									</p>
-									<p className='text-xs text-white/60'>{session.user?.email}</p>
-								</div>
-								{/* Menu */}
-								<DropdownMenuItem
-									asChild
-									className='cursor-pointer hover:bg-white/10 transition text-white'
-								>
-									<Link href='/profile'>Edit Profile</Link>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => signOut({ callbackUrl: '/login' })}
-									className='cursor-pointer text-red-400 hover:bg-red-500/10 transition'
-								>
-									Sign out
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
+						<DropdownMenuDeskTop session={session} />
 					)}
 				</div>
 				{/* Mobile hamburger menuー */}

@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { navLinks } from './navLinks';
-
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+
 import { Users } from 'lucide-react';
 import { Session } from 'next-auth';
 
@@ -69,12 +69,12 @@ const BottomNavClient = ({ session }: { session: Session | null }) => {
 						</Link>
 					);
 				})}
-				{/* Profile Edit */}
+				{/* Profile Icon */}
 				<Link
-					href='/profile/edit'
+					href='/profile'
 					className='relative flex items-center justify-center w-12 h-12'
 				>
-					{pathname === '/profile/edit' && (
+					{pathname === '/profile' && (
 						<motion.div
 							layoutId='active-pill'
 							className='
@@ -96,7 +96,7 @@ const BottomNavClient = ({ session }: { session: Session | null }) => {
 
 					<motion.div
 						whileTap={{ scale: 0.85 }}
-						animate={{ scale: pathname === '/profile/edit' ? 1.1 : 1 }}
+						animate={{ scale: pathname === '/profile' ? 1.1 : 1 }}
 						className='relative z-10'
 					>
 						<Avatar className='w-8 h-8 ring-1 ring-white/20'>
