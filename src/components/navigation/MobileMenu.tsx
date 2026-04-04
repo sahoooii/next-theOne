@@ -90,7 +90,11 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 
 									<SheetClose asChild>
 										<button
-											onClick={() => signOut({ callbackUrl: '/login' })}
+											onClick={() =>
+												signOut({
+													callbackUrl: '/login',
+												})
+											}
 											className='menu-item text-red-400 hover:bg-red-500/10'
 										>
 											<LogOut size={20} />
