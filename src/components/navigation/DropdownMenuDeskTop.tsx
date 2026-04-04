@@ -60,7 +60,11 @@ const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
 					<Link href='/profile'>Edit Profile</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => signOut({ callbackUrl: '/login' })}
+					onClick={() =>
+						signOut({
+							callbackUrl: '/login',
+						})
+					}
 					className='cursor-pointer text-red-400 hover:bg-red-500/10 transition'
 				>
 					Sign out
