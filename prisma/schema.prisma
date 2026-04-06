@@ -26,6 +26,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+// User = Authentication Login(System)
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -37,6 +38,7 @@ model User {
   member        Member?
 }
 
+// Member = Profile in App(User of Domain)
 model Member {
   id          String   @id @default(cuid())
   userId      String   @unique
