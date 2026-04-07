@@ -70,18 +70,18 @@ export const membersData = [
 		image: '/images/f5.jpeg',
 	},
 	{
-		email: 'todd@test.com',
-		username: 'todd',
+		email: 'josh@test.com',
+		username: 'josh',
 		gender: 'male',
 		dateOfBirth: '1980-02-07',
-		name: 'Todd',
+		name: 'Josh',
 		created: '2019-04-29',
 		lastActive: '2020-05-16',
 		description:
 			'Mollit elit cillum dolore ea laboris consequat excepteur eiusmod eiusmod qui magna mollit occaecat. Sint qui ut veniam non. Est non veniam magna in consectetur ullamco eiusmod in elit aute ea ipsum aliquip. Duis nisi do dolore ad. Consectetur incididunt quis exercitation aliquip officia. Ex anim pariatur veniam fugiat aute consequat quis nisi in quis.\r\n',
 		city: 'Cliff',
 		country: 'British Indian Ocean Territory',
-		image: '/images/m1.jpeg',
+		image: '/images/hapaBoy.jpg',
 	},
 	{
 		email: 'porter@test.com',
