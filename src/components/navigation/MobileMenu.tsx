@@ -16,7 +16,6 @@ import { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import { Menu, LogIn, User, UserCircle, LogOut } from 'lucide-react';
 
-
 const MobileMenu = ({ session }: { session: Session | null }) => {
 	// For hamburger menu button
 	const [open, setOpen] = useState(false);
@@ -47,7 +46,10 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 						{session && (
 							<div className='flex items-center gap-4 px-4 pb-4 border-b border-white/10'>
 								<Avatar className='h-12 w-12 ring-2 ring-purple-400/40'>
-									<AvatarImage src={session.user?.image || ''} />
+									<AvatarImage
+										className='object-cover object-top'
+										src={session.user?.image || ''}
+									/>
 									<AvatarFallback>
 										{session.user?.name?.charAt(0) || <User />}
 									</AvatarFallback>

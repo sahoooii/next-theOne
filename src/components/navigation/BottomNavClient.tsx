@@ -99,8 +99,8 @@ const BottomNavClient = ({ session }: { session: Session | null }) => {
 						animate={{ scale: pathname === '/profile' ? 1.1 : 1 }}
 						className='relative z-10'
 					>
-						<Avatar className='w-8 h-8 ring-1 ring-white/20'>
-							<AvatarImage src={session?.user?.image || ''} />
+						<Avatar className='w-11 h-11 ring-1 ring-white/10'>
+							<AvatarImage className='object-cover object-top' src={session?.user?.image || ''} />
 							<AvatarFallback>
 								{session?.user?.name?.charAt(0) || <Users />}
 							</AvatarFallback>
