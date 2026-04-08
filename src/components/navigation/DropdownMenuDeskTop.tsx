@@ -23,9 +23,13 @@ const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
           hover:scale-105
           hover:ring-2 hover:ring-purple-400/60
           hover:shadow-[0_0_12px_rgba(168,85,247,0.6)]
+					w-11 h-11 ring-1 ring-white/10
         '
 					>
-						<AvatarImage src={session?.user?.image || ''} />
+						<AvatarImage
+							className='object-cover object-top'
+							src={session?.user?.image || ''}
+						/>
 
 						<AvatarFallback className='bg-purple-500/20 text-white'>
 							{session?.user?.name?.charAt(0) || <Users size={18} />}
