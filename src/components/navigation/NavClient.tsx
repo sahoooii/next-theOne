@@ -33,7 +33,7 @@ const NavClient = ({ session }: { session: Session | null }) => {
 
 	return (
 		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
-			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 py-4'>
+			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 h-20'>
 				{/* Left：Brand Logo */}
 				<Link
 					href='/'
