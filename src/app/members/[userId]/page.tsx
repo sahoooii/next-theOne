@@ -1,5 +1,5 @@
 import { getMemberByUserId } from '@/app/actions/memberActions';
-import NotFound from '@/app/messages/not-found';
+import NotFound from '@/app/members/not-found';
 
 const MembersDetailPage = async ({
 	params,
