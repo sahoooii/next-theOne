@@ -1,9 +1,9 @@
-import { Member } from '@prisma/client';
-import { Card, CardContent } from '../ui/card';
 import Image from 'next/image';
-import { Button } from '../ui/button';
-import { LuHeart } from 'react-icons/lu';
 import Link from 'next/link';
+import { Member } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { LuHeart } from 'react-icons/lu';
 import { calculateAge } from '@/lib/utils';
 
 type Props = {
@@ -30,7 +30,7 @@ const MemberCard = ({ member }: Props) => {
 					{/* Info Section*/}
 					<div
 						className=' -mt-16 pt-10 px-4 pb-4 bg-gradient-to-t from-black/70 via-purple-900/40
-    to-transparent  rounded-b-2xl flex-1 '
+    to-transparent rounded-b-2xl flex-1 '
 					>
 						<p className='text-white font-semibold tracking-wide'>
 							{member.name}, {age}
