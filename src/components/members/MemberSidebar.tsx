@@ -29,7 +29,7 @@ const MemberSidebar = ({ member }: Props) => {
 			backdrop-blur-xl
 			border border-white/5
 			rounded-2xl
-			p-6
+			p-4 lg:p-6
 			flex flex-col bg-transparent overflow-hidden
 			'
 		>
@@ -39,7 +39,7 @@ const MemberSidebar = ({ member }: Props) => {
 			<div className='relative p-6 flex flex-col h-full'>
 				{/* Profile */}
 				<div className='flex flex-col items-center text-center space-y-3'>
-					<div className='relative w-32 h-32 rounded-full overflow-hidden border border-white/20'>
+					<div className='relative w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border border-white/20'>
 						<Image
 							src={member.image || '/images/user.png'}
 							fill
@@ -61,7 +61,7 @@ const MemberSidebar = ({ member }: Props) => {
 				<div className='my-6 h-px bg-white/10' />
 
 				{/* Navigation */}
-				<nav className='flex flex-col gap-2 bg-white/10 rounded-xl p-2'>
+				<nav className='flex flex-col gap-2 bg-white/10 lg:bg-transparent rounded-xl p-2'>
 					{navLinks.map((link) => {
 						const isActive = pathname === link.href;
 
@@ -82,7 +82,7 @@ const MemberSidebar = ({ member }: Props) => {
 								{isActive && (
 									<motion.span
 										layoutId='active-sidebar'
-										className='absolute left-0 top-0 h-full w-[2px] bg-purple-500'
+										className='absolute left-0 top-0 h-full w-[5px] bg-purple-500'
 										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
 									/>
 								)}
