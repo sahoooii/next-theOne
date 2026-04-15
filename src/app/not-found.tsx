@@ -21,7 +21,7 @@ export default function NotFound() {
 
 					{/* Title */}
 					<h1 className='text-2xl font-semibold text-gray-800 tracking-wide'>
-						Member Not Found
+						Not Found
 					</h1>
 
 					{/* Sub Text*/}

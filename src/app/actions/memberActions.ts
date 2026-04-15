@@ -26,6 +26,18 @@ export async function getMemberByUserId(userId: string) {
 		return prisma.member.findUnique({ where: { userId } });
 	} catch (error) {
 		console.log(error);
-
 	}
+}
+
+export async function getMemberPhotoByUserId(userId: string) {
+	const member = await prisma.member.findUnique({
+		where: {
+			userId,
+		},
+		select: { photos: true },
+	});
+
+	if (!member) return null;
+
+	return member.photos;
 }
