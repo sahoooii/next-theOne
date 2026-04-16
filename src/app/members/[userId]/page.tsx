@@ -1,5 +1,6 @@
 import { getMemberByUserId } from '@/app/actions/memberActions';
 import NotFound from '@/app/members/not-found';
+import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { Card } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
 
@@ -24,12 +25,7 @@ const MembersDetailPage = async ({
 '
 		>
 			{/* Header */}
-			<div className='mb-6'>
-				<h2 className='text-xl font-semibold text-gray-900'>Profile</h2>
-				<div className='h-[2px] w-10 bg-purple-500 rounded-full' />
-			</div>
-
-			<div className='h-px bg-black/10 mb-6' />
+			<MemberDetailPageHeader title='Profile' />
 
 			{/* Info Grid */}
 			<div className='grid grid-cols-2 gap-4 mb-8'>
