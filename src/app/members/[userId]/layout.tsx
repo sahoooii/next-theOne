@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { getMemberByUserId } from '@/app/actions/memberActions';
-import MemberSidebar from '@/components/members/MemberSidebar';
+import MemberSidebar from '@/components/members/memberDetail/MemberSidebar';
 import NotFound from '@/app/not-found';
 
 const Layout = async ({
