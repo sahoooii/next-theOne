@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Member } from '@prisma/client';
-import { Card, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
 
 type Props = {
@@ -97,14 +96,14 @@ const MemberSidebar = ({ member }: Props) => {
 				<div className='flex-1' />
 
 				{/* Footer */}
-				<CardFooter className='p-0 pt-6'>
+				{/* <CardFooter className='p-0 pt-6'>
 					<Button
 						asChild
 						className='w-full bg-white/10 hover:bg-white/20 text-white'
 					>
 						<Link href='/members'>Back to Members</Link>
 					</Button>
-				</CardFooter>
+				</CardFooter> */}
 			</div>
 		</Card>
 	);
