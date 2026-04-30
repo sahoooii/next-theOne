@@ -1,5 +1,7 @@
 import { getMemberPhotoByUserId } from '@/app/actions/memberActions';
 import MemberPhotosClient from '@/components/members/memberDetail/MemberPhotosClient';
+import PhotoSkeleton from '@/components/members/memberDetail/skeleton/PhotoSkeleton';
+import { Suspense } from 'react';
 
 const PhotosPage = async ({
 	params,
@@ -14,7 +16,11 @@ const PhotosPage = async ({
 		return <div className='text-gray-500'>No photos available</div>;
 	}
 
-	return <MemberPhotosClient photos={photos} />;
+	return (
+		<Suspense fallback={<PhotoSkeleton />}>
+			<MemberPhotosClient photos={photos} />
+		</Suspense>
+	);
 };
 
 export default PhotosPage;

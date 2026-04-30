@@ -1,14 +1,21 @@
-import { CardContent, CardHeader } from '@/components/ui/card';
+import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
+import { Card } from '@/components/ui/card';
 
 const ChatPage = () => {
 	return (
-		<>
-			<CardHeader className='text-2xl font-semibold text-primary'>
-				Chat
-			</CardHeader>
-			<div className='my-6 h-px bg-gray-400' />
-			<CardContent>Chat coming soon...</CardContent>
-		</>
+		<Card
+			className='
+	h-full
+	bg-white/70 backdrop-blur-md
+	border border-black/10
+	rounded-2xl
+	p-8
+'
+		>
+			{/* Header */}
+			<MemberDetailPageHeader title='Chat' />
+			<div>Chat room is coming soon...</div>
+		</Card>
 	);
 };
 

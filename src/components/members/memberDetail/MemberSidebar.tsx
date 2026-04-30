@@ -42,6 +42,7 @@ const MemberSidebar = ({ member }: Props) => {
 						<Image
 							src={member.image || '/images/user.png'}
 							fill
+							sizes='128px'
 							alt='User Profile'
 							className='object-cover object-top transition-transform duration-500 hover:scale-105'
 						/>
