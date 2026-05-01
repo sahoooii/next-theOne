@@ -1,23 +1,23 @@
 'use server';
 
-import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
+import { getAuthUserId } from './authActions';
 
 export async function getMembers() {
-	const session = await auth();
-	if (!session?.user) return null;
+	const userId = await getAuthUserId();
 
 	try {
 		return prisma.member.findMany({
 			// Exclude login user
 			where: {
 				NOT: {
-					userId: session.user.id,
+					userId: userId,
 				},
 			},
 		});
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 }
 
@@ -26,6 +26,7 @@ export async function getMemberByUserId(userId: string) {
 		return prisma.member.findUnique({ where: { userId } });
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 }
 
