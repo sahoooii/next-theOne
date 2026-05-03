@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Member } from '@prisma/client';
@@ -8,9 +10,11 @@ import LikeButton from './LikeButton';
 
 type Props = {
 	member: Member;
+	likeIds: string[];
 };
 
-const MemberCard = ({ member }: Props) => {
+const MemberCard = ({ member, likeIds }: Props) => {
+	const hasLiked = likeIds.includes(member.userId);
 	const age = calculateAge(member.dateOfBirth);
 	return (
 		<Card className='group bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/30 pb-2 group cursor-pointer'>
@@ -56,7 +60,7 @@ const MemberCard = ({ member }: Props) => {
 					</Button>
 					{/* Like button */}
 					<div className='z-30'>
-						<LikeButton targetId={member.userId} hasLiked={false} />
+						<LikeButton targetId={member.userId} hasLiked={hasLiked} />
 					</div>
 				</div>
 			</CardContent>
