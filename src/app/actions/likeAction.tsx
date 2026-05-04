@@ -50,3 +50,78 @@ export async function fetchCurrentUserLikeIds() {
 		throw error;
 	}
 }
+
+// likeしたmembers list
+export async function fetchLikedMembers(type = 'source') {
+	try {
+		const userId = await getAuthUserId();
+		// source → target
+		switch (type) {
+			case 'source': //自分がいいねした相手
+				return await fetchSourceLikes(userId);
+			case 'target': //自分にいいねしてきた相手
+				return await fetchTargetLikes(userId);
+			case 'mutual': //お互いにいいねしている関係（マッチ状態）
+				return await fetchMutualLikes(userId);
+			default:
+				return [];
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
+//自分がいいねした相手達
+async function fetchSourceLikes(userId: string) {
+	const sourceList = await prisma.like.findMany({
+		where: {
+			sourceUserId: userId,//自分
+		},
+		select: {
+			targetMember: true,//自分がlikeした誰か
+		},
+	});
+	return sourceList.map((x) => x.targetMember);
+}
+
+//自分にいいねしてきた相手達
+async function fetchTargetLikes(userId: string) {
+	const targetList = await prisma.like.findMany({
+		where: {
+			targetUserId: userId,//targetは自分
+		},
+		select: {
+			sourceMember: true,//相手は自分にlikeしてきた誰か
+		},
+	});
+	return targetList.map((x) => x.sourceMember);
+}
+
+// お互いにいいねしている関係達
+// likedUser.map((x) => x.targetUserId)
+async function fetchMutualLikes(userId: string) {
+	// 自分がいいねした人を取る
+	const likedUser = await prisma.like.findMany({
+		where: {
+			sourceUserId: userId,
+		},
+		select: {
+			targetUserId: true,
+		},
+	});
+	const likedIds = likedUser.map((x) => x.targetUserId);
+
+	const mutualList = await prisma.like.findMany({
+		where: {
+			AND: [
+				{ targetUserId: userId }, // 誰か → 自分
+				{ sourceUserId: { in: likedIds } }, // その誰かが自分がいいねした人の中にいる,
+			],
+		},
+		select: {
+			sourceMember: true,
+		},
+	});
+	return mutualList.map((x) => x.sourceMember);
+}
