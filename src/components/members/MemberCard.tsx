@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Member } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
 import LikeButton from './LikeButton';
+import { useRouter } from 'next/navigation';
 
 type Props = {
 	member: Member;
@@ -16,14 +16,18 @@ type Props = {
 const MemberCard = ({ member, likeIds }: Props) => {
 	const hasLiked = likeIds.includes(member.userId);
 	const age = calculateAge(member.dateOfBirth);
+	const router = useRouter();
 	return (
-		<Card className='group bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/30 pb-2 group cursor-pointer'>
+		<Card
+			className='group bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/30 pb-2 group cursor-pointer'
+			onClick={() => router.push(`/members/${member.userId}`)}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter') {
+					router.push(`/members/${member.userId}`);
+				}
+			}}
+		>
 			<CardContent className='p-3 space-y-3 flex flex-col h-full'>
-				<Link
-					href={`/members/${member.userId}`}
-					className='absolute inset-0 z-0'
-				/>
-
 				{/* Image */}
 				<div className='relative aspect-[3/4] w-full overflow-hidden rounded-xl'>
 					<Image
