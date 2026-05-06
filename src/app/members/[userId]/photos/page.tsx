@@ -1,7 +1,7 @@
+import { Suspense } from 'react';
 import { getMemberPhotoByUserId } from '@/app/actions/memberActions';
 import MemberPhotosClient from '@/components/members/memberDetail/MemberPhotosClient';
 import PhotoSkeleton from '@/components/members/memberDetail/skeleton/PhotoSkeleton';
-import { Suspense } from 'react';
 
 const PhotosPage = async ({
 	params,
