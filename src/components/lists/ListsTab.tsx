@@ -1,20 +1,16 @@
 'use client';
 
+import { useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Member } from '@prisma/client';
 import { motion } from 'framer-motion';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import MemberCard from '@/components/members/utils/MemberCard';
+import { LoadingDisplay } from '@/components/LoadingDisplay';
+import { tabs } from './Tabs';
 
 type Props = {
 	members: Member[];
 	likeIds: string[];
-};
-
-type Tab = {
-	id: string;
-	label: string;
-	emptyTitle: string;
-	emptyDescription: string;
 };
 
 const ListsTab = ({ members, likeIds }: Props) => {
@@ -24,31 +20,15 @@ const ListsTab = ({ members, likeIds }: Props) => {
 
 	const current = searchParams.get('type') || 'source';
 
-	const tabs: Tab[] = [
-		{
-			id: 'source',
-			label: 'Liked',
-			emptyTitle: 'No connections yet',
-			emptyDescription: 'People you like will appear here.',
-		},
-		{
-			id: 'target',
-			label: 'Likes You',
-			emptyTitle: 'No one has found you yet',
-			emptyDescription: 'This space will fill as people discover you.',
-		},
-		{
-			id: 'mutual',
-			label: 'Matches',
-			emptyTitle: 'No matches yet',
-			emptyDescription: 'When feelings are mutual, they’ll appear here.',
-		},
-	];
+	const [isPending, startTransition] = useTransition();
+
 
 	const handleTabChange = (key: string) => {
-		const params = new URLSearchParams(searchParams);
-		params.set('type', key);
-		router.replace(`${pathname}?${params.toString()}`);
+		startTransition(() => {
+			const params = new URLSearchParams(searchParams);
+			params.set('type', key);
+			router.replace(`${pathname}?${params.toString()}`);
+		});
 	};
 
 	const activeTab = tabs.find((tab) => tab.id === current) || tabs[0];
@@ -93,21 +73,30 @@ const ListsTab = ({ members, likeIds }: Props) => {
 					})}
 				</div>
 			</div>
-			{/* Show members  */}
-			{members.length > 0 ? (
-				<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-					{members.map((member) => (
-						<MemberCard key={member.id} member={member} likeIds={likeIds} />
-					))}
-				</div>
+
+			{isPending ? (
+				<LoadingDisplay message='Preparing your connections list...' />
 			) : (
-				// If no likes, liked, matches members, show empty message
-				<div className='mt-8 flex flex-col items-center text-center space-y-3'>
-					<p className='text-gray-900 text-sm tracking-wide'>
-						{activeTab.emptyTitle}
-					</p>
-					<p className='text-gray-400 text-xs'>{activeTab.emptyDescription}</p>
-				</div>
+				<>
+					{/* Show members  */}
+					{members.length > 0 ? (
+						<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+							{members.map((member) => (
+								<MemberCard key={member.id} member={member} likeIds={likeIds} />
+							))}
+						</div>
+					) : (
+						// If no liked, likes you, matches members, show empty message
+						<div className='mt-8 flex flex-col items-center text-center space-y-3'>
+							<p className='text-gray-900 text-sm tracking-wide'>
+								{activeTab.emptyTitle}
+							</p>
+							<p className='text-gray-400 text-xs'>
+								{activeTab.emptyDescription}
+							</p>
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	);
