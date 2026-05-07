@@ -1,13 +1,20 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Member } from '@prisma/client';
 import { motion } from 'framer-motion';
-import MemberCard from '../members/MemberCard';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import MemberCard from '@/components/members/utils/MemberCard';
 
 type Props = {
 	members: Member[];
 	likeIds: string[];
+};
+
+type Tab = {
+	id: string;
+	label: string;
+	emptyTitle: string;
+	emptyDescription: string;
 };
 
 const ListsTab = ({ members, likeIds }: Props) => {
@@ -17,10 +24,25 @@ const ListsTab = ({ members, likeIds }: Props) => {
 
 	const current = searchParams.get('type') || 'source';
 
-	const tabs = [
-		{ id: 'source', label: 'Liked' },
-		{ id: 'target', label: 'Likes You' },
-		{ id: 'mutual', label: 'Matches' },
+	const tabs: Tab[] = [
+		{
+			id: 'source',
+			label: 'Liked',
+			emptyTitle: 'No connections yet',
+			emptyDescription: 'People you like will appear here.',
+		},
+		{
+			id: 'target',
+			label: 'Likes You',
+			emptyTitle: 'No one has found you yet',
+			emptyDescription: 'This space will fill as people discover you.',
+		},
+		{
+			id: 'mutual',
+			label: 'Matches',
+			emptyTitle: 'No matches yet',
+			emptyDescription: 'When feelings are mutual, they’ll appear here.',
+		},
 	];
 
 	const handleTabChange = (key: string) => {
@@ -29,8 +51,10 @@ const ListsTab = ({ members, likeIds }: Props) => {
 		router.replace(`${pathname}?${params.toString()}`);
 	};
 
+	const activeTab = tabs.find((tab) => tab.id === current) || tabs[0];
+
 	return (
-		<>
+		<div className='max-w-5xl mx-auto px-4'>
 			<div className='overflow-x-auto'>
 				<div
 					className='flex gap-6 border-b border-black/10 pb-2
@@ -69,7 +93,7 @@ const ListsTab = ({ members, likeIds }: Props) => {
 					})}
 				</div>
 			</div>
-			{/* Display members  */}
+			{/* Show members  */}
 			{members.length > 0 ? (
 				<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
 					{members.map((member) => (
@@ -77,17 +101,15 @@ const ListsTab = ({ members, likeIds }: Props) => {
 					))}
 				</div>
 			) : (
-				// Tabごとに変更する、Add loading, Skeleton
+				// If no likes, liked, matches members, show empty message
 				<div className='mt-8 flex flex-col items-center text-center space-y-3'>
 					<p className='text-gray-900 text-sm tracking-wide'>
-						No connections yet
+						{activeTab.emptyTitle}
 					</p>
-					<p className='text-gray-400 text-xs'>
-						This space will fill as you explore.
-					</p>
+					<p className='text-gray-400 text-xs'>{activeTab.emptyDescription}</p>
 				</div>
 			)}
-		</>
+		</div>
 	);
 };
 

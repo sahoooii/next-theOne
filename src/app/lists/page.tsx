@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import ListsTab from '@/components/lists/ListsTab';
 import {
 	fetchCurrentUserLikeIds,
 	fetchLikedMembers,
 } from '@/app/actions/likeAction';
+import ListsSkeleton from '@/components/lists/ListsSkeleton';
 
 const ListsPage = async ({
 	searchParams,
@@ -14,9 +16,9 @@ const ListsPage = async ({
 	const likeIds = await fetchCurrentUserLikeIds();
 	const members = await fetchLikedMembers(type);
 	return (
-		<div>
+		<Suspense fallback={<ListsSkeleton />}>
 			<ListsTab members={members} likeIds={likeIds} />
-		</div>
+		</Suspense>
 	);
 };
 

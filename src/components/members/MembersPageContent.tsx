@@ -1,4 +1,4 @@
-import MemberCard from '@/components/members/MemberCard';
+import MemberCard from '@/components/members/utils/MemberCard';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import { getMembers } from '@/app/actions/memberActions';
 import { fetchCurrentUserLikeIds } from '@/app/actions/likeAction';
