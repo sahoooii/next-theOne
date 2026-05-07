@@ -1,9 +1,12 @@
 'use client';
 
+import { useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Member } from '@prisma/client';
 import { motion } from 'framer-motion';
-import MemberCard from '../members/MemberCard';
+import MemberCard from '@/components/members/utils/MemberCard';
+import { LoadingDisplay } from '@/components/LoadingDisplay';
+import { tabs } from './Tabs';
 
 type Props = {
 	members: Member[];
@@ -17,20 +20,21 @@ const ListsTab = ({ members, likeIds }: Props) => {
 
 	const current = searchParams.get('type') || 'source';
 
-	const tabs = [
-		{ id: 'source', label: 'Liked' },
-		{ id: 'target', label: 'Likes You' },
-		{ id: 'mutual', label: 'Matches' },
-	];
+	const [isPending, startTransition] = useTransition();
+
 
 	const handleTabChange = (key: string) => {
-		const params = new URLSearchParams(searchParams);
-		params.set('type', key);
-		router.replace(`${pathname}?${params.toString()}`);
+		startTransition(() => {
+			const params = new URLSearchParams(searchParams);
+			params.set('type', key);
+			router.replace(`${pathname}?${params.toString()}`);
+		});
 	};
 
+	const activeTab = tabs.find((tab) => tab.id === current) || tabs[0];
+
 	return (
-		<>
+		<div className='max-w-5xl mx-auto px-4'>
 			<div className='overflow-x-auto'>
 				<div
 					className='flex gap-6 border-b border-black/10 pb-2
@@ -69,25 +73,32 @@ const ListsTab = ({ members, likeIds }: Props) => {
 					})}
 				</div>
 			</div>
-			{/* Display members  */}
-			{members.length > 0 ? (
-				<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-					{members.map((member) => (
-						<MemberCard key={member.id} member={member} likeIds={likeIds} />
-					))}
-				</div>
+
+			{isPending ? (
+				<LoadingDisplay message='Preparing your connections list...' />
 			) : (
-				// Tabごとに変更する、Add loading, Skeleton
-				<div className='mt-8 flex flex-col items-center text-center space-y-3'>
-					<p className='text-gray-900 text-sm tracking-wide'>
-						No connections yet
-					</p>
-					<p className='text-gray-400 text-xs'>
-						This space will fill as you explore.
-					</p>
-				</div>
+				<>
+					{/* Show members  */}
+					{members.length > 0 ? (
+						<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+							{members.map((member) => (
+								<MemberCard key={member.id} member={member} likeIds={likeIds} />
+							))}
+						</div>
+					) : (
+						// If no liked, likes you, matches members, show empty message
+						<div className='mt-8 flex flex-col items-center text-center space-y-3'>
+							<p className='text-gray-900 text-sm tracking-wide'>
+								{activeTab.emptyTitle}
+							</p>
+							<p className='text-gray-400 text-xs'>
+								{activeTab.emptyDescription}
+							</p>
+						</div>
+					)}
+				</>
 			)}
-		</>
+		</div>
 	);
 };
 
