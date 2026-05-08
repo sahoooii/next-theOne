@@ -10,17 +10,11 @@ import { calculateAge } from '@/lib/utils';
 
 type Props = {
 	member: Member;
+	navLinks: { name: string; href: string }[];
 };
 
-const MemberSidebar = ({ member }: Props) => {
+const MemberSidebar = ({ member, navLinks }: Props) => {
 	const pathname = usePathname();
-	const basePath = `/members/${member.userId}`;
-
-	const navLinks = [
-		{ name: 'Profile', href: `${basePath}` },
-		{ name: 'Photos', href: `${basePath}/photos` },
-		{ name: 'Chat', href: `${basePath}/chat` },
-	];
 	return (
 		<Card
 			className='

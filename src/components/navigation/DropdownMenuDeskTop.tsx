@@ -61,7 +61,7 @@ const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
 					asChild
 					className='cursor-pointer hover:bg-white/10 transition text-white'
 				>
-					<Link href='/profile'>Edit Profile</Link>
+					<Link href='/members/edit'>Edit Profile</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={() =>

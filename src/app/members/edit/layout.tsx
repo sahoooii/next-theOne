@@ -1,32 +1,28 @@
 import React, { ReactNode } from 'react';
-import { notFound } from 'next/navigation';
 import { getMemberByUserId } from '@/app/actions/memberActions';
 import MemberSidebar from '@/components/members/memberDetail/MemberSidebar';
+import NotFound from '@/app/not-found';
 import BreadCrumb from '@/components/BreadCrumb';
+import { getAuthUserId } from '@/app/actions/authActions';
 
-const Layout = async ({
-	children,
-	params,
-}: {
-	children: ReactNode;
-	params: Promise<{ userId: string }>;
-}) => {
-	const { userId } = await params;
+const Layout = async ({ children }: { children: ReactNode }) => {
+	const userId = await getAuthUserId();
 
 	const member = await getMemberByUserId(userId);
-	if (!member) notFound();
+	if (!member) return NotFound();
 
-	const basePath = `/members/${member.userId}`;
+	const basePath = `/members/edit`;
 
 	const navLinks = [
 		{ name: 'Profile', href: `${basePath}` },
 		{ name: 'Photos', href: `${basePath}/photos` },
-		{ name: 'Chat', href: `${basePath}/chat` },
 	];
 
+	// Add loading
+	// Add update
 	return (
 		<>
-			<BreadCrumb name={member.name} link='/members' title='Members' />
+			<BreadCrumb name={member.name} link='/' title='Home' />
 
 			<div className='grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[80vh]'>
 				{/* Sidebar */}

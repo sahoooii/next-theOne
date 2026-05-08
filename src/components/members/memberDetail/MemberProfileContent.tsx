@@ -1,15 +1,13 @@
-import { getMemberByUserId } from '@/app/actions/memberActions';
-import NotFound from '@/app/members/not-found';
 import { Card } from '@/components/ui/card';
-import React from 'react';
-import MemberDetailPageHeader from './MemberDetailPageHeader';
 import { calculateAge } from '@/lib/utils';
+import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
+import { Member } from '@prisma/client';
 
-const MemberProfileContent = async ({ userId }: { userId: string }) => {
-	const member = await getMemberByUserId(userId);
+type Props = {
+	member: Member;
+};
 
-	if (!member) return NotFound();
-
+const MemberProfileContent = async ({ member }: Props) => {
 	return (
 		<Card
 			className='
