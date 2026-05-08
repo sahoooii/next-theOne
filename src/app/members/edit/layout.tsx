@@ -22,7 +22,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 	// Add update
 	return (
 		<>
-			<BreadCrumb name={member.name} link='/members' title='Members' />
+			<BreadCrumb name={member.name} link='/' title='Home' />
 
 			<div className='grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[80vh]'>
 				{/* Sidebar */}
