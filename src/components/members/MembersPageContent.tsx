@@ -1,7 +1,7 @@
 import MemberCard from '@/components/members/utils/MemberCard';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import { getMembers } from '@/app/actions/memberActions';
-import { fetchCurrentUserLikeIds } from '@/app/actions/likeAction';
+import { fetchCurrentUserLikeIds } from '@/app/actions/likeActions';
 
 const MembersPageContent = async () => {
 	const members = await getMembers();

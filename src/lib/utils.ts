@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { differenceInYears } from 'date-fns';
+import { FieldValues, Path, UseFormSetError } from 'react-hook-form';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -10,4 +11,22 @@ export function cn(...inputs: ClassValue[]) {
 // dob→ Date of birth
 export function calculateAge(dob: Date) {
 	return differenceInYears(new Date(), dob);
+}
+
+// サーバーから返ってきたエラーをReact Hook Formに流し込む
+export function handleFormServerErrors<T extends FieldValues>(
+	error: Record<string, string> | string, //{[key: string]: string}
+	setFormError: (msg: string) => void, //文字列を受け取る関数
+	setError: UseFormSetError<T>, //React Hook Form専用型
+) {
+	if (typeof error === 'string') {
+		setFormError(error);
+	} else {
+		Object.entries(error).forEach(([field, message]) => {
+			//存在するfield名だけOK
+			setError(field as Path<T>, {
+				message,
+			});
+		});
+	}
 }

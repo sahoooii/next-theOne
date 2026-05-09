@@ -2,11 +2,11 @@
 
 import { useForm } from 'react-hook-form';
 import { Member } from '@prisma/client';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	memberEditSchema,
 	MemberEditSchema,
 } from '@/lib/schema/memberEditSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	Form,
 	FormControl,
@@ -15,19 +15,28 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { Input } from '@/components/ui/input';
-import { calculateAge } from '@/lib/utils';
 import ReadOnlyField from './ReadOnlyField';
+import { calculateAge, handleFormServerErrors } from '@/lib/utils';
+import { updateMemberProfile } from '@/app/actions/userActions';
+import { useState } from 'react';
+import { showToast } from '@/lib/toast';
+import { useRouter } from 'next/navigation';
 
 type Props = {
 	member: Member;
 };
 
 const EditForm = ({ member }: Props) => {
+	// For entire of server error
+	const [formError, setFormError] = useState('');
+
+	const router = useRouter();
+
 	const form = useForm<MemberEditSchema>({
 		resolver: zodResolver(memberEditSchema),
 		mode: 'onTouched',
@@ -39,8 +48,17 @@ const EditForm = ({ member }: Props) => {
 		},
 	});
 
-	const onSubmit = (data: MemberEditSchema) => {
-		console.log(data);
+	const onSubmit = async (data: MemberEditSchema) => {
+		const result = await updateMemberProfile(data);
+
+		if (result.status === 'success') {
+			showToast('User profile updated successfully', 'success');
+
+			form.reset(data);
+			router.refresh();
+		} else {
+			handleFormServerErrors(result.error, setFormError, form.setError);
+		}
 	};
 	return (
 		<Card
@@ -115,7 +133,6 @@ const EditForm = ({ member }: Props) => {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel className='text-xs text-gray-400'>Country</FormLabel>
-
 								<FormControl>
 									<Input
 										className='bg-white/50 border-black/10'
@@ -123,8 +140,7 @@ const EditForm = ({ member }: Props) => {
 										{...field}
 									/>
 								</FormControl>
-
-								<FormMessage />
+								<FormMessage className='text-sm text-red-400' />
 							</FormItem>
 						)}
 					/>
@@ -138,7 +154,6 @@ const EditForm = ({ member }: Props) => {
 								<FormLabel className='text-xs text-gray-400'>
 									About You
 								</FormLabel>
-
 								<FormControl>
 									<Textarea
 										placeholder='Tell people about yourself'
@@ -150,6 +165,9 @@ const EditForm = ({ member }: Props) => {
 							</FormItem>
 						)}
 					/>
+
+					{/* For entire of server error */}
+					{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 					{/* Submit */}
 					<div className='flex justify-center lg:justify-end'>
