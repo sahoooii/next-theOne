@@ -1,0 +1,49 @@
+'use server';
+
+import {
+	memberEditSchema,
+	MemberEditSchema,
+} from '@/lib/schema/memberEditSchema';
+import { ActionResult } from '@/types';
+import { Member } from '@prisma/client';
+import { getAuthUserId } from './authActions';
+import { prisma } from '@/lib/prisma';
+
+export async function updateMemberProfile(
+	data: MemberEditSchema,
+): Promise<ActionResult<Member>> {
+	try {
+		const userId = await getAuthUserId();
+
+		const validated = memberEditSchema.safeParse(data);
+
+		if (!validated.success) {
+			const fieldErrors = validated.error.issues.reduce(
+				(acc, issue) => {
+					const field = issue.path[0] as string;
+					acc[field] = issue.message;
+					return acc;
+				},
+				{} as Record<string, string>,
+			);
+			return { status: 'error', error: fieldErrors };
+		}
+
+		const { name, description, city, country } = validated.data;
+
+		const member = await prisma.member.update({
+			where: { userId },
+			data: {
+				name,
+				description,
+				city,
+				country,
+			},
+		});
+		return { status: 'success', data: member };
+	} catch (error) {
+		console.log(error);
+
+		return { status: 'error', error: 'Something went wrong' };
+	}
+}

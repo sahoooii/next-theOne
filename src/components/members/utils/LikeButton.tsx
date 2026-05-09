@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { toggleLikeMember } from '@/app/actions/likeAction';
+import { toggleLikeMember } from '@/app/actions/likeActions';
 import { Button } from '@/components/ui/button';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 type Props = {
@@ -38,13 +38,9 @@ const LikeButton = ({ targetId, hasLiked }: Props) => {
 			}}
 		>
 			{hasLiked ? (
-				<FaHeart
-					className='transition-transform duration-200 text-red-400 group-hover:scale-110 active:scale-90 drop-shadow-md'
-				/>
+				<FaHeart className='transition-transform duration-200 text-red-400 group-hover:scale-110 active:scale-90 drop-shadow-md' />
 			) : (
-				<FaRegHeart
-					className='transition-all duration-200 text-red-400 opacity-70 group-hover:text-red-400 group-hover:scale-110 active:scale-90 drop-shadow-md'
-				/>
+				<FaRegHeart className='transition-all duration-200 text-red-400 opacity-70 group-hover:text-red-400 group-hover:scale-110 active:scale-90 drop-shadow-md' />
 			)}
 		</Button>
 	);

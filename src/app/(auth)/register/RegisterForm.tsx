@@ -31,6 +31,7 @@ import { Loader2 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { handleFormServerErrors } from '@/lib/utils';
 
 const RegisterForm = () => {
 	const router = useRouter();
@@ -65,16 +66,7 @@ const RegisterForm = () => {
 			showToast('User registered successfully', 'success');
 		} else {
 			// For entire of server error
-			if (typeof result.error === 'string') {
-				setFormError(result.error);
-			} else {
-				// For field error
-				Object.entries(result.error).forEach(([field, message]) => {
-					form.setError(field as keyof RegisterSchema, {
-						message,
-					});
-				});
-			}
+			handleFormServerErrors(result.error, setFormError, form.setError)
 		}
 	};
 
