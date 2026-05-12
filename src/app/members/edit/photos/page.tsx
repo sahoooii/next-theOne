@@ -5,6 +5,7 @@ import { getMemberPhotoByUserId } from '@/app/actions/memberActions';
 import Image from 'next/image';
 import StarButton from '@/components/edit/photos/StarButton';
 import DeleteButton from '@/components/edit/photos/DeleteButton';
+import ImageUploadButton from '@/components/edit/photos/ImageUploadButton';
 
 const PhotosPage = async () => {
 	const userId = await getAuthUserId();
@@ -24,6 +25,10 @@ const PhotosPage = async () => {
 			<MemberDetailPageHeader title='Edit Photos' />
 
 			<CardContent>
+				<div className='pt-5 pl-5'>
+					<ImageUploadButton folder='userImages' />
+				</div>
+
 				<div className='mt-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 					{photos &&
 						photos.map((photo) => (
@@ -38,7 +43,7 @@ const PhotosPage = async () => {
 								<div className='absolute top-3 left-3 z-50'>
 									<StarButton selected={true} loading={false} />
 								</div>
-								<div className='absolute top-3 right-3 z-50'>
+								<div className='absolute top-3 left-10 z-50'>
 									<DeleteButton loading={false} />
 								</div>
 							</div>
