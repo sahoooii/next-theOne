@@ -1,15 +1,16 @@
 import { Card, CardContent } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { getAuthUserId } from '@/app/actions/authActions';
-import { getMemberPhotoByUserId } from '@/app/actions/memberActions';
-import Image from 'next/image';
-import StarButton from '@/components/edit/photos/StarButton';
-import DeleteButton from '@/components/edit/photos/DeleteButton';
+import {
+	getMemberByUserId,
+	getMemberPhotoByUserId,
+} from '@/app/actions/memberActions';
 import MemberPhotoUpload from '@/components/edit/photos/MemberPhotoUpload';
+import MemberPhotos from '@/components/edit/photos/MemberPhotos';
 
 const PhotosPage = async () => {
 	const userId = await getAuthUserId();
-
+	const member = await getMemberByUserId(userId);
 	const photos = await getMemberPhotoByUserId(userId);
 	return (
 		<Card
@@ -27,27 +28,12 @@ const PhotosPage = async () => {
 			<CardContent>
 				{/* Image upload button */}
 				<MemberPhotoUpload />
-
-				<div className='mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-					{photos &&
-						photos.map((photo) => (
-							<div key={photo.id} className='relative'>
-								<Image
-									src={photo.url}
-									width={220}
-									height={220}
-									alt='Image of user'
-									className='object-cover rounded-sm'
-								/>
-								<div className='absolute top-3 left-3 z-50'>
-									<StarButton selected={true} loading={false} />
-								</div>
-								<div className='absolute top-3 left-10 z-50'>
-									<DeleteButton loading={false} />
-								</div>
-							</div>
-						))}
-				</div>
+				{/* Display Star and trash button */}
+				<MemberPhotos
+					photos={photos}
+					editing={true}
+					mainImageUrl={member?.image}
+				/>
 			</CardContent>
 		</Card>
 	);
