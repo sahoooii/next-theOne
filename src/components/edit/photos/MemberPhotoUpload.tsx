@@ -6,6 +6,7 @@ import { CloudinaryUploadWidgetResults } from 'next-cloudinary';
 import { addImage } from '@/app/actions/userActions';
 import { showToast } from '@/lib/toast';
 
+// For business logic
 const MemberPhotoUpload = () => {
 	const router = useRouter();
 
@@ -18,11 +19,7 @@ const MemberPhotoUpload = () => {
 			showToast('Failed to upload the user photo', 'error');
 		}
 	};
-	return (
-		<div className='pt-5 pl-5'>
-			<ImageUploadButton folder='userImages' onUploadImage={onAddImage} />
-		</div>
-	);
+	return <ImageUploadButton folder='userImages' onUploadImage={onAddImage} />;
 };
 
 export default MemberPhotoUpload;
