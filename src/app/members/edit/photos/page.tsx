@@ -5,7 +5,6 @@ import {
 	getMemberByUserId,
 	getMemberPhotoByUserId,
 } from '@/app/actions/memberActions';
-import MemberPhotoUpload from '@/components/edit/photos/MemberPhotoUpload';
 import MemberPhotos from '@/components/edit/photos/MemberPhotos';
 
 const PhotosPage = async () => {
@@ -26,9 +25,7 @@ const PhotosPage = async () => {
 			<MemberDetailPageHeader title='Edit Photos' />
 
 			<CardContent>
-				{/* Image upload button */}
-				<MemberPhotoUpload />
-				{/* Display Star and trash button */}
+				{/* Manage lists, state, action */}
 				<MemberPhotos
 					photos={photos}
 					editing={true}

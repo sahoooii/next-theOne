@@ -22,10 +22,36 @@ const ImageUploadButton = ({ folder, onUploadImage }: Props) => {
 			}}
 			onSuccess={onUploadImage}
 			uploadPreset='ml_default'
-			className='flex items-center gap-2 bg-primary text-white rounded-lg py-2 px-2 hover:bg-secondary/70'
+			className='group w-full'
 		>
-			<HiOutlinePhotograph size={28} />
-			Upload new Image
+			<div
+				className='
+			relative
+			aspect-[3/4]
+			overflow-hidden
+			rounded-2xl
+			border border-dashed border-black/15
+			bg-white/30
+			backdrop-blur-sm
+			transition-all duration-300
+			hover:border-purple-300/40
+			hover:bg-white/50
+		'
+			>
+				<div
+					className='
+				flex h-full flex-col items-center justify-center
+				gap-3
+				text-gray-500
+			'
+				>
+					<HiOutlinePhotograph
+						size={38}
+						className='transition-transform duration-300 group-hover:scale-105'
+					/>
+					<div className='text-sm font-medium'>Add Photo</div>
+				</div>
+			</div>
 		</CldUploadButton>
 	);
 };
