@@ -11,7 +11,16 @@ import { signOut } from 'next-auth/react';
 
 import { Users } from 'lucide-react';
 
-const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
+const DropdownMenuDeskTop = ({
+	session,
+	userInfo,
+}: {
+	session: Session | null;
+	userInfo: {
+		name: string | null;
+		image: string | null;
+	} | null;
+}) => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -28,11 +37,11 @@ const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
 					>
 						<AvatarImage
 							className='object-cover object-top'
-							src={session?.user?.image || ''}
+							src={userInfo?.image || ''}
 						/>
 
 						<AvatarFallback className='bg-purple-500/20 text-white'>
-							{session?.user?.name?.charAt(0) || <Users size={18} />}
+							{userInfo?.name?.charAt(0) || <Users size={18} />}
 						</AvatarFallback>
 					</Avatar>
 				</button>
@@ -52,7 +61,7 @@ const DropdownMenuDeskTop = ({ session }: { session: Session | null }) => {
 				{/* User info */}
 				<div className='px-3 py-2 border-b border-white/10'>
 					<p className='text-sm text-white font-medium'>
-						{session?.user?.name || 'User'}
+						{userInfo?.name || 'User'}
 					</p>
 					<p className='text-xs text-white/60'>{session?.user?.email}</p>
 				</div>
