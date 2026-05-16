@@ -7,9 +7,15 @@ import { navLinks } from './navLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 import { Users } from 'lucide-react';
-import { Session } from 'next-auth';
 
-const BottomNavClient = ({ session }: { session: Session | null }) => {
+const BottomNavClient = ({
+	userInfo,
+}: {
+	userInfo: {
+		name: string | null;
+		image: string | null;
+	} | null;
+}) => {
 	const pathname = usePathname();
 
 	const userLinks = navLinks.filter((link) => link.auth === 'user');
@@ -71,10 +77,10 @@ const BottomNavClient = ({ session }: { session: Session | null }) => {
 				})}
 				{/* Profile Icon */}
 				<Link
-					href='/profile'
+					href='/members/edit'
 					className='relative flex items-center justify-center w-12 h-12'
 				>
-					{pathname === '/profile' && (
+					{pathname === '/members/edit' && (
 						<motion.div
 							layoutId='active-pill'
 							className='
@@ -96,13 +102,16 @@ const BottomNavClient = ({ session }: { session: Session | null }) => {
 
 					<motion.div
 						whileTap={{ scale: 0.85 }}
-						animate={{ scale: pathname === '/profile' ? 1.1 : 1 }}
+						animate={{ scale: pathname === '/members/edit' ? 1.1 : 1 }}
 						className='relative z-10'
 					>
 						<Avatar className='w-11 h-11 ring-1 ring-white/10'>
-							<AvatarImage className='object-cover object-top' src={session?.user?.image || ''} />
+							<AvatarImage
+								className='object-cover object-top'
+								src={userInfo?.image || ''}
+							/>
 							<AvatarFallback>
-								{session?.user?.name?.charAt(0) || <Users />}
+								{userInfo?.name?.charAt(0) || <Users />}
 							</AvatarFallback>
 						</Avatar>
 					</motion.div>

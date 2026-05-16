@@ -16,7 +16,16 @@ import { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import { Menu, LogIn, User, UserCircle, LogOut } from 'lucide-react';
 
-const MobileMenu = ({ session }: { session: Session | null }) => {
+const MobileMenu = ({
+	session,
+	userInfo,
+}: {
+	session: Session | null;
+	userInfo: {
+		name: string | null;
+		image: string | null;
+	} | null;
+}) => {
 	// For hamburger menu button
 	const [open, setOpen] = useState(false);
 
@@ -48,16 +57,16 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 								<Avatar className='h-12 w-12 ring-2 ring-purple-400/40'>
 									<AvatarImage
 										className='object-cover object-top'
-										src={session.user?.image || ''}
+										src={userInfo?.image || ''}
 									/>
 									<AvatarFallback>
-										{session.user?.name?.charAt(0) || <User />}
+										{userInfo?.name?.charAt(0) || <User />}
 									</AvatarFallback>
 								</Avatar>
 
 								<div>
 									<p className='text-sm font-semibold'>
-										{session.user?.name || 'User'}
+										{userInfo?.name || 'User'}
 									</p>
 									<p className='text-xs text-white/60'>{session.user?.email}</p>
 								</div>
@@ -84,7 +93,7 @@ const MobileMenu = ({ session }: { session: Session | null }) => {
 							) : (
 								<>
 									<SheetClose asChild>
-										<Link className='menu-item' href='/profile'>
+										<Link className='menu-item' href='/members/edit'>
 											<UserCircle size={22} />
 											Edit Profile
 										</Link>

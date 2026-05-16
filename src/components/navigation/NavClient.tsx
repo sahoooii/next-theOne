@@ -13,7 +13,16 @@ import { IoSparkles } from 'react-icons/io5';
 const linkStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
 
-const NavClient = ({ session }: { session: Session | null }) => {
+const NavClient = ({
+	session,
+	userInfo,
+}: {
+	session: Session | null;
+	userInfo: {
+		name: string | null;
+		image: string | null;
+	} | null;
+}) => {
 	const pathname = usePathname();
 
 	// Filter by auth
@@ -119,11 +128,11 @@ const NavClient = ({ session }: { session: Session | null }) => {
 							</Link>
 						</>
 					) : (
-						<DropdownMenuDeskTop session={session} />
+						<DropdownMenuDeskTop session={session} userInfo={userInfo} />
 					)}
 				</div>
 				{/* Mobile hamburger menuー */}
-				<MobileMenu session={session} />
+				<MobileMenu session={session} userInfo={userInfo} />
 			</div>
 		</nav>
 	);
