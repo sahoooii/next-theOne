@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import { useRouter } from 'next/navigation';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
 	member: Member;
@@ -32,7 +33,9 @@ const MemberCard = ({ member, likeIds }: Props) => {
 				<div className='relative aspect-[3/4] w-full overflow-hidden rounded-xl'>
 					<Image
 						alt={member.name}
-						src={member.image || '/images/user.png'}
+						src={
+							transformImageUrl(member.image, 'card') || '/images/user.png'
+						}
 						fill
 						sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
 						className='object-cover transition-transform duration-500 group-hover:scale-105'

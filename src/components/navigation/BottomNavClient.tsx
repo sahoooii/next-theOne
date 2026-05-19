@@ -7,6 +7,7 @@ import { navLinks } from './navLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 import { Users } from 'lucide-react';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const BottomNavClient = ({
 	userInfo,
@@ -107,8 +108,8 @@ const BottomNavClient = ({
 					>
 						<Avatar className='w-11 h-11 ring-1 ring-white/10'>
 							<AvatarImage
-								className='object-cover object-top'
-								src={userInfo?.image || ''}
+								className='object-cover'
+								src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 							/>
 							<AvatarFallback>
 								{userInfo?.name?.charAt(0) || <Users />}
