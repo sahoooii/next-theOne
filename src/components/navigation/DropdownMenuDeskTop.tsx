@@ -37,9 +37,8 @@ const DropdownMenuDeskTop = ({
         '
 					>
 						<AvatarImage
-							className='object-cover'
-							src={transformImageUrl
-								(userInfo?.image, 'avatar') || ''}
+							className='object-cover object-[center_20%]'
+							src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 						/>
 
 						<AvatarFallback className='bg-purple-500/20 text-white'>

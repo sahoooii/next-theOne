@@ -3,7 +3,7 @@
 type ImageType = 'avatar' | 'card' | 'gallery';
 
 const imageTransformations: Record<ImageType, string> = {
-	avatar: 'c_fill,g_auto:face,w_300,h_300,q_auto,f_auto/',
+	avatar: 'c_thumb,g_face,w_300,h_300,q_auto,f_auto/',
 
 	card: 'c_fill,g_auto:face,w_600,h_800,q_auto,f_auto/',
 

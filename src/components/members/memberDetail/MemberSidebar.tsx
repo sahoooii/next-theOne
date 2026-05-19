@@ -35,11 +35,13 @@ const MemberSidebar = ({ member, navLinks }: Props) => {
 				<div className='flex flex-col items-center text-center space-y-3'>
 					<div className='relative w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border border-white/20'>
 						<Image
-							src={transformImageUrl(member.image, 'avatar') || '/images/user.png'}
+							src={
+								transformImageUrl(member.image, 'avatar') || '/images/user.png'
+							}
 							fill
 							sizes='128px'
 							alt='User Profile'
-							className='object-cover transition-transform duration-500 hover:scale-105'
+							className='object-cover object-[center_20%] transition-transform duration-500 hover:scale-105'
 						/>
 					</div>
 
