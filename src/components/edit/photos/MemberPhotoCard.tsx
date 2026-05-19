@@ -8,6 +8,7 @@ type Props = {
 	editing?: boolean;
 	isMain: boolean;
 	onSetMain: (photo: Photo) => void;
+	onDelete: (photo: Photo) => void;
 	loading: {
 		type: string;
 		isLoading: boolean;
@@ -21,10 +22,15 @@ const MemberPhotoCard = ({
 	editing,
 	isMain,
 	onSetMain,
+	onDelete,
 	loading,
 }: Props) => {
 	const isMainLoading =
 		loading.isLoading && loading.type === 'main' && loading.id === photo.id;
+
+	const isDeleteLoading =
+		loading.isLoading && loading.type === 'delete' && loading.id === photo.id;
+
 	return (
 		<div className='group relative'>
 			{/* Display member image */}
@@ -102,8 +108,16 @@ const MemberPhotoCard = ({
 							text-white
 							transition hover:bg-black/60
 						'
+						onClick={() => onDelete(photo)}
 					>
-						<AiFillDelete size={18} />
+						{isDeleteLoading ? (
+							<AiFillDelete
+								size={18}
+								className='animate-[spin_3s_linear_infinite]'
+							/>
+						) : (
+							<AiFillDelete size={18} />
+						)}
 					</button>
 				</div>
 			)}
@@ -111,4 +125,4 @@ const MemberPhotoCard = ({
 	);
 };
 
-export default MemberPhotoCard
+export default MemberPhotoCard;

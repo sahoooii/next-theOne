@@ -15,6 +15,7 @@ import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import { Menu, LogIn, User, UserCircle, LogOut } from 'lucide-react';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const MobileMenu = ({
 	session,
@@ -56,8 +57,8 @@ const MobileMenu = ({
 							<div className='flex items-center gap-4 px-4 pb-4 border-b border-white/10'>
 								<Avatar className='h-12 w-12 ring-2 ring-purple-400/40'>
 									<AvatarImage
-										className='object-cover object-top'
-										src={userInfo?.image || ''}
+										className='object-cover'
+										src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 									/>
 									<AvatarFallback>
 										{userInfo?.name?.charAt(0) || <User />}

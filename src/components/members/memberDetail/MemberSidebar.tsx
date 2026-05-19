@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Member } from '@prisma/client';
 import { Card } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
 	member: Member;
@@ -34,11 +35,11 @@ const MemberSidebar = ({ member, navLinks }: Props) => {
 				<div className='flex flex-col items-center text-center space-y-3'>
 					<div className='relative w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border border-white/20'>
 						<Image
-							src={member.image || '/images/user.png'}
+							src={transformImageUrl(member.image, 'avatar') || '/images/user.png'}
 							fill
 							sizes='128px'
 							alt='User Profile'
-							className='object-cover object-top transition-transform duration-500 hover:scale-105'
+							className='object-cover transition-transform duration-500 hover:scale-105'
 						/>
 					</div>
 

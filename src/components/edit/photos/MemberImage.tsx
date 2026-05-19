@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { Photo } from '@prisma/client';
 import { CldImage } from 'next-cloudinary';
-import Image from 'next/image';
 
 type Props = {
 	photo: Photo | null;

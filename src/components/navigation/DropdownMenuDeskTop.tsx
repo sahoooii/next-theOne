@@ -10,6 +10,7 @@ import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
 import { Users } from 'lucide-react';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const DropdownMenuDeskTop = ({
 	session,
@@ -36,8 +37,9 @@ const DropdownMenuDeskTop = ({
         '
 					>
 						<AvatarImage
-							className='object-cover object-top'
-							src={userInfo?.image || ''}
+							className='object-cover'
+							src={transformImageUrl
+								(userInfo?.image, 'avatar') || ''}
 						/>
 
 						<AvatarFallback className='bg-purple-500/20 text-white'>

@@ -7,6 +7,7 @@ import MemberDetailPageHeader from './MemberDetailPageHeader';
 import { Photo } from '@prisma/client';
 import { motion } from 'framer-motion';
 import LightBox from './LightBox';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const MemberPhotosClient = ({ photos }: { photos: Photo[] }) => {
 	const [selectedPhoto, setSelectedPhoto] = useState(photos?.[0] || null);
@@ -31,7 +32,6 @@ const MemberPhotosClient = ({ photos }: { photos: Photo[] }) => {
 			document.body.style.overflow = '';
 		}
 	}, [isOpen]);
-
 
 	return (
 		<>
@@ -67,7 +67,7 @@ const MemberPhotosClient = ({ photos }: { photos: Photo[] }) => {
 							className='absolute inset-0'
 						>
 							<Image
-								src={selectedPhoto?.url || '/images/user.png'}
+								src={transformImageUrl(selectedPhoto?.url, 'gallery') || '/images/user.png'}
 								fill
 								alt='Main photo'
 								className='object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]'
@@ -91,10 +91,10 @@ const MemberPhotosClient = ({ photos }: { photos: Photo[] }) => {
 							`}
 								>
 									<Image
-										src={photo.url}
+										src={transformImageUrl(photo.url) || '/images/user.png'}
 										fill
 										alt='Thumbnail'
-										className='object-cover object-[center_30%] transition-transform duration-300 hover:scale-105 hover:opacity-90'
+										className='object-cover transition-transform duration-300 hover:scale-105 hover:opacity-90'
 									/>
 								</button>
 							))}
