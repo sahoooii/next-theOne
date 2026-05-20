@@ -57,7 +57,7 @@ const MobileMenu = ({
 							<div className='flex items-center gap-4 px-4 pb-4 border-b border-white/10'>
 								<Avatar className='h-12 w-12 ring-2 ring-purple-400/40'>
 									<AvatarImage
-										className='object-cover'
+										className='object-cover object-[center_20%]'
 										src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 									/>
 									<AvatarFallback>

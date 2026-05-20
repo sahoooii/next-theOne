@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import MembersPageSkeleton from '@/components/members/MembersPageSkeleton';
 import MembersPageContent from '@/components/members/MembersPageContent';
+import MembersPageSkeleton from '@/components/members/MembersPageSkeleton';
 
 const MembersPage = () => {
 	return (

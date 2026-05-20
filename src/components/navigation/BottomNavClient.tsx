@@ -108,7 +108,7 @@ const BottomNavClient = ({
 					>
 						<Avatar className='w-11 h-11 ring-1 ring-white/10'>
 							<AvatarImage
-								className='object-cover'
+								className='object-cover object-[center_20%]'
 								src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 							/>
 							<AvatarFallback>

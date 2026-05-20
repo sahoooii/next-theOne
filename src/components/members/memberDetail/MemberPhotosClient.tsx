@@ -67,8 +67,12 @@ const MemberPhotosClient = ({ photos }: { photos: Photo[] }) => {
 							className='absolute inset-0'
 						>
 							<Image
-								src={transformImageUrl(selectedPhoto?.url, 'gallery') || '/images/user.png'}
+								src={
+									transformImageUrl(selectedPhoto?.url, 'gallery') ||
+									'/images/user.png'
+								}
 								fill
+								priority
 								alt='Main photo'
 								className='object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]'
 							/>

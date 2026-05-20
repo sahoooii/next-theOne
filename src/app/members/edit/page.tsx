@@ -1,8 +1,8 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getAuthUserId } from '@/app/actions/authActions';
 import { getMemberByUserId } from '@/app/actions/memberActions';
 import EditForm from '@/components/edit/EditForm';
-import { Suspense } from 'react';
 import ProfileSkeleton from '@/components/members/memberDetail/skeleton/ProfileSkeleton';
 
 const MemberEditPage = async () => {
