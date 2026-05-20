@@ -27,7 +27,6 @@ const Layout = async ({
 	return (
 		<>
 			<BreadCrumb name={member.name} link='/members' title='Members' />
-
 			<div className='grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[80vh]'>
 				{/* Sidebar */}
 				<div className='lg:col-span-3 mt-6 lg:mt-8 order-1'>

@@ -39,6 +39,7 @@ const MemberSidebar = ({ member, navLinks }: Props) => {
 								transformImageUrl(member.image, 'avatar') || '/images/user.png'
 							}
 							fill
+							priority
 							sizes='128px'
 							alt='User Profile'
 							className='object-cover object-[center_20%] transition-transform duration-500 hover:scale-105'
@@ -92,16 +93,6 @@ const MemberSidebar = ({ member, navLinks }: Props) => {
 
 				{/* Spacer */}
 				<div className='flex-1' />
-
-				{/* Footer */}
-				{/* <CardFooter className='p-0 pt-6'>
-					<Button
-						asChild
-						className='w-full bg-white/10 hover:bg-white/20 text-white'
-					>
-						<Link href='/members'>Back to Members</Link>
-					</Button>
-				</CardFooter> */}
 			</div>
 		</Card>
 	);
