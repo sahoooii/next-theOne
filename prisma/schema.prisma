@@ -40,21 +40,23 @@ model User {
 
 // Member = Profile in App(User of Domain)
 model Member {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  name        String
-  gender      String
-  dateOfBirth DateTime
-  created     DateTime @default(now())
-  updated     DateTime @default(now())
-  description String
-  city        String
-  country     String
-  image       String?
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  photos      Photo[]
-  sourceLikes Like[]   @relation("source")
-  targetLikes Like[]   @relation("target")
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  name              String
+  gender            String
+  dateOfBirth       DateTime
+  created           DateTime  @default(now())
+  updated           DateTime  @default(now())
+  description       String
+  city              String
+  country           String
+  image             String?
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos            Photo[]
+  sourceLikes       Like[]    @relation("source")
+  targetLikes       Like[]    @relation("target")
+  senderMessages    Message[] @relation("sender")
+  recipientMessages Message[] @relation("recipient")
 }
 
 model Photo {
@@ -76,4 +78,16 @@ model Like {
 
   // sourceUserId_targetUserId 複合キー用のユニーク識別子、同じペアは1つだけ
   @@id([sourceUserId, targetUserId])
+}
+
+model Message {
+  id               String   @id @default(cuid())
+  text             String
+  created          DateTime @default(now())
+  senderId         String?
+  recipientId      String?
+  sender           Member?   @relation("sender", fields: [senderId], references: [userId], onDelete: SetNull)
+  recipient        Member?   @relation("recipient", fields: [recipientId], references: [userId], onDelete: SetNull)
+  senderDeleted    Boolean  @default(false)
+  recipientDeleted Boolean  @default(false)
 }
