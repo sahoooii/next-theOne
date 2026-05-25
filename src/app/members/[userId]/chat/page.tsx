@@ -1,3 +1,4 @@
+import ChatForm from '@/components/members/memberDetail/chat/ChatForm';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { Card } from '@/components/ui/card';
 
@@ -14,7 +15,7 @@ const ChatPage = () => {
 		>
 			{/* Header */}
 			<MemberDetailPageHeader title='Chat' />
-			<div>Chat room is coming soon...</div>
+			<ChatForm />
 		</Card>
 	);
 };
