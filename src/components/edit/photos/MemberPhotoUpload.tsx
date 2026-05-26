@@ -13,7 +13,7 @@ const MemberPhotoUpload = () => {
 	const onAddImage = async (result: CloudinaryUploadWidgetResults) => {
 		if (result.info && typeof result.info === 'object') {
 			await addImage(result.info.secure_url, result.info.public_id);
-			showToast('User photo updated successfully');
+			showToast('Your new photo updated successfully');
 			router.refresh();
 		} else {
 			showToast('Failed to upload the user photo', 'error');

@@ -84,7 +84,7 @@ export const membersData = [
 		image: '/images/josh.jpg',
 	},
 	{
-		email: 'ert@test.comalb',
+		email: 'albert@test.com',
 		username: 'albert',
 		gender: 'male',
 		dateOfBirth: '1984-04-09',
