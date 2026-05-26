@@ -5,6 +5,7 @@ import { Message } from '@prisma/client';
 import { ActionResult } from '@/types';
 import { getAuthUserId } from './authActions';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
+import { mapMessageToMessageDto } from '@/lib/mappings';
 
 export async function createMessage(
 	recipientUserId: string,
@@ -43,11 +44,12 @@ export async function createMessage(
 	}
 }
 
+// 自分 と 相手 の会話一覧を取得
 export async function getMessageThread(recipientId: string) {
 	try {
 		const userId = await getAuthUserId();
 
-		return prisma.message.findMany({
+		const messages = await prisma.message.findMany({
 			where: {
 				OR: [
 					{
@@ -84,6 +86,8 @@ export async function getMessageThread(recipientId: string) {
 				},
 			},
 		});
+
+		return messages.map((message) => mapMessageToMessageDto(message))
 	} catch (error) {
 		console.log(error);
 		throw error;
