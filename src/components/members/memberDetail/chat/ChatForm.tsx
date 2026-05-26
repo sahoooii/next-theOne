@@ -16,6 +16,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useParams, useRouter } from 'next/navigation';
+import { createMessage } from '@/app/actions/messageActions';
+import { handleFormServerErrors } from '@/lib/utils';
+import { useState } from 'react';
 
 const mockMessages = [
 	{
@@ -43,6 +46,9 @@ const mockMessages = [
 ];
 
 const ChatForm = () => {
+	// For entire of server error
+	const [formError, setFormError] = useState('');
+
 	const router = useRouter();
 
 	const params = useParams<{ userId: string }>();
@@ -55,10 +61,15 @@ const ChatForm = () => {
 		},
 	});
 
-	const onSubmit = (data: MessageSchema) => {
-		console.log(data);
+	const onSubmit = async (data: MessageSchema) => {
+		const result = await createMessage(params.userId, data);
 
-		form.reset();
+		if (result.status === 'error') {
+			handleFormServerErrors(result.error, setFormError, form.setError);
+		} else {
+			form.reset(data);
+			router.refresh();
+		}
 	};
 
 	return (
@@ -202,7 +213,7 @@ const ChatForm = () => {
 							className='
 								h-12
 								w-12
-								rounded-2xl
+								rounded-full
 								bg-purple-500
 								transition-all
 								duration-300
@@ -211,6 +222,8 @@ const ChatForm = () => {
 						>
 							<SendHorizonal className='h-5 w-5' />
 						</Button>
+						{/* For entire of server error */}
+						{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 					</form>
 				</Form>
 			</div>
