@@ -1,8 +1,18 @@
+import { getMessageThread } from '@/app/actions/messageActions';
 import ChatForm from '@/components/members/memberDetail/chat/ChatForm';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { Card } from '@/components/ui/card';
 
-const ChatPage = () => {
+const ChatPage = async ({
+	params,
+}: {
+	params: Promise<{ userId: string }>;
+}) => {
+	const { userId } = await params;
+
+	const message = await getMessageThread(userId);
+	console.log(message);
+
 	return (
 		<Card
 			className='
