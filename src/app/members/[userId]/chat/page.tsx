@@ -10,8 +10,8 @@ const ChatPage = async ({
 }) => {
 	const { userId } = await params;
 
-	const message = await getMessageThread(userId);
-	console.log(message);
+	const messages = await getMessageThread(userId);
+	// console.log('message:',messages);
 
 	return (
 		<Card
@@ -25,7 +25,7 @@ const ChatPage = async ({
 		>
 			{/* Header */}
 			<MemberDetailPageHeader title='Chat' />
-			<ChatForm />
+			<ChatForm messages={messages} currentUserId={userId} />
 		</Card>
 	);
 };
