@@ -19,38 +19,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { createMessage } from '@/app/actions/messageActions';
 import { handleFormServerErrors } from '@/lib/utils';
 import { useState } from 'react';
+import { MessageDto } from '@/types';
 
-const mockMessages = [
-	{
-		// 相手
-		id: 1,
-		text: 'Hey, how was your day?',
-		isCurrentUser: false,
-	},
-	{
-		// 自分
-		id: 2,
-		text: 'Pretty good. Just finished working out.',
-		isCurrentUser: true,
-	},
-	{
-		id: 3,
-		text: 'Nice. You always seem disciplined.',
-		isCurrentUser: false,
-	},
-	{
-		id: 4,
-		text: 'ha ha ha',
-		isCurrentUser: true,
-	},
-];
+type Props = {
+	messages: MessageDto[];
+	currentUserId: string;
+};
 
-const ChatForm = () => {
+const ChatForm = ({ messages, currentUserId }: Props) => {
 	// For entire of server error
 	const [formError, setFormError] = useState('');
 
 	const router = useRouter();
-
 	const params = useParams<{ userId: string }>();
 
 	const form = useForm<MessageSchema>({
@@ -86,45 +66,40 @@ const ChatForm = () => {
 				backdrop-blur-md
 			'
 		>
-			{/* Header */}
-			<div
-				className='
-					flex
-					items-center
-					justify-between
+			{/* Messages */}
+			{messages.length === 0 ? (
+				<div
+						className='
 					border-b
 					border-black/10
 					px-6
 					py-4
 				'
-			>
-				<div>
-					{/* Change to sender name */}
-					<h2 className='text-lg font-semibold text-gray-900'>Emily</h2>
+					>
 
-					<p className='text-sm text-gray-500'>Active now</p>
+					<p className='text-lg font-medium'>Your conversation starts here.</p>
+					<p className='mt-1 text-sm'>Say hello when you are ready.</p>
 				</div>
-			</div>
-
-			{/* Messages */}
-			<div
-				className='
+			) : (
+					<div
+						className='
 					flex-1
 					space-y-4
 					overflow-y-auto
 					p-6
 				'
-			>
-				{/* Change from DB data */}
-				{mockMessages.map((message) => (
-					<div
-						key={message.id}
-						className={`flex ${
-							message.isCurrentUser ? 'justify-end' : 'justify-start'
-						}`}
 					>
-						<div
-							className={`
+						{messages.map((message) => {
+							const isCurrentUser = message.senderId === currentUserId;
+							return (
+								<div
+									key={message.id}
+									className={`flex ${
+										isCurrentUser ? 'justify-end' : 'justify-start'
+									}`}
+								>
+									<div
+										className={`
 								relative
 		max-w-[75%]
 		px-4
@@ -135,7 +110,7 @@ const ChatForm = () => {
 		transition-all
 		duration-300
 							${
-								message.isCurrentUser
+								isCurrentUser
 									? `
 					rounded-3xl
 					rounded-br-sm
@@ -152,12 +127,14 @@ const ChatForm = () => {
 				`
 							}
 	`}
-						>
-							{message.text}
-						</div>
+									>
+										{message.text}
+									</div>
+								</div>
+							);
+						})}
 					</div>
-				))}
-			</div>
+			)}
 
 			{/* Form */}
 			<div

@@ -7,11 +7,11 @@ export function mapMessageToMessageDto(message: MessageWithSenderRecipient) {
 		text: message.text,
 		created: formatShortDateTime(message.created),
 		dateRead: message.dateRead ? formatShortDateTime(message.dateRead) : null,
-		senderId: message.sender?.userId,
-		senderName: message.sender?.name,
+		senderId: message.sender?.userId ?? null,
+		senderName: message.sender?.name ?? 'Deleted user',
 		senderImage: message.sender?.image,
-		recipientId: message.recipient?.userId,
-		recipientName: message.recipient?.name,
+		recipientId: message.recipient?.userId ?? null,
+		recipientName: message.recipient?.name ?? 'Deleted user',
 		recipientImage: message.recipient?.image,
 	};
 }
