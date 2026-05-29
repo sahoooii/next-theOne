@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { differenceInYears, format } from 'date-fns';
+import { differenceInYears, format, isToday, isYesterday } from 'date-fns';
 import { FieldValues, Path, UseFormSetError } from 'react-hook-form';
 
 export function cn(...inputs: ClassValue[]) {
@@ -16,6 +16,20 @@ export function calculateAge(dob: Date) {
 // To format date time
 export function formatShortDateTime(date: Date) {
 	return format(date, 'dd MMM yy h:mm:a')
+}
+
+// For chat display to show date or time
+export function formatMessageDate(date: Date) {
+	if (isToday(date)) return 'Today';
+
+	if (isYesterday(date)) return 'Yesterday';
+
+	return format(date, 'dd MMM');
+}
+
+// Display only time ex: 11:10PM
+export function formatChatTime(date: Date) {
+	return format(date, 'h:mm a');
 }
 
 // サーバーから返ってきたエラーをReact Hook Formに流し込む

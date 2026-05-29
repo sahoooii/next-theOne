@@ -1,10 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-
+import { useParams, useRouter } from 'next/navigation';
+import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
+
+import { MessageDto } from '@/types';
+import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
+import { createMessage } from '@/app/actions/messageActions';
+
 import {
 	Form,
 	FormControl,
@@ -12,14 +18,16 @@ import {
 	FormItem,
 	FormMessage,
 } from '@/components/ui/form';
-
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useParams, useRouter } from 'next/navigation';
-import { createMessage } from '@/app/actions/messageActions';
-import { handleFormServerErrors } from '@/lib/utils';
-import { useState } from 'react';
-import { MessageDto } from '@/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+import {
+	formatChatTime,
+	formatMessageDate,
+	handleFormServerErrors,
+} from '@/lib/utils';
+import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
 	messages: MessageDto[];
@@ -47,7 +55,7 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 		if (result.status === 'error') {
 			handleFormServerErrors(result.error, setFormError, form.setError);
 		} else {
-			form.reset(data);
+			form.reset();
 			router.refresh();
 		}
 	};
@@ -69,71 +77,149 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 			{/* Messages */}
 			{messages.length === 0 ? (
 				<div
-						className='
+					className='
 					border-b
 					border-black/10
 					px-6
 					py-4
 				'
-					>
-
+				>
 					<p className='text-lg font-medium'>Your conversation starts here.</p>
 					<p className='mt-1 text-sm'>Say hello when you are ready.</p>
 				</div>
 			) : (
-					<div
-						className='
+				<div
+					className='
 					flex-1
-					space-y-4
+					space-y-2
 					overflow-y-auto
 					p-6
 				'
-					>
-						{messages.map((message) => {
-							const isCurrentUser = message.senderId === currentUserId;
-							return (
+				>
+					{messages.map((message, index) => {
+						const isCurrentUser = message.senderId === currentUserId;
+
+						// If Double texting from sender
+						const previousMessage = messages[index - 1];
+						// If not login user & not double texting and then show avatar
+						const showAvatar =
+							!isCurrentUser && previousMessage?.senderId !== message.senderId;
+
+						// Display separator when change a date
+						const showDateSeparator =
+							!previousMessage ||
+							!isSameDay(
+								new Date(previousMessage.created),
+								new Date(message.created),
+							);
+
+						return (
+							<div key={message.id}>
+								{/* Date Separator */}
+								{showDateSeparator && (
+									<div className='my-6 flex items-center gap-4'>
+										<div className='h-px flex-1 bg-black/10' />
+
+										<p
+											className='
+						text-[11px]
+						tracking-wide
+						text-gray-400
+					'
+										>
+											{formatMessageDate(new Date(message.created))}
+										</p>
+
+										<div className='h-px flex-1 bg-black/10' />
+									</div>
+								)}
+
+								{/* Message Row */}
 								<div
-									key={message.id}
-									className={`flex ${
+									className={`flex gap-2 ${
 										isCurrentUser ? 'justify-end' : 'justify-start'
 									}`}
 								>
-									<div
-										className={`
-								relative
-		max-w-[75%]
-		px-4
-		py-3
-		text-sm
-		leading-relaxed
-		shadow-sm
-		transition-all
-		duration-300
-							${
-								isCurrentUser
-									? `
-					rounded-3xl
-					rounded-br-sm
-					bg-purple-500/90
-					text-white
-				`
-									: `
-					rounded-3xl
-					rounded-bl-sm
-					border
-					border-black/5
-					bg-black/5
-					text-gray-800
-				`
-							}
-	`}
-									>
-										{message.text}
+									{/* Avatar */}
+									{showAvatar && (
+										<Avatar
+											className='
+											mt-1
+						h-10
+						w-10
+						overflow-hidden
+						border
+						border-black/10
+					'
+										>
+											<AvatarImage
+												className='object-cover object-[center_10%]'
+												src={
+													transformImageUrl(message.senderImage, 'avatar') ?? ''
+												}
+											/>
+
+											<AvatarFallback>
+												{message.senderName?.charAt(0)}
+											</AvatarFallback>
+										</Avatar>
+									)}
+
+									{/* Empty spacing */}
+									{!isCurrentUser && !showAvatar && <div className='w-10' />}
+
+									{/* Bubble + Time */}
+									<div className='flex flex-col'>
+										<div
+											className={`
+						relative
+						max-w-[80%]
+						min-w-[80px]
+						px-4
+						py-2.5
+						text-sm
+						leading-relaxed
+						shadow-sm
+						transition-all
+						duration-300
+						${
+							isCurrentUser
+								? `
+									rounded-3xl
+									rounded-br-sm
+									bg-purple-500/90
+									text-white
+								`
+								: `
+									rounded-3xl
+									rounded-bl-sm
+									border
+									border-black/5
+									bg-black/5
+									text-gray-800
+								`
+						}
+					`}
+										>
+											{message.text}
+										</div>
+
+										<p
+											className={`
+						mt-1
+						text-[11px]
+						text-gray-400
+						${isCurrentUser ? 'text-right' : 'text-left'}
+					`}
+										>
+											{formatChatTime(new Date(message.created))}
+										</p>
 									</div>
 								</div>
-							);
-						})}
-					</div>
+							</div>
+						);
+					})}
+				</div>
 			)}
 
 			{/* Form */}

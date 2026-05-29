@@ -23,8 +23,8 @@ export type MessageWithSenderRecipient = Prisma.MessageGetPayload<{
 export type MessageDto = {
 	id: string;
 	text: string;
-	created: string;
-	dateRead: string | null;
+	created: Date;
+	dateRead: Date | null;
 	senderId: string | null;
 	senderName: string;
 	senderImage?: string | null;

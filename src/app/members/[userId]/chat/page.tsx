@@ -1,3 +1,4 @@
+import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';
 import ChatForm from '@/components/members/memberDetail/chat/ChatForm';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
@@ -9,9 +10,9 @@ const ChatPage = async ({
 	params: Promise<{ userId: string }>;
 }) => {
 	const { userId } = await params;
-
 	const messages = await getMessageThread(userId);
-	// console.log('message:',messages);
+
+	const currentUserId = await getAuthUserId();
 
 	return (
 		<Card
@@ -25,7 +26,7 @@ const ChatPage = async ({
 		>
 			{/* Header */}
 			<MemberDetailPageHeader title='Chat' />
-			<ChatForm messages={messages} currentUserId={userId} />
+			<ChatForm messages={messages} currentUserId={currentUserId} />
 		</Card>
 	);
 };
