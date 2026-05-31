@@ -41,7 +41,7 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 	const router = useRouter();
 	const params = useParams<{ userId: string }>();
 
-	// For auto scroll to the latest message
+	// Auto scroll to see the latest message
 	const bottomRef = useRef<HTMLDivElement>(null);
 
 		useEffect(() => {
@@ -243,6 +243,7 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 							</div>
 						);
 					})}
+					{/* For auto scroll to the latest chat */}
 					<div ref={bottomRef} />
 				</div>
 			)}
