@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
@@ -41,6 +41,16 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 	const router = useRouter();
 	const params = useParams<{ userId: string }>();
 
+	// Auto scroll to see the latest message
+	const bottomRef = useRef<HTMLDivElement>(null);
+
+		useEffect(() => {
+			bottomRef.current?.scrollIntoView({
+				behavior: 'smooth',
+			});
+		}, [messages]);
+
+
 	const form = useForm<MessageSchema>({
 		resolver: zodResolver(messageSchema),
 		mode: 'onChange',
@@ -57,6 +67,20 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 		} else {
 			form.reset();
 			router.refresh();
+		}
+	};
+
+	// Press enter to submit message
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (
+			e.key === 'Enter' &&
+			!e.shiftKey &&
+			form.formState.isValid &&
+			!form.formState.isSubmitting
+		) {
+			e.preventDefault();
+
+			form.handleSubmit(onSubmit)();
 		}
 	};
 
@@ -219,6 +243,8 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 							</div>
 						);
 					})}
+					{/* For auto scroll to the latest chat */}
+					<div ref={bottomRef} />
 				</div>
 			)}
 
@@ -247,6 +273,7 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 									<FormControl>
 										<Textarea
 											placeholder='Write a message...'
+											onKeyDown={handleKeyDown}
 											className='
 												min-h-[56px]
 												resize-none
