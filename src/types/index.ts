@@ -32,3 +32,12 @@ export type MessageDto = {
 	recipientName: string;
 	recipientImage?: string | null;
 };
+
+export type ConversationDto = {
+	userId: string;
+	name: string;
+	image: string | null;
+	lastMessage: string;
+	created: Date;
+	dateRead: Date | null;
+};

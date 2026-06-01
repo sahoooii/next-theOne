@@ -14,3 +14,4 @@ export function mapMessageToMessageDto(message: MessageWithSenderRecipient) {
 		recipientImage: message.recipient?.image,
 	};
 }
+
