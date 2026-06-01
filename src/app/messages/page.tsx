@@ -1,6 +1,9 @@
-import React from 'react';
+import { getConversationsList } from '../actions/messageActions';
 
-const MessagesPage = () => {
+const MessagesPage = async () => {
+	const messages = await getConversationsList();
+	console.log(messages);
+
 	return <div>MessagesPage</div>;
 };
 

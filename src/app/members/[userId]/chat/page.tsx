@@ -1,8 +1,8 @@
+import { Suspense } from 'react';
 import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';
-import ChatForm from '@/components/members/memberDetail/chat/ChatForm';
-import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { Card } from '@/components/ui/card';
+import ChatSkeleton from '@/components/members/memberDetail/skeleton/ChatSkeleton';
+import ChatClient from '@/components/members/memberDetail/chat/ChatClient';
 
 const ChatPage = async ({
 	params,
@@ -15,19 +15,9 @@ const ChatPage = async ({
 	const currentUserId = await getAuthUserId();
 
 	return (
-		<Card
-			className='
-	h-full
-	bg-white/70 backdrop-blur-md
-	border border-black/10
-	rounded-2xl
-	p-8
-'
-		>
-			{/* Header */}
-			<MemberDetailPageHeader title='Chat' />
-			<ChatForm messages={messages} currentUserId={currentUserId} />
-		</Card>
+		<Suspense fallback={<ChatSkeleton />}>
+			<ChatClient messages={messages} currentUserId={currentUserId} />
+		</Suspense>
 	);
 };
 
