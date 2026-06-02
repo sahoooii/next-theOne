@@ -1,10 +1,13 @@
+import ConversationList from '@/components/messages/ConversationList';
 import { getConversationsList } from '../actions/messageActions';
 
 const MessagesPage = async () => {
-	const messages = await getConversationsList();
-	console.log(messages);
-
-	return <div>MessagesPage</div>;
+	const conversations = await getConversationsList();
+	return (
+		<div className='flex justify-center px-4'>
+			<ConversationList conversations={conversations} />
+		</div>
+	);
 };
 
 export default MessagesPage;
