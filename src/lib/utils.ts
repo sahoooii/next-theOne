@@ -18,7 +18,7 @@ export function formatShortDateTime(date: Date) {
 	return format(date, 'dd MMM yy h:mm:a')
 }
 
-// For chat display to show date or time
+// For chat display to show date
 export function formatMessageDate(date: Date) {
 	if (isToday(date)) return 'Today';
 
@@ -30,6 +30,19 @@ export function formatMessageDate(date: Date) {
 // Display only time ex: 11:10PM
 export function formatChatTime(date: Date) {
 	return format(date, 'h:mm a');
+}
+
+// For message page
+export function formatConversationDate(date: Date) {
+	if (isToday(date)) {
+		return format(date, 'h:mm a');
+	}
+
+	if (isYesterday(date)) {
+		return 'Yesterday';
+	}
+
+	return format(date, 'dd MMM');
 }
 
 // サーバーから返ってきたエラーをReact Hook Formに流し込む
