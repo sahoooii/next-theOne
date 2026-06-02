@@ -9,7 +9,6 @@ type Props = {
 };
 
 const ConversationCard = ({ conversation }: Props) => {
-	console.log(conversation);
 	return (
 		<Link href={`/members/${conversation.userId}/chat`}>
 			<div

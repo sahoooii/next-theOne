@@ -1,12 +1,15 @@
+import { Suspense } from 'react';
 import ConversationList from '@/components/messages/ConversationList';
 import { getConversationsList } from '../actions/messageActions';
+import ConversationListSkeleton from '@/components/messages/skeleton/ConversationListSkeleton';
 
+// loading
 const MessagesPage = async () => {
 	const conversations = await getConversationsList();
 	return (
-		<div className='flex justify-center px-4'>
+		<Suspense fallback={<ConversationListSkeleton />}>
 			<ConversationList conversations={conversations} />
-		</div>
+		</Suspense>
 	);
 };
 
