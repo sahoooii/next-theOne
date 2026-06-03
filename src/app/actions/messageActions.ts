@@ -87,6 +87,19 @@ export async function getMessageThread(recipientId: string) {
 			},
 		});
 
+		// Add Date at date Read, when open up chat conversation
+		const currentUserId = userId;
+		const otherUserId = recipientId;
+
+		await prisma.message.updateMany({
+			where: {
+				senderId: otherUserId,
+				recipientId: currentUserId,
+				dateRead: null,
+			},
+			data: { dateRead: new Date() },
+		});
+
 		return messages.map((message) => mapMessageToMessageDto(message));
 	} catch (error) {
 		console.log(error);

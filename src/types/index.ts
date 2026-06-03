@@ -40,4 +40,6 @@ export type ConversationDto = {
 	lastMessage: string;
 	created: Date;
 	dateRead: Date | null;
+
+	// hasUnread: boolean;
 };
