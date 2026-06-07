@@ -6,6 +6,7 @@ import ConversationListSkeleton from '@/components/messages/skeleton/Conversatio
 // loading
 const MessagesPage = async () => {
 	const conversations = await getConversationsList();
+
 	return (
 		<Suspense fallback={<ConversationListSkeleton />}>
 			<ConversationList conversations={conversations} />

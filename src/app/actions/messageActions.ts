@@ -107,11 +107,12 @@ export async function getMessageThread(recipientId: string) {
 	}
 }
 
+// ① Get all conversation(全メッセージ取得)s② Convert to list of conversation(会話一覧に変換)③ Get unread message info and add these(未読情報を付与)
 export async function getConversationsList() {
 	try {
 		const userId = await getAuthUserId();
 
-		// 自分が送信、受信したメッセージのリストを最新順に取得
+		// ① 自分が送信、受信したメッセージのリストを最新順に取得
 		const messages = await prisma.message.findMany({
 			where: {
 				OR: [{ senderId: userId }, { recipientId: userId }],
@@ -141,16 +142,31 @@ export async function getConversationsList() {
 			},
 		});
 
-		// 会話相手の取得
+		// Map: Prevent set duplicate user
+		// ex: Hannah,Hannah,Hannah,Amanda,Amanda→Hannah,Amanda
 		const conversationMap = new Map<string, ConversationDto>();
+
+		const unreadUsers = new Set<string>();
 
 		for (const message of messages) {
 			// nullの制御
 			if (!message.sender || !message.recipient) continue;
 
+			// Get conversation partner(会話相手の取得)
 			const otherUser =
 				message.sender.userId === userId ? message.recipient : message.sender;
 
+			// Record user of unread(未読メッセージの記録)
+			if (
+				message.sender.userId === otherUser.userId &&
+				message.recipient.userId === userId &&
+				message.dateRead === null
+			) {
+				unreadUsers.add(otherUser.userId);
+			}
+
+			// 最新メッセージからConversation生成
+			// has=同じユーザーを1回だけ登録 set=未読ユーザーを重複なく記録するため
 			if (!conversationMap.has(otherUser.userId)) {
 				conversationMap.set(otherUser.userId, {
 					userId: otherUser.userId,
@@ -159,10 +175,16 @@ export async function getConversationsList() {
 					lastMessage: message.text,
 					created: message.created,
 					dateRead: message.dateRead,
+					hasUnread: false, //Add later
 				});
 			}
 		}
-		return Array.from(conversationMap.values());
+
+		// 配列に戻す
+		return Array.from(conversationMap.values()).map((conversation) => ({
+			...conversation,
+			hasUnread: unreadUsers.has(conversation.userId),
+		}));
 	} catch (error) {
 		console.log(error);
 		throw error;

@@ -41,15 +41,23 @@ const ConversationCard = ({ conversation }: Props) => {
 
 				<div className='flex-1 min-w-0'>
 					<div className='flex items-center justify-between gap-4'>
-						<h3
-							className='
-		font-medium
-		text-gray-900
-		truncate
-	'
-						>
-							{conversation.name}
-						</h3>
+						<div className='flex items-center gap-2'>
+							{/* Add purple dot when user have unread message */}
+							{conversation.hasUnread && (
+								<div
+									className='
+					h-2
+					w-2
+					shrink-0
+					rounded-full
+					bg-purple-500
+				'
+								/>
+							)}
+
+
+							<h3 className='truncate text-gray-900'>{conversation.name}</h3>
+						</div>
 						{/* Date time */}
 						<span
 							className='
