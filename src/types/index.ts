@@ -41,5 +41,5 @@ export type ConversationDto = {
 	created: Date;
 	dateRead: Date | null;
 
-	hasUnread: boolean; //Manege unread message
+	hasUnread: boolean; //Manage unread message
 };

@@ -190,3 +190,19 @@ export async function getConversationsList() {
 		throw error;
 	}
 }
+
+export async function deleteMessage(messageId: string) {
+	try {
+		const userId = await getAuthUserId();
+
+		await prisma.message.deleteMany({
+			where: {
+				id: messageId,
+				senderId: userId,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
