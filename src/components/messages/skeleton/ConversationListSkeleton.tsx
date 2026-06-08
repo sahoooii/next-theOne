@@ -4,8 +4,9 @@ import ConversationCardSkeleton from './ConversationCardSkeleton';
 
 const ConversationListSkeleton = () => {
 	return (
-		<Card
-			className='
+		<div className='flex justify-center px-4'>
+			<Card
+				className='
 				w-full
 				max-w-2xl
 				bg-white/70
@@ -14,25 +15,26 @@ const ConversationListSkeleton = () => {
 				rounded-2xl
 				p-8
 			'
-		>
-			{/* header */}
-			<div className='mb-6 space-y-2'>
-				<Skeleton className='h-6 w-24' />
-				<div className='h-[2px] w-10 rounded-full bg-purple-300' />
-			</div>
+			>
+				{/* header */}
+				<div className='mb-6 space-y-2'>
+					<Skeleton className='h-6 w-24' />
+					<div className='h-[2px] w-10 rounded-full bg-purple-300' />
+				</div>
 
-			{/* Divider */}
-			<div className='h-px bg-black/10 mb-6' />
+				{/* Divider */}
+				<div className='h-px bg-black/10 mb-6' />
 
-			<div className='space-y-3'>
-				<ConversationCardSkeleton />
-				<ConversationCardSkeleton />
-				<ConversationCardSkeleton />
-				<ConversationCardSkeleton />
-				<ConversationCardSkeleton />
-			</div>
-		</Card>
+				<div className='space-y-3'>
+					<ConversationCardSkeleton />
+					<ConversationCardSkeleton />
+					<ConversationCardSkeleton />
+					<ConversationCardSkeleton />
+					<ConversationCardSkeleton />
+				</div>
+			</Card>
+		</div>
 	);
-}
+};
 
-export default ConversationListSkeleton
+export default ConversationListSkeleton;

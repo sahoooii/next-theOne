@@ -9,7 +9,7 @@ import { SendHorizonal } from 'lucide-react';
 
 import { MessageDto } from '@/types';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-import { createMessage } from '@/app/actions/messageActions';
+import { createMessage, deleteMessage } from '@/app/actions/messageActions';
 
 import {
 	Form,
@@ -23,11 +23,23 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
+import {
 	formatChatTime,
 	formatMessageDate,
 	handleFormServerErrors,
 } from '@/lib/utils';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import ChatOptions from './ChatOptions';
 
 type Props = {
 	messages: MessageDto[];
@@ -38,18 +50,32 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 	// For entire of server error
 	const [formError, setFormError] = useState('');
 
+	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
+	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+		null,
+	);
+
+	// Delete message action
+	const handleDelete = async () => {
+		if (!selectedMessageId) return;
+
+		await deleteMessage(selectedMessageId);
+		setSelectedMessageId(null);
+
+		router.refresh();
+	};
+
 	const router = useRouter();
 	const params = useParams<{ userId: string }>();
 
 	// Auto scroll to see the latest message
 	const bottomRef = useRef<HTMLDivElement>(null);
 
-		useEffect(() => {
-			bottomRef.current?.scrollIntoView({
-				behavior: 'smooth',
-			});
-		}, [messages]);
-
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({
+			behavior: 'smooth',
+		});
+	}, [messages]);
 
 	const form = useForm<MessageSchema>({
 		resolver: zodResolver(messageSchema),
@@ -85,8 +111,9 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 	};
 
 	return (
-		<div
-			className='
+		<>
+			<div
+				className='
 				flex
 				h-[calc(100vh-120px)]
 				flex-col
@@ -97,77 +124,80 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 				bg-white/70
 				backdrop-blur-md
 			'
-		>
-			{/* Messages */}
-			{messages.length === 0 ? (
-				<div
-					className='
+			>
+				{/* Messages */}
+				{messages.length === 0 ? (
+					<div
+						className='
 					border-b
 					border-black/10
 					px-6
 					py-4
 				'
-				>
-					<p className='text-lg font-medium'>Your conversation starts here.</p>
-					<p className='mt-1 text-sm'>Say hello when you are ready.</p>
-				</div>
-			) : (
-				<div
-					className='
+					>
+						<p className='text-lg font-medium'>
+							Your conversation starts here.
+						</p>
+						<p className='mt-1 text-sm'>Say hello when you are ready.</p>
+					</div>
+				) : (
+					<div
+						className='
 					flex-1
 					space-y-2
 					overflow-y-auto
 					p-6
 				'
-				>
-					{messages.map((message, index) => {
-						const isCurrentUser = message.senderId === currentUserId;
+					>
+						{messages.map((message, index) => {
+							const isCurrentUser = message.senderId === currentUserId;
 
-						// If Double texting from sender
-						const previousMessage = messages[index - 1];
-						// If not login user & not double texting and then show avatar
-						const showAvatar =
-							!isCurrentUser && previousMessage?.senderId !== message.senderId;
+							// If Double texting from sender
+							const previousMessage = messages[index - 1];
+							// If not login user & not double texting and then show avatar
+							const showAvatar =
+								!isCurrentUser &&
+								previousMessage?.senderId !== message.senderId;
 
-						// Display separator when change a date
-						const showDateSeparator =
-							!previousMessage ||
-							!isSameDay(
-								new Date(previousMessage.created),
-								new Date(message.created),
-							);
+							// Display separator when change a date
+							const showDateSeparator =
+								!previousMessage ||
+								!isSameDay(
+									new Date(previousMessage.created),
+									new Date(message.created),
+								);
 
-						return (
-							<div key={message.id}>
-								{/* Date Separator */}
-								{showDateSeparator && (
-									<div className='my-6 flex items-center gap-4'>
-										<div className='h-px flex-1 bg-black/10' />
+							return (
+								<div key={message.id}>
+									{/* Date Separator */}
+									{showDateSeparator && (
+										<div className='my-6 flex items-center gap-4'>
+											<div className='h-px flex-1 bg-black/10' />
 
-										<p
-											className='
+											<p
+												className='
 						text-[11px]
 						tracking-wide
 						text-gray-400
 					'
-										>
-											{formatMessageDate(new Date(message.created))}
-										</p>
+											>
+												{formatMessageDate(new Date(message.created))}
+											</p>
 
-										<div className='h-px flex-1 bg-black/10' />
-									</div>
-								)}
+											<div className='h-px flex-1 bg-black/10' />
+										</div>
+									)}
 
-								{/* Message Row */}
-								<div
-									className={`flex gap-2 ${
-										isCurrentUser ? 'justify-end' : 'justify-start'
-									}`}
-								>
-									{/* Avatar */}
-									{showAvatar && (
-										<Avatar
-											className='
+									{/* Message Row */}
+									<div
+										className={`flex gap-2 ${
+											isCurrentUser ? 'justify-end' : 'justify-start'
+										}`}
+									>
+										{/* Avatar */}
+										{showAvatar && (
+											<Avatar
+												className='
 											mt-1
 						h-10
 						w-10
@@ -175,27 +205,40 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 						border
 						border-black/10
 					'
-										>
-											<AvatarImage
-												className='object-cover object-[center_10%]'
-												src={
-													transformImageUrl(message.senderImage, 'avatar') ?? ''
-												}
-											/>
+											>
+												<AvatarImage
+													className='object-cover object-[center_10%]'
+													src={
+														transformImageUrl(message.senderImage, 'avatar') ??
+														''
+													}
+												/>
 
-											<AvatarFallback>
-												{message.senderName?.charAt(0)}
-											</AvatarFallback>
-										</Avatar>
-									)}
+												<AvatarFallback>
+													{message.senderName?.charAt(0)}
+												</AvatarFallback>
+											</Avatar>
+										)}
 
-									{/* Empty spacing */}
-									{!isCurrentUser && !showAvatar && <div className='w-10' />}
+										{/* Empty spacing */}
+										{!isCurrentUser && !showAvatar && <div className='w-10' />}
 
-									{/* Bubble + Time */}
-									<div className='flex flex-col'>
 										<div
-											className={`
+											className={`group flex gap-2 ${
+												isCurrentUser ? 'justify-end' : 'justify-start'
+											}`}
+										>
+											{/* Chat Options ex: delete */}
+											{isCurrentUser && (
+												<ChatOptions
+													onDeleteClick={() => setSelectedMessageId(message.id)}
+												/>
+											)}
+
+											{/* Bubble + Time */}
+											<div className='flex flex-col'>
+												<div
+													className={`
 						relative
 						max-w-[80%]
 						min-w-[80px]
@@ -224,57 +267,58 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 								`
 						}
 					`}
-										>
-											{message.text}
-										</div>
+												>
+													{message.text}
+												</div>
 
-										<p
-											className={`
+												<p
+													className={`
 						mt-1
 						text-[11px]
 						text-gray-400
 						${isCurrentUser ? 'text-right' : 'text-left'}
 					`}
-										>
-											{formatChatTime(new Date(message.created))}
-										</p>
+												>
+													{formatChatTime(new Date(message.created))}
+												</p>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
-					{/* For auto scroll to the latest chat */}
-					<div ref={bottomRef} />
-				</div>
-			)}
+							);
+						})}
+						{/* For auto scroll to the latest chat */}
+						<div ref={bottomRef} />
+					</div>
+				)}
 
-			{/* Form */}
-			<div
-				className='
+				{/* Form */}
+				<div
+					className='
 					border-t
 					border-black/10
 					bg-white/40
 					p-4
 					backdrop-blur-xl
 				'
-			>
-				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className='flex items-end gap-3'
-					>
-						<FormField
-							control={form.control}
-							name='text'
-							render={({ field }) => (
-								<FormItem className='flex-1'>
-									<FormMessage className='text-sm text-red-700' />
+				>
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit(onSubmit)}
+							className='flex items-end gap-3'
+						>
+							<FormField
+								control={form.control}
+								name='text'
+								render={({ field }) => (
+									<FormItem className='flex-1'>
+										<FormMessage className='text-sm text-red-700' />
 
-									<FormControl>
-										<Textarea
-											placeholder='Write a message...'
-											onKeyDown={handleKeyDown}
-											className='
+										<FormControl>
+											<Textarea
+												placeholder='Write a message...'
+												onKeyDown={handleKeyDown}
+												className='
 												min-h-[56px]
 												resize-none
 												rounded-2xl
@@ -285,22 +329,22 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 												focus-visible:ring-1
 												focus-visible:ring-purple-400
 											'
-											{...field}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
+												{...field}
+											/>
+										</FormControl>
+									</FormItem>
+								)}
+							/>
 
-						<Button
-							type='submit'
-							size='icon'
-							disabled={
-								!form.formState.isDirty ||
-								!form.formState.isValid ||
-								form.formState.isSubmitting
-							}
-							className='
+							<Button
+								type='submit'
+								size='icon'
+								disabled={
+									!form.formState.isDirty ||
+									!form.formState.isValid ||
+									form.formState.isSubmitting
+								}
+								className='
 								h-12
 								w-12
 								rounded-full
@@ -309,15 +353,86 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 								duration-300
 								hover:bg-purple-400
 							'
-						>
-							<SendHorizonal className='h-5 w-5' />
-						</Button>
-						{/* For entire of server error */}
-						{formError && <p className='text-red-500 text-sm'>{formError}</p>}
-					</form>
-				</Form>
+							>
+								<SendHorizonal className='h-5 w-5' />
+							</Button>
+							{/* For entire of server error */}
+							{formError && <p className='text-red-500 text-sm'>{formError}</p>}
+						</form>
+					</Form>
+				</div>
 			</div>
-		</div>
+
+			{/* Show alert dialog to delete message */}
+			<AlertDialog
+				open={!!selectedMessageId}
+				onOpenChange={(open) => {
+					if (!open) {
+						setSelectedMessageId(null);
+					}
+				}}
+			>
+				<AlertDialogContent
+					className='
+	w-[90%]
+	max-w-sm
+	rounded-3xl
+	border-black/10
+	bg-white/90
+	p-6
+	md:p-8
+	backdrop-blur-xl
+'
+				>
+					<AlertDialogHeader>
+						<AlertDialogTitle
+							className='
+						pt-4
+						text-xl
+						font-semibold
+						text-gray-900
+					'
+						>
+							Delete message?
+						</AlertDialogTitle>
+						<div className='h-[2px] w-10 rounded-full bg-purple-500' />
+
+						<AlertDialogDescription
+							className='
+						pt-1
+						text-sm
+						text-gray-500
+					'
+						>
+							This message will be permanently removed.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+
+					<AlertDialogFooter>
+						<AlertDialogCancel
+							className='
+						rounded-2xl
+						border-black/10
+					'
+						>
+							Cancel
+						</AlertDialogCancel>
+
+						<AlertDialogAction
+							onClick={handleDelete}
+							className='
+						rounded-2xl
+						bg-purple-500
+						text-white
+						hover:bg-purple-400
+					'
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</>
 	);
 };
 
