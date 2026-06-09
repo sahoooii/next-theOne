@@ -5,10 +5,10 @@ export default async function Home() {
 
 	return (
 		<div className='space-y-4'>
-			<h3 className='text-2xl'>User Session Data:</h3>
+			<h3 className='text-2xl'>Dashboard coming soon...</h3>
 			{session ? (
 				<div>
-					Add section later...
+					You can see Today&apos;s Matches, New Likes, Unread Messages, etc...
 				</div>
 			) : (
 				<div>Not logged in</div>
