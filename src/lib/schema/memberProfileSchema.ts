@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Gender, SearchGender } from '@prisma/client';
 
 export const memberProfileSchema = z.object({
 	name: z.string().min(1, { message: 'Name must be at least 1 characters.' }),
@@ -11,8 +12,11 @@ export const memberProfileSchema = z.object({
 	country: z.string().min(1, {
 		message: 'Country must be at least 1 characters.',
 	}),
-	gender: z.enum(['male', 'female', 'non-binary'], {
+	gender: z.enum(Gender, {
 		message: 'Please select a gender',
+	}),
+	searchGender: z.enum(SearchGender, {
+		message: 'Please select the gender you are looking for',
 	}),
 	dateOfBirth: z.string().min(1, {
 		message: 'Date of birth is required',
