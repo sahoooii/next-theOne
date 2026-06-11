@@ -17,6 +17,7 @@ async function seedMembers() {
 					create: {
 						dateOfBirth: new Date(member.dateOfBirth),
 						gender: member.gender,
+						searchGender: member.searchGender,
 						name: member.name,
 						created: new Date(member.created),
 						updated: new Date(member.lastActive),
