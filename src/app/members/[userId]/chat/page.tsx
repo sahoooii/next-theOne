@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { Suspense } from 'react';
 import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';

@@ -38,12 +38,18 @@ model User {
   member        Member?
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+}
+
 // Member = Profile in App(User of Domain)
 model Member {
   id                String    @id @default(cuid())
   userId            String    @unique
   name              String
-  gender            String
+  gender            Gender
   dateOfBirth       DateTime
   created           DateTime  @default(now())
   updated           DateTime  @default(now())

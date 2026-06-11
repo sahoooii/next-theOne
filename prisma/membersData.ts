@@ -1,8 +1,10 @@
+import { Gender } from '@prisma/client';
+
 export const membersData = [
 	{
 		email: 'lizz@test.com',
 		username: 'lizz',
-		gender: 'female',
+		gender: Gender.FEMALE,
 		dateOfBirth: '1999-07-22',
 		name: 'Lizz',
 		created: '2020-06-24',
@@ -16,7 +18,7 @@ export const membersData = [
 	{
 		email: 'amanda@test.com',
 		username: 'amanda',
-		gender: 'female',
+		gender: Gender.FEMALE,
 		dateOfBirth: '1992-10-12',
 		name: 'Amanda',
 		created: '2019-12-09',
@@ -30,7 +32,7 @@ export const membersData = [
 	{
 		email: 'hannah@test.com',
 		username: 'hannah',
-		gender: 'female',
+		gender: Gender.FEMALE,
 		dateOfBirth: '2003-08-05',
 		name: 'Hannah',
 		created: '2019-08-10',
@@ -44,7 +46,7 @@ export const membersData = [
 	{
 		email: 'misato@test.com',
 		username: 'misato',
-		gender: 'female',
+		gender: Gender.FEMALE,
 		dateOfBirth: '1994-06-22',
 		name: 'Misato',
 		created: '2019-04-24',
@@ -58,7 +60,7 @@ export const membersData = [
 	{
 		email: 'maria@test.com',
 		username: 'maria',
-		gender: 'female',
+		gender: Gender.FEMALE,
 		dateOfBirth: '1989-01-12',
 		name: 'Maria',
 		created: '2019-04-30',
@@ -72,7 +74,7 @@ export const membersData = [
 	{
 		email: 'josh@test.com',
 		username: 'josh',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1997-02-07',
 		name: 'Josh',
 		created: '2019-04-29',
@@ -86,7 +88,7 @@ export const membersData = [
 	{
 		email: 'albert@test.com',
 		username: 'albert',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1984-04-09',
 		name: 'Albert',
 		created: '2020-04-05',
@@ -100,7 +102,7 @@ export const membersData = [
 	{
 		email: 'chris@test.com',
 		username: 'chris',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1989-03-23',
 		name: 'Chris',
 		created: '2020-03-14',
@@ -114,7 +116,7 @@ export const membersData = [
 	{
 		email: 'eric@test.com',
 		username: 'eric',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1992-12-01',
 		name: 'Eric',
 		created: '2019-01-28',
@@ -128,7 +130,7 @@ export const membersData = [
 	{
 		email: 'gabriel@test.com',
 		username: 'gabriel',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1999-08-10',
 		name: 'Gabriel',
 		created: '2020-02-25',
@@ -142,7 +144,7 @@ export const membersData = [
 	{
 		email: 'kaito@test.com',
 		username: 'kaito',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '1998-12-24',
 		name: 'Kaito',
 		created: '2020-02-25',
@@ -156,7 +158,7 @@ export const membersData = [
 	{
 		email: 'ian@test.com',
 		username: 'ian',
-		gender: 'male',
+		gender: Gender.MALE,
 		dateOfBirth: '2002-02-20',
 		name: 'Ian',
 		created: '2020-02-25',
