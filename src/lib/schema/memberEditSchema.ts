@@ -11,6 +11,9 @@ export const memberEditSchema = z.object({
 	country: z.string().min(1, {
 		message: 'Country must be at least 1 characters.',
 	}),
+
+	// TODO:
+	// Add searchGender when MemberProfileForm replaces EditForm
 });
 
 export type MemberEditSchema = z.infer<typeof memberEditSchema>

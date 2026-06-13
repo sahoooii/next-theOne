@@ -1,7 +1,13 @@
-import React from 'react';
+'use client';
+
+import MemberProfileForm from '@/components/profile/MemberProfileForm';
+// import { MemberProfileSchema } from '@/lib/schema/memberProfileSchema';
 
 const CompleteProfilePage = () => {
-	return <div>CompleteProfilePage</div>;
+	const handleCreate = async (data: unknown) => {
+		console.log(data);
+	};
+	return <MemberProfileForm mode='create' onSubmit={handleCreate} />;
 };
 
 export default CompleteProfilePage;
