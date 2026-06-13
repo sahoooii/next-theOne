@@ -18,8 +18,8 @@ export const memberProfileSchema = z.object({
 	searchGender: z.enum(SearchGender, {
 		message: 'Please select the gender you are looking for',
 	}),
-	dateOfBirth: z.string().min(1, {
-		message: 'Date of birth is required',
+	dateOfBirth: z.date({
+		message: 'Please select your date of birth',
 	}),
 });
 
