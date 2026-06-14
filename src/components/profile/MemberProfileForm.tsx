@@ -3,8 +3,15 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import {
+	MemberProfileSchema,
+	memberProfileSchema,
+} from '@/lib/schema/memberProfileSchema';
+
 import {
 	Form,
 	FormControl,
@@ -24,14 +31,18 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { useRouter } from 'next/navigation';
-import ReadOnlyField from '../edit/ReadOnlyField';
 import {
-	MemberProfileSchema,
-	memberProfileSchema,
-} from '@/lib/schema/memberProfileSchema';
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+
+import ReadOnlyField from '@/components/edit/ReadOnlyField';
+import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { selectItemClass } from '@/lib/styles';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 type Props = {
 	member?: Member;
@@ -88,7 +99,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 			<Form {...form}>
 				<form className='space-y-8'>
 					{/* Info Grid */}
-					<div className='grid grid-cols-2 gap-4'>
+					<div className='grid md:grid-cols-2 gap-4'>
 						{/* Editable - Name */}
 						<FormField
 							control={form.control}
@@ -104,6 +115,47 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 										/>
 									</FormControl>
 									<FormMessage className='text-sm text-red-400' />
+								</FormItem>
+							)}
+						/>
+
+						{/* DOB */}
+						<FormField
+							control={form.control}
+							name='dateOfBirth'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className='text-xs text-gray-400'>
+										Date of Birth
+									</FormLabel>
+
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant='outline'
+													className={cn(
+														'w-full justify-start bg-white/50 border-black/10',
+														!field.value && 'text-gray-400',
+													)}
+												>
+													{field.value
+														? format(field.value, 'PPP')
+														: 'Select your date of birth'}
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+
+										<PopoverContent className='w-auto p-0'>
+											<Calendar
+												mode='single'
+												selected={field.value}
+												onSelect={field.onChange}
+											/>
+										</PopoverContent>
+									</Popover>
+
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -239,26 +291,28 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 								</FormItem>
 							)}
 						/>
-					</div>
 
-					{/* Editable - Country */}
-					<FormField
-						control={form.control}
-						name='country'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel className='text-xs text-gray-400'>Country</FormLabel>
-								<FormControl>
-									<Input
-										className='bg-white/50 border-black/10'
-										placeholder='Country'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage className='text-sm text-red-400' />
-							</FormItem>
-						)}
-					/>
+						{/* Editable - Country */}
+						<FormField
+							control={form.control}
+							name='country'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className='text-xs text-gray-400'>
+										Country
+									</FormLabel>
+									<FormControl>
+										<Input
+											className='bg-white/50 border-black/10'
+											placeholder='Country'
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage className='text-sm text-red-400' />
+								</FormItem>
+							)}
+						/>
+					</div>
 
 					{/* Editable - Description */}
 					<FormField
