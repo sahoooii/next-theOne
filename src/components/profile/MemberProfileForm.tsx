@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
 import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -36,13 +37,21 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from '@/components/ui/command';
 import { Calendar } from '@/components/ui/calendar';
 
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { selectItemClass } from '@/lib/styles';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { calculateAge, cn } from '@/lib/utils';
+import { countryOptions } from '@/lib/countries';
 
 type Props = {
 	member?: Member;
@@ -151,14 +160,38 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 												mode='single'
 												selected={field.value}
 												onSelect={field.onChange}
+												captionLayout='dropdown'
+												startMonth={new Date(1940, 0)}
+												endMonth={
+													new Date(
+														new Date().getFullYear() - 18,
+														new Date().getMonth(),
+													)
+												}
+												disabled={{
+													after: new Date(
+														new Date().getFullYear() - 18,
+														new Date().getMonth(),
+														new Date().getDate(),
+													),
+												}}
 											/>
 										</PopoverContent>
 									</Popover>
 
-									<FormMessage />
+									<FormMessage className='text-sm text-red-400' />
 								</FormItem>
 							)}
 						/>
+
+						{/* Read only - DOB */}
+						{mode === 'edit' && member && (
+							<ReadOnlyField
+								label='Date Of Birth'
+								id='dateOfBirth'
+								value={calculateAge(member.dateOfBirth)}
+							/>
+						)}
 
 						{/* Gender */}
 						{mode === 'create' && (
@@ -181,14 +214,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 												</SelectTrigger>
 											</FormControl>
 
-											<SelectContent
-												className='
-    bg-white
-    border border-black/10
-    shadow-xl
-    rounded-xl
-  '
-											>
+											<SelectContent className=' bg-white border border-black/10 shadow-xl rounded-xl'>
 												{genderOptions.map((gender) => (
 													<SelectItem
 														key={gender.value}
@@ -212,7 +238,6 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 						)}
 
 						{/* Search Gender */}
-
 						<FormField
 							control={form.control}
 							name='searchGender'
@@ -232,14 +257,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 											</SelectTrigger>
 										</FormControl>
 
-										<SelectContent
-											className='
-    bg-white
-    border border-black/10
-    shadow-xl
-    rounded-xl
-  '
-										>
+										<SelectContent className='bg-white border border-black/10 shadow-xl rounded-xl'>
 											{searchGenderOptions.map((gender) => (
 												<SelectItem
 													key={gender.value}
@@ -264,14 +282,6 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 								value={member.searchGender}
 							/>
 						)}
-
-						{/* Read only - Age */}
-						{/* <ReadOnlyField
-							label='Age'
-							id='age'
-							value={calculateAge(member.dateOfBirth)}
-						/>
- */}
 
 						{/* Editable - City */}
 						<FormField
@@ -301,13 +311,48 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 									<FormLabel className='text-xs text-gray-400'>
 										Country
 									</FormLabel>
-									<FormControl>
-										<Input
-											className='bg-white/50 border-black/10'
-											placeholder='Country'
-											{...field}
-										/>
-									</FormControl>
+
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant='outline'
+													className={cn(
+														'w-full justify-between bg-white/50 border-black/10',
+														!field.value && 'text-gray-400',
+													)}
+												>
+													{field.value
+														? countryOptions.find(
+																(country) => country.value === field.value,
+															)?.label
+														: 'Select your country'}
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+
+										<PopoverContent className='p-0 bg-white border-black/10'>
+											<Command>
+												<CommandInput placeholder='Search country...' />
+
+												<CommandList>
+													<CommandEmpty>No country found.</CommandEmpty>
+
+													<CommandGroup>
+														{countryOptions.map((country) => (
+															<CommandItem
+																key={country.value}
+																value={country.label}
+																onSelect={() => field.onChange(country.value)}
+															>
+																{country.label}
+															</CommandItem>
+														))}
+													</CommandGroup>
+												</CommandList>
+											</Command>
+										</PopoverContent>
+									</Popover>
 									<FormMessage className='text-sm text-red-400' />
 								</FormItem>
 							)}

@@ -7,10 +7,10 @@ export const memberProfileSchema = z.object({
 		message: 'Tell us about yourself in at least 10 characters.',
 	}),
 	city: z.string().min(1, {
-		message: 'City must be at least 1 characters.',
+		message: 'City must be at least 1 characters',
 	}),
 	country: z.string().min(1, {
-		message: 'Country must be at least 1 characters.',
+		message: 'Please select your country',
 	}),
 	gender: z.enum(Gender, {
 		message: 'Please select a gender',
@@ -18,9 +18,25 @@ export const memberProfileSchema = z.object({
 	searchGender: z.enum(SearchGender, {
 		message: 'Please select the gender you are looking for',
 	}),
-	dateOfBirth: z.date({
-		message: 'Please select your date of birth',
-	}),
+	dateOfBirth: z
+		.date({
+			message: 'Please select your date of birth',
+		})
+		.refine(
+			(date) => {
+				const today = new Date();
+				const adultDate = new Date(
+					today.getFullYear() - 18,
+					today.getMonth(),
+					today.getDate(),
+				);
+
+				return date <= adultDate;
+			},
+			{
+				message: 'You must be at least 18 years old',
+			},
+		),
 });
 
 export type MemberProfileSchema = z.infer<typeof memberProfileSchema>;
