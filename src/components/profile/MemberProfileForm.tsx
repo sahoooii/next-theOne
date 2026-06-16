@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState } from 'react';
@@ -7,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check } from 'lucide-react';
 
 import {
 	MemberProfileSchema,
@@ -50,14 +50,20 @@ import { Calendar } from '@/components/ui/calendar';
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { selectItemClass } from '@/lib/styles';
-import { calculateAge, cn } from '@/lib/utils';
+import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
+import {
+	createMemberProfile,
+} from '@/app/actions/userActions';
+import { showToast } from '@/lib/toast';
 
 type Props = {
 	member?: Member;
 	mode: 'create' | 'edit';
-	onSubmit: (data: unknown) => Promise<void>;
+	// onSubmit: (data: unknown) => Promise<void>;
 };
+
+// エラーのトースト表示、ガードの設定(loginユーザーでも登録していない場合)、写真がないユーザーへの文字、アバター登録
 
 const genderOptions = [
 	{ value: Gender.MALE, label: 'Male' },
@@ -69,11 +75,13 @@ const searchGenderOptions = [
 	{ value: SearchGender.MALE, label: 'Male' },
 	{ value: SearchGender.FEMALE, label: 'Female' },
 	{ value: SearchGender.NON_BINARY, label: 'Non Binary' },
-	{ value: SearchGender.ANY, label: 'any' },
+	{ value: SearchGender.ANY, label: 'Any' },
 ];
 
-const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
+const MemberProfileForm = ({ member, mode }: Props) => {
 	const [formError, setFormError] = useState('');
+	// To handle open and close select country list
+	const [open, setOpen] = useState(false);
 
 	const router = useRouter();
 
@@ -81,7 +89,6 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 		resolver: zodResolver(memberProfileSchema),
 		mode: 'onTouched',
 		defaultValues: {
-			name: member?.name || '',
 			description: member?.description || '',
 			city: member?.city || '',
 			country: member?.country || '',
@@ -91,10 +98,39 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 		},
 	});
 
+	const onSubmit = async (data: MemberProfileSchema) => {
+		const result = await createMemberProfile(data);
+		console.log(result);
+
+		if (result.status === 'success') {
+			showToast('User profile created successfully', 'success');
+
+			router.push('/members/edit/photos');
+		} else {
+			handleFormServerErrors(result.error, setFormError, form.setError);
+			// Delete later
+			showToast('Your profile has already been created', 'error');
+		}
+	};
+
+	// 	const onSubmit = async (data: MemberProfileSchema) => {
+	// 	if (mode === 'create') {
+	// 				const result = await createMemberProfile(data);
+	// 	console.log(result);
+
+	// 	if (result.status === 'success') {
+	// 		showToast('User profile created successfully', 'success');
+
+	// 		router.push('/members/edit/photos');
+
+	// 	} else {
+	// 		await updateMemberProfile(data);
+	// 	}
+	// };
 	return (
 		<Card
 			className='
-				h-full
+				mt-4 h-full w-full max-w-3xl mx-auto
 				bg-white/70 backdrop-blur-md
 				border border-black/10
 				rounded-2xl
@@ -106,83 +142,89 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 			{mode === 'edit' && <MemberDetailPageHeader title='Edit Profile' />}
 
 			<Form {...form}>
-				<form className='space-y-8'>
+				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
 					{/* Info Grid */}
 					<div className='grid md:grid-cols-2 gap-4'>
-						{/* Editable - Name */}
-						<FormField
-							control={form.control}
-							name='name'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>Name</FormLabel>
-									<FormControl>
-										<Input
-											className='bg-white/50 border-black/10'
-											placeholder='Your name'
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage className='text-sm text-red-400' />
-								</FormItem>
-							)}
-						/>
+						{/* Name */}
+						{/* {mode === 'edit' && (
+							<FormField
+								control={form.control}
+								name='name'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className='text-xs text-gray-400'>
+											Name
+										</FormLabel>
+										<FormControl>
+											<Input
+												className='bg-white/50 border-black/10'
+												placeholder='Your name'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage className='text-sm text-red-400' />
+									</FormItem>
+								)}
+							/>
+						)} */}
 
 						{/* DOB */}
-						<FormField
-							control={form.control}
-							name='dateOfBirth'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>
-										Date of Birth
-									</FormLabel>
+						{mode === 'create' && (
+							<FormField
+								control={form.control}
+								name='dateOfBirth'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className='text-xs text-gray-400'>
+											Date of Birth
+										</FormLabel>
 
-									<Popover>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant='outline'
-													className={cn(
-														'w-full justify-start bg-white/50 border-black/10',
-														!field.value && 'text-gray-400',
-													)}
-												>
-													{field.value
-														? format(field.value, 'PPP')
-														: 'Select your date of birth'}
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant='outline'
+														className={cn(
+															'w-full justify-start bg-white/50 border-black/10',
+															!field.value && 'text-gray-400',
+														)}
+													>
+														{field.value
+															? format(field.value, 'PPP')
+															: 'Select your date of birth'}
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
 
-										<PopoverContent className='w-auto p-0'>
-											<Calendar
-												mode='single'
-												selected={field.value}
-												onSelect={field.onChange}
-												captionLayout='dropdown'
-												startMonth={new Date(1940, 0)}
-												endMonth={
-													new Date(
-														new Date().getFullYear() - 18,
-														new Date().getMonth(),
-													)
-												}
-												disabled={{
-													after: new Date(
-														new Date().getFullYear() - 18,
-														new Date().getMonth(),
-														new Date().getDate(),
-													),
-												}}
-											/>
-										</PopoverContent>
-									</Popover>
+											<PopoverContent className='w-auto p-0'>
+												<Calendar
+													mode='single'
+													selected={field.value}
+													onSelect={field.onChange}
+													captionLayout='dropdown'
+													startMonth={new Date(1940, 0)}
+													endMonth={
+														new Date(
+															new Date().getFullYear() - 18,
+															new Date().getMonth(),
+														)
+													}
+													disabled={{
+														after: new Date(
+															new Date().getFullYear() - 18,
+															new Date().getMonth(),
+															new Date().getDate(),
+														),
+													}}
+												/>
+											</PopoverContent>
+										</Popover>
 
-									<FormMessage className='text-sm text-red-400' />
-								</FormItem>
-							)}
-						/>
+										<FormMessage className='text-sm text-red-400' />
+									</FormItem>
+								)}
+							/>
+						)}
 
 						{/* Read only - DOB */}
 						{mode === 'edit' && member && (
@@ -274,14 +316,6 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 								</FormItem>
 							)}
 						/>
-						{/* Read only - Search Gender */}
-						{mode === 'edit' && member && (
-							<ReadOnlyField
-								label='SearchGender'
-								id='searchGender'
-								value={member.searchGender}
-							/>
-						)}
 
 						{/* Editable - City */}
 						<FormField
@@ -312,7 +346,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 										Country
 									</FormLabel>
 
-									<Popover>
+									<Popover open={open} onOpenChange={setOpen}>
 										<PopoverTrigger asChild>
 											<FormControl>
 												<Button
@@ -343,8 +377,19 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 															<CommandItem
 																key={country.value}
 																value={country.label}
-																onSelect={() => field.onChange(country.value)}
+																onSelect={() => {
+																	field.onChange(country.value);
+																	setOpen(false);
+																}}
 															>
+																<Check
+																	className={cn(
+																		'mr-2 h-4 w-4',
+																		field.value === country.value
+																			? 'opacity-100'
+																			: 'opacity-0',
+																	)}
+																/>
 																{country.label}
 															</CommandItem>
 														))}
@@ -380,7 +425,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 						)}
 					/>
 
-					{/* For entire of server error */}
+					{/* Delete later For entire of server error */}
 					{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 					{/* Submit */}
@@ -394,7 +439,7 @@ const MemberProfileForm = ({ member, mode, onSubmit }: Props) => {
 							}
 							className='w-full lg:w-auto lg:min-w-32'
 						>
-							Save Changes
+							{mode === 'create' ? 'Complete Profile' : 'Save Changes'}
 						</Button>
 					</div>
 				</form>

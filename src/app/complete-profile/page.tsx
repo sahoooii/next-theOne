@@ -1,13 +1,16 @@
-'use client';
-
 import MemberProfileForm from '@/components/profile/MemberProfileForm';
-// import { MemberProfileSchema } from '@/lib/schema/memberProfileSchema';
+import { getMemberByUserId } from '../actions/memberActions';
+import { getAuthUserId } from '../actions/authActions';
+import { redirect } from 'next/navigation';
 
-const CompleteProfilePage = () => {
-	const handleCreate = async (data: unknown) => {
-		console.log(data);
-	};
-	return <MemberProfileForm mode='create' onSubmit={handleCreate} />;
+const CompleteProfilePage = async () => {
+	const userId = await getAuthUserId();
+	const member = await getMemberByUserId(userId);
+
+	if (member) {
+		redirect('/members');
+	}
+	return <MemberProfileForm mode='create' />;
 };
 
 export default CompleteProfilePage;

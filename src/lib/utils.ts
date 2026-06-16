@@ -46,6 +46,7 @@ export function formatConversationDate(date: Date) {
 }
 
 // サーバーから返ってきたエラーをReact Hook Formに流し込む
+// 後でtoastにまとめる
 export function handleFormServerErrors<T extends FieldValues>(
 	error: Record<string, string> | string, //{[key: string]: string}
 	setFormError: (msg: string) => void, //文字列を受け取る関数
