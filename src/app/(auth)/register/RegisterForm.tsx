@@ -60,7 +60,7 @@ const RegisterForm = () => {
 				redirect: false,
 			});
 
-			router.push('/members');
+			router.push('/complete-profile');
 			router.refresh();
 
 			showToast('User registered successfully', 'success');

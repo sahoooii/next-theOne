@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { Gender, SearchGender } from '@prisma/client';
 
 export const memberProfileSchema = z.object({
-	name: z.string().min(1, { message: 'Name must be at least 1 characters.' }),
 	description: z.string().min(10, {
 		message: 'Tell us about yourself in at least 10 characters.',
 	}),
@@ -37,6 +36,9 @@ export const memberProfileSchema = z.object({
 				message: 'You must be at least 18 years old',
 			},
 		),
+	// Future Features
+	// - Relationship Goal
+	// - Interest Tags
 });
 
 export type MemberProfileSchema = z.infer<typeof memberProfileSchema>;

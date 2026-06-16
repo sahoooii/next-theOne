@@ -62,6 +62,7 @@ const EditForm = ({ member }: Props) => {
 			handleFormServerErrors(result.error, setFormError, form.setError);
 		}
 	};
+
 	return (
 		<Card
 			className='

@@ -27,6 +27,7 @@ model Account {
 }
 
 // User = Authentication Login(System)
+// Note: name String? ?を消す
 model User {
   id            String    @id @default(cuid())
   name          String?
