@@ -10,6 +10,7 @@ const CompleteProfilePage = async () => {
 	if (member) {
 		redirect('/members');
 	}
+
 	return <MemberProfileForm mode='create' />;
 };
 

@@ -65,9 +65,24 @@ export async function addImage(url: string, publicId: string) {
 	try {
 		const userId = await getAuthUserId();
 
+		const member = await prisma.member.findUnique({
+			where: { userId },
+			include: {
+				photos: {
+					select: {
+						id: true,
+					},
+				},
+			},
+		});
+
+		// Judge user already have a photo
+		const isFirstPhoto = member?.photos.length === 0;
+
 		return prisma.member.update({
 			where: { userId },
 			data: {
+				...(isFirstPhoto && { image: url }),
 				photos: {
 					create: [
 						{
@@ -131,12 +146,13 @@ export async function deleteImage(photo: Photo) {
 	}
 }
 
+// Get user info from Member
 export async function getUserInfoForNav() {
 	try {
 		const userId = await getAuthUserId();
 
-		return await prisma.user.findUnique({
-			where: { id: userId },
+		return await prisma.member.findUnique({
+			where: { userId },
 			select: { name: true, image: true },
 		});
 	} catch (error) {
