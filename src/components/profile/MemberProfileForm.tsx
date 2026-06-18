@@ -9,9 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Check } from 'lucide-react';
 
 import {
-	MemberProfileSchema,
-	memberProfileSchema,
-} from '@/lib/schema/memberProfileSchema';
+	MemberCreateSchema,
+	memberCreateSchema,
+} from '@/lib/schema/memberCreateSchema';
+import {
+	MemberEditSchema,
+	memberEditSchema,
+} from '@/lib/schema/memberEditSchema';
 
 import {
 	Form,
@@ -54,8 +58,10 @@ import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
 import {
 	createMemberProfile,
+	updateMemberProfile,
 } from '@/app/actions/userActions';
 import { showToast } from '@/lib/toast';
+import { ActionResult } from '@/types';
 
 type Props = {
 	member?: Member;
@@ -63,7 +69,7 @@ type Props = {
 	// onSubmit: (data: unknown) => Promise<void>;
 };
 
-// エラーのトースト表示、ガードの設定(loginユーザーでも登録していない場合)、写真がないユーザーへの文字、アバター登録
+type MemberFormValues = MemberCreateSchema | MemberEditSchema;
 
 const genderOptions = [
 	{ value: Gender.MALE, label: 'Male' },
@@ -85,27 +91,53 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 
 	const router = useRouter();
 
-	const form = useForm<MemberProfileSchema>({
-		resolver: zodResolver(memberProfileSchema),
+	const schema = mode === 'create' ? memberCreateSchema : memberEditSchema;
+
+	const defaultValues =
+		mode === 'create'
+			? {
+					description: '',
+					city: '',
+					country: '',
+					gender: undefined,
+					searchGender: undefined,
+					dateOfBirth: undefined,
+				}
+			: {
+					name: member?.name ?? '',
+					description: member?.description ?? '',
+					city: member?.city ?? '',
+					country: member?.country ?? '',
+					searchGender: member?.searchGender,
+				};
+
+	const form = useForm<MemberFormValues>({
+		resolver: zodResolver(schema),
 		mode: 'onTouched',
-		defaultValues: {
-			description: member?.description || '',
-			city: member?.city || '',
-			country: member?.country || '',
-			gender: member?.gender,
-			searchGender: member?.searchGender,
-			dateOfBirth: member?.dateOfBirth,
-		},
+		defaultValues,
 	});
 
-	const onSubmit = async (data: MemberProfileSchema) => {
-		const result = await createMemberProfile(data);
-		console.log(result);
+	const onSubmit = async (data: MemberFormValues) => {
+		let result: ActionResult<unknown>;
+
+		if (mode === 'create') {
+			result = await createMemberProfile(data as MemberCreateSchema);
+		} else {
+			const editData = data as MemberEditSchema;
+			const nameUpdated = editData.name !== member?.name;
+
+			result = await updateMemberProfile(data as MemberEditSchema, nameUpdated);
+		}
 
 		if (result.status === 'success') {
-			showToast('User profile created successfully', 'success');
-
-			router.push('/members/edit/photos');
+			if (mode === 'create') {
+				showToast('User profile created successfully', 'success');
+				router.push('/members/edit/photos');
+			} else {
+				showToast('User profile updated successfully', 'success');
+				form.reset(data);
+				router.refresh();
+			}
 		} else {
 			handleFormServerErrors(result.error, setFormError, form.setError);
 			// Delete later
@@ -113,20 +145,6 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 		}
 	};
 
-	// 	const onSubmit = async (data: MemberProfileSchema) => {
-	// 	if (mode === 'create') {
-	// 				const result = await createMemberProfile(data);
-	// 	console.log(result);
-
-	// 	if (result.status === 'success') {
-	// 		showToast('User profile created successfully', 'success');
-
-	// 		router.push('/members/edit/photos');
-
-	// 	} else {
-	// 		await updateMemberProfile(data);
-	// 	}
-	// };
 	return (
 		<Card
 			className='
@@ -146,7 +164,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					{/* Info Grid */}
 					<div className='grid md:grid-cols-2 gap-4'>
 						{/* Name */}
-						{/* {mode === 'edit' && (
+						{mode === 'edit' && (
 							<FormField
 								control={form.control}
 								name='name'
@@ -166,7 +184,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									</FormItem>
 								)}
 							/>
-						)} */}
+						)}
 
 						{/* DOB */}
 						{mode === 'create' && (

@@ -6,8 +6,14 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Gender } from '@prisma/client';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MemberProfileSchema } from '@/lib/schema/memberProfileSchema';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { MemberProfileSchema } from '@/lib/schema/memberCreateSchema';
 import { UseFormReturn } from 'react-hook-form';
 
 type GenderSelectProps = {
@@ -52,4 +58,4 @@ const GenderSelect = ({ form }: GenderSelectProps) => {
 	);
 };
 
-export default GenderSelect
+export default GenderSelect;

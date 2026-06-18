@@ -2,8 +2,8 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getAuthUserId } from '@/app/actions/authActions';
 import { getMemberByUserId } from '@/app/actions/memberActions';
-import EditForm from '@/components/edit/EditForm';
 import ProfileSkeleton from '@/components/members/memberDetail/skeleton/ProfileSkeleton';
+import MemberProfileForm from '@/components/profile/MemberProfileForm';
 
 const MemberEditPage = async () => {
 	const userId = await getAuthUserId();
@@ -13,7 +13,7 @@ const MemberEditPage = async () => {
 
 	return (
 		<Suspense fallback={<ProfileSkeleton />}>
-			<EditForm member={member} />
+			<MemberProfileForm mode='edit' member={member} />
 		</Suspense>
 	);
 };
