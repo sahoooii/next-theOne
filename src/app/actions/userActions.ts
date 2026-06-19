@@ -35,7 +35,7 @@ export async function updateMemberProfile(
 			return { status: 'error', error: fieldErrors };
 		}
 
-		const { name, description, city, country } = validated.data;
+		const { name, description, city, country, searchGender } = validated.data;
 
 		if (nameUpdated) {
 			await prisma.user.update({
@@ -51,6 +51,7 @@ export async function updateMemberProfile(
 				description,
 				city,
 				country,
+				searchGender
 			},
 		});
 		return { status: 'success', data: member };
@@ -225,3 +226,6 @@ export async function createMemberProfile(
 		return { status: 'error', error: 'Something went wrong' };
 	}
 }
+
+
+// Note: Delete Account

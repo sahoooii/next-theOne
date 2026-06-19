@@ -13,11 +13,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { MemberProfileSchema } from '@/lib/schema/memberCreateSchema';
+import { MemberCreateSchema } from '@/lib/schema/memberCreateSchema';
 import { UseFormReturn } from 'react-hook-form';
 
 type GenderSelectProps = {
-	form: UseFormReturn<MemberProfileSchema>;
+	form: UseFormReturn<MemberCreateSchema>;
 };
 
 const genderOptions = [

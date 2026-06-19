@@ -23,7 +23,6 @@ import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDeta
 import ReadOnlyField from './ReadOnlyField';
 import { calculateAge, handleFormServerErrors } from '@/lib/utils';
 import { updateMemberProfile } from '@/app/actions/userActions';
-import { useState } from 'react';
 import { showToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 
@@ -32,9 +31,6 @@ type Props = {
 };
 
 const EditForm = ({ member }: Props) => {
-	// For entire of server error
-	const [formError, setFormError] = useState('');
-
 	const router = useRouter();
 
 	const form = useForm<MemberEditSchema>({
@@ -52,14 +48,17 @@ const EditForm = ({ member }: Props) => {
 		const nameUpdated = data.name !== member.name;
 		const result = await updateMemberProfile(data, nameUpdated);
 
-
 		if (result.status === 'success') {
 			showToast('User profile updated successfully', 'success');
 
 			form.reset(data);
 			router.refresh();
 		} else {
-			handleFormServerErrors(result.error, setFormError, form.setError);
+			const globalError = handleFormServerErrors(result.error, form.setError);
+
+			if (globalError) {
+				showToast(globalError, 'error');
+			}
 		}
 	};
 
@@ -168,9 +167,6 @@ const EditForm = ({ member }: Props) => {
 							</FormItem>
 						)}
 					/>
-
-					{/* For entire of server error */}
-					{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 					{/* Submit */}
 					<div className='flex justify-center lg:justify-end'>

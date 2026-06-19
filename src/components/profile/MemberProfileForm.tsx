@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { showToast } from '@/lib/toast';
 import { Check } from 'lucide-react';
 
 import {
@@ -16,6 +17,11 @@ import {
 	MemberEditSchema,
 	memberEditSchema,
 } from '@/lib/schema/memberEditSchema';
+
+import {
+	createMemberProfile,
+	updateMemberProfile,
+} from '@/app/actions/userActions';
 
 import {
 	Form,
@@ -56,17 +62,10 @@ import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDeta
 import { selectItemClass } from '@/lib/styles';
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
-import {
-	createMemberProfile,
-	updateMemberProfile,
-} from '@/app/actions/userActions';
-import { showToast } from '@/lib/toast';
-import { ActionResult } from '@/types';
 
 type Props = {
 	member?: Member;
 	mode: 'create' | 'edit';
-	// onSubmit: (data: unknown) => Promise<void>;
 };
 
 type MemberFormValues = MemberCreateSchema | MemberEditSchema;
@@ -85,7 +84,6 @@ const searchGenderOptions = [
 ];
 
 const MemberProfileForm = ({ member, mode }: Props) => {
-	const [formError, setFormError] = useState('');
 	// To handle open and close select country list
 	const [open, setOpen] = useState(false);
 
@@ -117,32 +115,53 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 		defaultValues,
 	});
 
-	const onSubmit = async (data: MemberFormValues) => {
-		let result: ActionResult<unknown>;
-
-		if (mode === 'create') {
-			result = await createMemberProfile(data as MemberCreateSchema);
-		} else {
-			const editData = data as MemberEditSchema;
-			const nameUpdated = editData.name !== member?.name;
-
-			result = await updateMemberProfile(data as MemberEditSchema, nameUpdated);
-		}
+	// For complete-profile(create)
+	const handleCreateSubmit = async (data: MemberCreateSchema) => {
+		const result = await createMemberProfile(data);
 
 		if (result.status === 'success') {
-			if (mode === 'create') {
-				showToast('User profile created successfully', 'success');
-				router.push('/members/edit/photos');
-			} else {
-				showToast('User profile updated successfully', 'success');
-				form.reset(data);
-				router.refresh();
-			}
-		} else {
-			handleFormServerErrors(result.error, setFormError, form.setError);
-			// Delete later
-			showToast('Your profile has already been created', 'error');
+			showToast('User profile created successfully', 'success');
+
+			router.push('/members/edit/photos');
+			return;
 		}
+
+		const globalError = handleFormServerErrors(result.error, form.setError);
+
+		if (globalError) {
+			showToast(globalError, 'error');
+		}
+	};
+
+	// For edit user profile(edit)
+	const handleEditSubmit = async (data: MemberEditSchema) => {
+		const nameUpdated = data.name !== member?.name;
+
+		const result = await updateMemberProfile(data, nameUpdated);
+
+		if (result.status === 'success') {
+			showToast('User profile updated successfully', 'success');
+
+			form.reset(data);
+
+			router.refresh();
+
+			return;
+		}
+
+		const globalError = handleFormServerErrors(result.error, form.setError);
+
+		if (globalError) {
+			showToast(globalError, 'error');
+		}
+	};
+
+	const onSubmit = async (data: MemberFormValues) => {
+		if (mode === 'create') {
+			return handleCreateSubmit(data as MemberCreateSchema);
+		}
+
+		return handleEditSubmit(data as MemberEditSchema);
 	};
 
 	return (
@@ -442,9 +461,6 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							</FormItem>
 						)}
 					/>
-
-					{/* Delete later For entire of server error */}
-					{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 					{/* Submit */}
 					<div className='flex justify-center lg:justify-end'>

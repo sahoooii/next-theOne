@@ -15,7 +15,7 @@ export function calculateAge(dob: Date) {
 
 // To format date time
 export function formatShortDateTime(date: Date) {
-	return format(date, 'dd MMM yy h:mm:a')
+	return format(date, 'dd MMM yy h:mm:a');
 }
 
 // For chat display to show date
@@ -49,11 +49,10 @@ export function formatConversationDate(date: Date) {
 // 後でtoastにまとめる
 export function handleFormServerErrors<T extends FieldValues>(
 	error: Record<string, string> | string, //{[key: string]: string}
-	setFormError: (msg: string) => void, //文字列を受け取る関数
 	setError: UseFormSetError<T>, //React Hook Form専用型
-) {
+):string | null {
 	if (typeof error === 'string') {
-		setFormError(error);
+		return error;
 	} else {
 		Object.entries(error).forEach(([field, message]) => {
 			//存在するfield名だけOK
@@ -61,5 +60,6 @@ export function handleFormServerErrors<T extends FieldValues>(
 				message,
 			});
 		});
+		return null;
 	}
 }

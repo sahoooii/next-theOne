@@ -13,7 +13,10 @@ const MemberEditPage = async () => {
 
 	return (
 		<Suspense fallback={<ProfileSkeleton />}>
-			<MemberProfileForm mode='edit' member={member} />
+			<MemberProfileForm
+				mode='edit'
+				member={member}
+			/>
 		</Suspense>
 	);
 };
