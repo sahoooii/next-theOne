@@ -1,3 +1,5 @@
+import { Control, FieldValues, Path} from 'react-hook-form';
+
 import {
 	FormControl,
 	FormField,
@@ -5,7 +7,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { Gender } from '@prisma/client';
 import {
 	Select,
 	SelectContent,
@@ -13,39 +14,51 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { MemberCreateSchema } from '@/lib/schema/memberCreateSchema';
-import { UseFormReturn } from 'react-hook-form';
+import { selectItemClass } from '@/lib/styles';
 
-type GenderSelectProps = {
-	form: UseFormReturn<MemberCreateSchema>;
+type Option = {
+	value: string;
+	label: string;
 };
 
-const genderOptions = [
-	{ value: Gender.MALE, label: 'Male' },
-	{ value: Gender.FEMALE, label: 'Female' },
-	{ value: Gender.NON_BINARY, label: 'Non Binary' },
-];
+type GenderSelectProps<T extends FieldValues> = {
+	control: Control<T>;
+	name: Path<T>;
+	label: string;
+	placeholder: string;
+	options: Option[];
+};
 
-const GenderSelect = ({ form }: GenderSelectProps) => {
+export function GenderSelect<T extends FieldValues>({
+	control,
+	name,
+	label,
+	placeholder,
+	options,
+}: GenderSelectProps<T>) {
 	return (
 		<FormField
-			control={form.control}
-			name='gender'
+			control={control}
+			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel className='text-xs text-gray-400'>Gender</FormLabel>
+					<FormLabel className='text-xs text-gray-400'>{label}</FormLabel>
 
 					<Select onValueChange={field.onChange} defaultValue={field.value}>
 						<FormControl>
 							<SelectTrigger className='bg-white/50 border-black/10'>
-								<SelectValue placeholder='Select your gender' />
+								<SelectValue placeholder={placeholder} />
 							</SelectTrigger>
 						</FormControl>
 
-						<SelectContent>
-							{genderOptions.map((gender) => (
-								<SelectItem key={gender.value} value={gender.value}>
-									{gender.label}
+						<SelectContent className='bg-white border border-black/10 shadow-xl rounded-xl'>
+							{options.map((option) => (
+								<SelectItem
+									key={option.value}
+									value={option.value}
+									className={selectItemClass}
+								>
+									{option.label}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -56,6 +69,4 @@ const GenderSelect = ({ form }: GenderSelectProps) => {
 			)}
 		/>
 	);
-};
-
-export default GenderSelect;
+}

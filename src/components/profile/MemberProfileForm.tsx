@@ -31,13 +31,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -59,9 +52,9 @@ import { Calendar } from '@/components/ui/calendar';
 
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { selectItemClass } from '@/lib/styles';
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
+import { GenderSelect } from './GenderSelect';
 
 type Props = {
 	member?: Member;
@@ -272,86 +265,28 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							/>
 						)}
 
-						{/* Gender */}
+						{/* Gender create*/}
 						{mode === 'create' && (
-							<FormField
+							<GenderSelect
 								control={form.control}
 								name='gender'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className='text-xs text-gray-400'>
-											Gender
-										</FormLabel>
-
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger className='bg-white/50 border-black/10'>
-													<SelectValue placeholder='Select your gender' />
-												</SelectTrigger>
-											</FormControl>
-
-											<SelectContent className=' bg-white border border-black/10 shadow-xl rounded-xl'>
-												{genderOptions.map((gender) => (
-													<SelectItem
-														key={gender.value}
-														value={gender.value}
-														className={selectItemClass}
-													>
-														{gender.label}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-
-										<FormMessage className='text-sm text-red-400' />
-									</FormItem>
-								)}
+								label='Gender'
+								placeholder='Select your gender'
+								options={genderOptions}
 							/>
 						)}
-						{/* Read only - Gender */}
+						{/* Read only - Gender  edit*/}
 						{mode === 'edit' && member && (
 							<ReadOnlyField label='Gender' id='gender' value={member.gender} />
 						)}
 
 						{/* Search Gender */}
-						<FormField
+						<GenderSelect
 							control={form.control}
 							name='searchGender'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>
-										Looking For
-									</FormLabel>
-
-									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger className='bg-white/50 border-black/10'>
-												<SelectValue placeholder="Select who you'd like to meet" />
-											</SelectTrigger>
-										</FormControl>
-
-										<SelectContent className='bg-white border border-black/10 shadow-xl rounded-xl'>
-											{searchGenderOptions.map((gender) => (
-												<SelectItem
-													key={gender.value}
-													value={gender.value}
-													className={selectItemClass}
-												>
-													{gender.label}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-
-									<FormMessage className='text-sm text-red-400' />
-								</FormItem>
-							)}
+							label='Looking For'
+							placeholder="Select who you'd like to meet"
+							options={searchGenderOptions}
 						/>
 
 						{/* Editable - City */}
