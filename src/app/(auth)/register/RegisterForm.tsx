@@ -26,7 +26,6 @@ import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import Link from 'next/link';
 import { registerUser } from '@/app/actions/authActions';
-import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
@@ -35,9 +34,6 @@ import { handleFormServerErrors } from '@/lib/utils';
 
 const RegisterForm = () => {
 	const router = useRouter();
-
-	// For entire of server error
-	const [formError, setFormError] = useState('');
 
 	const form = useForm<RegisterSchema>({
 		resolver: zodResolver(registerSchema),
@@ -66,7 +62,11 @@ const RegisterForm = () => {
 			showToast('User registered successfully', 'success');
 		} else {
 			// For entire of server error
-			handleFormServerErrors(result.error, setFormError, form.setError)
+			const globalError = handleFormServerErrors(result.error, form.setError);
+
+			if (globalError) {
+				showToast(globalError, 'error');
+			}
 		}
 	};
 
@@ -148,9 +148,6 @@ const RegisterForm = () => {
 								</FormItem>
 							)}
 						/>
-
-						{/* For entire of server error */}
-						{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 						<Button
 							type='submit'

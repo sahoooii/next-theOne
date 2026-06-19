@@ -6,12 +6,22 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { showToast } from '@/lib/toast';
 import { Check } from 'lucide-react';
 
 import {
-	MemberProfileSchema,
-	memberProfileSchema,
-} from '@/lib/schema/memberProfileSchema';
+	MemberCreateSchema,
+	memberCreateSchema,
+} from '@/lib/schema/memberCreateSchema';
+import {
+	MemberEditSchema,
+	memberEditSchema,
+} from '@/lib/schema/memberEditSchema';
+
+import {
+	createMemberProfile,
+	updateMemberProfile,
+} from '@/app/actions/userActions';
 
 import {
 	Form,
@@ -21,13 +31,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -49,21 +52,16 @@ import { Calendar } from '@/components/ui/calendar';
 
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { selectItemClass } from '@/lib/styles';
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
-import {
-	createMemberProfile,
-} from '@/app/actions/userActions';
-import { showToast } from '@/lib/toast';
+import { GenderSelect } from './GenderSelect';
 
 type Props = {
 	member?: Member;
 	mode: 'create' | 'edit';
-	// onSubmit: (data: unknown) => Promise<void>;
 };
 
-// エラーのトースト表示、ガードの設定(loginユーザーでも登録していない場合)、写真がないユーザーへの文字、アバター登録
+type MemberFormValues = MemberCreateSchema | MemberEditSchema;
 
 const genderOptions = [
 	{ value: Gender.MALE, label: 'Male' },
@@ -79,54 +77,86 @@ const searchGenderOptions = [
 ];
 
 const MemberProfileForm = ({ member, mode }: Props) => {
-	const [formError, setFormError] = useState('');
 	// To handle open and close select country list
 	const [open, setOpen] = useState(false);
 
 	const router = useRouter();
 
-	const form = useForm<MemberProfileSchema>({
-		resolver: zodResolver(memberProfileSchema),
+	const schema = mode === 'create' ? memberCreateSchema : memberEditSchema;
+
+	const defaultValues =
+		mode === 'create'
+			? {
+					description: '',
+					city: '',
+					country: '',
+					gender: undefined,
+					searchGender: undefined,
+					dateOfBirth: undefined,
+				}
+			: {
+					name: member?.name ?? '',
+					description: member?.description ?? '',
+					city: member?.city ?? '',
+					country: member?.country ?? '',
+					searchGender: member?.searchGender,
+				};
+
+	const form = useForm<MemberFormValues>({
+		resolver: zodResolver(schema),
 		mode: 'onTouched',
-		defaultValues: {
-			description: member?.description || '',
-			city: member?.city || '',
-			country: member?.country || '',
-			gender: member?.gender,
-			searchGender: member?.searchGender,
-			dateOfBirth: member?.dateOfBirth,
-		},
+		defaultValues,
 	});
 
-	const onSubmit = async (data: MemberProfileSchema) => {
+	// For complete-profile(create)
+	const handleCreateSubmit = async (data: MemberCreateSchema) => {
 		const result = await createMemberProfile(data);
-		console.log(result);
 
 		if (result.status === 'success') {
 			showToast('User profile created successfully', 'success');
 
 			router.push('/members/edit/photos');
-		} else {
-			handleFormServerErrors(result.error, setFormError, form.setError);
-			// Delete later
-			showToast('Your profile has already been created', 'error');
+			return;
+		}
+
+		const globalError = handleFormServerErrors(result.error, form.setError);
+
+		if (globalError) {
+			showToast(globalError, 'error');
 		}
 	};
 
-	// 	const onSubmit = async (data: MemberProfileSchema) => {
-	// 	if (mode === 'create') {
-	// 				const result = await createMemberProfile(data);
-	// 	console.log(result);
+	// For edit user profile(edit)
+	const handleEditSubmit = async (data: MemberEditSchema) => {
+		const nameUpdated = data.name !== member?.name;
 
-	// 	if (result.status === 'success') {
-	// 		showToast('User profile created successfully', 'success');
+		const result = await updateMemberProfile(data, nameUpdated);
 
-	// 		router.push('/members/edit/photos');
+		if (result.status === 'success') {
+			showToast('User profile updated successfully', 'success');
 
-	// 	} else {
-	// 		await updateMemberProfile(data);
-	// 	}
-	// };
+			form.reset(data);
+
+			router.refresh();
+
+			return;
+		}
+
+		const globalError = handleFormServerErrors(result.error, form.setError);
+
+		if (globalError) {
+			showToast(globalError, 'error');
+		}
+	};
+
+	const onSubmit = async (data: MemberFormValues) => {
+		if (mode === 'create') {
+			return handleCreateSubmit(data as MemberCreateSchema);
+		}
+
+		return handleEditSubmit(data as MemberEditSchema);
+	};
+
 	return (
 		<Card
 			className='
@@ -146,7 +176,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					{/* Info Grid */}
 					<div className='grid md:grid-cols-2 gap-4'>
 						{/* Name */}
-						{/* {mode === 'edit' && (
+						{mode === 'edit' && (
 							<FormField
 								control={form.control}
 								name='name'
@@ -166,7 +196,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									</FormItem>
 								)}
 							/>
-						)} */}
+						)}
 
 						{/* DOB */}
 						{mode === 'create' && (
@@ -235,86 +265,28 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							/>
 						)}
 
-						{/* Gender */}
+						{/* Gender create*/}
 						{mode === 'create' && (
-							<FormField
+							<GenderSelect
 								control={form.control}
 								name='gender'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className='text-xs text-gray-400'>
-											Gender
-										</FormLabel>
-
-										<Select
-											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<FormControl>
-												<SelectTrigger className='bg-white/50 border-black/10'>
-													<SelectValue placeholder='Select your gender' />
-												</SelectTrigger>
-											</FormControl>
-
-											<SelectContent className=' bg-white border border-black/10 shadow-xl rounded-xl'>
-												{genderOptions.map((gender) => (
-													<SelectItem
-														key={gender.value}
-														value={gender.value}
-														className={selectItemClass}
-													>
-														{gender.label}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-
-										<FormMessage className='text-sm text-red-400' />
-									</FormItem>
-								)}
+								label='Gender'
+								placeholder='Select your gender'
+								options={genderOptions}
 							/>
 						)}
-						{/* Read only - Gender */}
+						{/* Read only - Gender  edit*/}
 						{mode === 'edit' && member && (
 							<ReadOnlyField label='Gender' id='gender' value={member.gender} />
 						)}
 
 						{/* Search Gender */}
-						<FormField
+						<GenderSelect
 							control={form.control}
 							name='searchGender'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>
-										Looking For
-									</FormLabel>
-
-									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger className='bg-white/50 border-black/10'>
-												<SelectValue placeholder="Select who you'd like to meet" />
-											</SelectTrigger>
-										</FormControl>
-
-										<SelectContent className='bg-white border border-black/10 shadow-xl rounded-xl'>
-											{searchGenderOptions.map((gender) => (
-												<SelectItem
-													key={gender.value}
-													value={gender.value}
-													className={selectItemClass}
-												>
-													{gender.label}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-
-									<FormMessage className='text-sm text-red-400' />
-								</FormItem>
-							)}
+							label='Looking For'
+							placeholder="Select who you'd like to meet"
+							options={searchGenderOptions}
 						/>
 
 						{/* Editable - City */}
@@ -424,9 +396,6 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							</FormItem>
 						)}
 					/>
-
-					{/* Delete later For entire of server error */}
-					{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 
 					{/* Submit */}
 					<div className='flex justify-center lg:justify-end'>

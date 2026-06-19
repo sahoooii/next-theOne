@@ -40,6 +40,7 @@ import {
 } from '@/lib/utils';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 import ChatOptions from './ChatOptions';
+import { showToast } from '@/lib/toast';
 
 type Props = {
 	messages: MessageDto[];
@@ -47,9 +48,6 @@ type Props = {
 };
 
 const ChatForm = ({ messages, currentUserId }: Props) => {
-	// For entire of server error
-	const [formError, setFormError] = useState('');
-
 	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
 		null,
@@ -89,7 +87,11 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 		const result = await createMessage(params.userId, data);
 
 		if (result.status === 'error') {
-			handleFormServerErrors(result.error, setFormError, form.setError);
+			const globalError = handleFormServerErrors(result.error, form.setError);
+
+			if (globalError) {
+				showToast(globalError, 'error');
+			}
 		} else {
 			form.reset();
 			router.refresh();
@@ -356,8 +358,6 @@ const ChatForm = ({ messages, currentUserId }: Props) => {
 							>
 								<SendHorizonal className='h-5 w-5' />
 							</Button>
-							{/* For entire of server error */}
-							{formError && <p className='text-red-500 text-sm'>{formError}</p>}
 						</form>
 					</Form>
 				</div>

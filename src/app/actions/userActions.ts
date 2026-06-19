@@ -10,9 +10,9 @@ import { getAuthUserId } from './authActions';
 import { prisma } from '@/lib/prisma';
 import { cloudinary } from '@/lib/cloudinary';
 import {
-	memberProfileSchema,
-	MemberProfileSchema,
-} from '@/lib/schema/memberProfileSchema';
+	memberCreateSchema,
+	MemberCreateSchema,
+} from '@/lib/schema/memberCreateSchema';
 
 export async function updateMemberProfile(
 	data: MemberEditSchema,
@@ -35,7 +35,7 @@ export async function updateMemberProfile(
 			return { status: 'error', error: fieldErrors };
 		}
 
-		const { name, description, city, country } = validated.data;
+		const { name, description, city, country, searchGender } = validated.data;
 
 		if (nameUpdated) {
 			await prisma.user.update({
@@ -51,6 +51,7 @@ export async function updateMemberProfile(
 				description,
 				city,
 				country,
+				searchGender
 			},
 		});
 		return { status: 'success', data: member };
@@ -163,7 +164,7 @@ export async function getUserInfoForNav() {
 
 // Register complete profile to make Member
 export async function createMemberProfile(
-	data: MemberProfileSchema,
+	data: MemberCreateSchema,
 ): Promise<ActionResult<Member>> {
 	try {
 		const userId = await getAuthUserId();
@@ -177,7 +178,7 @@ export async function createMemberProfile(
 			throw new Error('User name is required');
 		}
 
-		const validated = memberProfileSchema.safeParse(data);
+		const validated = memberCreateSchema.safeParse(data);
 
 		if (!validated.success) {
 			const fieldErrors = validated.error.issues.reduce(
@@ -225,3 +226,6 @@ export async function createMemberProfile(
 		return { status: 'error', error: 'Something went wrong' };
 	}
 }
+
+
+// Note: Delete Account

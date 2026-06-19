@@ -6,7 +6,7 @@ const ProfileSkeleton = () => {
 	return (
 		<Card
 			className='
-		h-full
+		h-full max-w-3xl mx-auto
 		bg-white/70 backdrop-blur-md
 		border border-black/10
 		rounded-2xl
