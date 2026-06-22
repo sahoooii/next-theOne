@@ -2,8 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense } from 'react';
 import ConversationList from '@/components/messages/ConversationList';
-import { getConversationsList } from '../actions/messageActions';
 import ConversationListSkeleton from '@/components/messages/skeleton/ConversationListSkeleton';
+import { getConversationsList } from '@/app/actions/messageActions';
 
 // loading
 const MessagesPage = async () => {
