@@ -55,6 +55,7 @@ import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDeta
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
 import { GenderSelect } from './GenderSelect';
+import DeleteAccount from '../edit/DeleteAccount';
 
 type Props = {
 	member?: Member;
@@ -158,37 +159,157 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 	};
 
 	return (
-		<Card
-			className='
-				mt-4 h-full w-full max-w-3xl mx-auto
+		<>
+			<Card
+				className='
+				w-full max-w-3xl mx-auto
 				bg-white/70 backdrop-blur-md
 				border border-black/10
 				rounded-2xl
 				p-8
 			'
-		>
-			{/* Header */}
-			{mode === 'create' && <MemberDetailPageHeader title='Complete Profile' />}
-			{mode === 'edit' && <MemberDetailPageHeader title='Edit Profile' />}
+			>
+				{/* Header */}
+				{mode === 'create' && (
+					<MemberDetailPageHeader title='Complete Profile' />
+				)}
+				{mode === 'edit' && <MemberDetailPageHeader title='Edit Profile' />}
 
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-					{/* Info Grid */}
-					<div className='grid md:grid-cols-2 gap-4'>
-						{/* Name */}
-						{mode === 'edit' && (
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+						{/* Info Grid */}
+						<div className='grid md:grid-cols-2 gap-4'>
+							{/* Name */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='name'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className='text-xs text-gray-400'>
+												Name
+											</FormLabel>
+											<FormControl>
+												<Input
+													className='bg-white/50 border-black/10'
+													placeholder='Your name'
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* DOB */}
+							{mode === 'create' && (
+								<FormField
+									control={form.control}
+									name='dateOfBirth'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className='text-xs text-gray-400'>
+												Date of Birth
+											</FormLabel>
+
+											<Popover>
+												<PopoverTrigger asChild>
+													<FormControl>
+														<Button
+															variant='outline'
+															className={cn(
+																'w-full justify-start bg-white/50 border-black/10',
+																!field.value && 'text-gray-400',
+															)}
+														>
+															{field.value
+																? format(field.value, 'PPP')
+																: 'Select your date of birth'}
+														</Button>
+													</FormControl>
+												</PopoverTrigger>
+
+												<PopoverContent className='w-auto p-0'>
+													<Calendar
+														mode='single'
+														selected={field.value}
+														onSelect={field.onChange}
+														captionLayout='dropdown'
+														startMonth={new Date(1940, 0)}
+														endMonth={
+															new Date(
+																new Date().getFullYear() - 18,
+																new Date().getMonth(),
+															)
+														}
+														disabled={{
+															after: new Date(
+																new Date().getFullYear() - 18,
+																new Date().getMonth(),
+																new Date().getDate(),
+															),
+														}}
+													/>
+												</PopoverContent>
+											</Popover>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Read only - DOB */}
+							{mode === 'edit' && member && (
+								<ReadOnlyField
+									label='Date Of Birth'
+									id='dateOfBirth'
+									value={calculateAge(member.dateOfBirth)}
+								/>
+							)}
+
+							{/* Gender create*/}
+							{mode === 'create' && (
+								<GenderSelect
+									control={form.control}
+									name='gender'
+									label='Gender'
+									placeholder='Select your gender'
+									options={genderOptions}
+								/>
+							)}
+							{/* Read only - Gender  edit*/}
+							{mode === 'edit' && member && (
+								<ReadOnlyField
+									label='Gender'
+									id='gender'
+									value={member.gender}
+								/>
+							)}
+
+							{/* Search Gender */}
+							<GenderSelect
+								control={form.control}
+								name='searchGender'
+								label='Looking For'
+								placeholder="Select who you'd like to meet"
+								options={searchGenderOptions}
+							/>
+
+							{/* Editable - City */}
 							<FormField
 								control={form.control}
-								name='name'
+								name='city'
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className='text-xs text-gray-400'>
-											Name
+											City
 										</FormLabel>
 										<FormControl>
 											<Input
 												className='bg-white/50 border-black/10'
-												placeholder='Your name'
+												placeholder='City'
 												{...field}
 											/>
 										</FormControl>
@@ -196,110 +317,88 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									</FormItem>
 								)}
 							/>
-						)}
 
-						{/* DOB */}
-						{mode === 'create' && (
+							{/* Editable - Country */}
 							<FormField
 								control={form.control}
-								name='dateOfBirth'
+								name='country'
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className='text-xs text-gray-400'>
-											Date of Birth
+											Country
 										</FormLabel>
 
-										<Popover>
+										<Popover open={open} onOpenChange={setOpen}>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
 														variant='outline'
 														className={cn(
-															'w-full justify-start bg-white/50 border-black/10',
+															'w-full justify-between bg-white/50 border-black/10',
 															!field.value && 'text-gray-400',
 														)}
 													>
 														{field.value
-															? format(field.value, 'PPP')
-															: 'Select your date of birth'}
+															? countryOptions.find(
+																	(country) => country.value === field.value,
+																)?.label
+															: 'Select your country'}
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
 
-											<PopoverContent className='w-auto p-0'>
-												<Calendar
-													mode='single'
-													selected={field.value}
-													onSelect={field.onChange}
-													captionLayout='dropdown'
-													startMonth={new Date(1940, 0)}
-													endMonth={
-														new Date(
-															new Date().getFullYear() - 18,
-															new Date().getMonth(),
-														)
-													}
-													disabled={{
-														after: new Date(
-															new Date().getFullYear() - 18,
-															new Date().getMonth(),
-															new Date().getDate(),
-														),
-													}}
-												/>
+											<PopoverContent className='p-0 bg-white border-black/10'>
+												<Command>
+													<CommandInput placeholder='Search country...' />
+
+													<CommandList>
+														<CommandEmpty>No country found.</CommandEmpty>
+
+														<CommandGroup>
+															{countryOptions.map((country) => (
+																<CommandItem
+																	key={country.value}
+																	value={country.label}
+																	onSelect={() => {
+																		field.onChange(country.value);
+																		setOpen(false);
+																	}}
+																>
+																	<Check
+																		className={cn(
+																			'mr-2 h-4 w-4',
+																			field.value === country.value
+																				? 'opacity-100'
+																				: 'opacity-0',
+																		)}
+																	/>
+																	{country.label}
+																</CommandItem>
+															))}
+														</CommandGroup>
+													</CommandList>
+												</Command>
 											</PopoverContent>
 										</Popover>
-
 										<FormMessage className='text-sm text-red-400' />
 									</FormItem>
 								)}
 							/>
-						)}
+						</div>
 
-						{/* Read only - DOB */}
-						{mode === 'edit' && member && (
-							<ReadOnlyField
-								label='Date Of Birth'
-								id='dateOfBirth'
-								value={calculateAge(member.dateOfBirth)}
-							/>
-						)}
-
-						{/* Gender create*/}
-						{mode === 'create' && (
-							<GenderSelect
-								control={form.control}
-								name='gender'
-								label='Gender'
-								placeholder='Select your gender'
-								options={genderOptions}
-							/>
-						)}
-						{/* Read only - Gender  edit*/}
-						{mode === 'edit' && member && (
-							<ReadOnlyField label='Gender' id='gender' value={member.gender} />
-						)}
-
-						{/* Search Gender */}
-						<GenderSelect
-							control={form.control}
-							name='searchGender'
-							label='Looking For'
-							placeholder="Select who you'd like to meet"
-							options={searchGenderOptions}
-						/>
-
-						{/* Editable - City */}
+						{/* Editable - Description */}
 						<FormField
 							control={form.control}
-							name='city'
+							name='description'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>City</FormLabel>
+									<FormLabel className='text-xs text-gray-400'>
+										About You
+									</FormLabel>
 									<FormControl>
-										<Input
-											className='bg-white/50 border-black/10'
-											placeholder='City'
+										<Textarea
+											placeholder='Tell people about yourself'
+											className='min-h-[140px] resize-none bg-white/50 border-black/10'
 											{...field}
 										/>
 									</FormControl>
@@ -308,112 +407,27 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							)}
 						/>
 
-						{/* Editable - Country */}
-						<FormField
-							control={form.control}
-							name='country'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className='text-xs text-gray-400'>
-										Country
-									</FormLabel>
+						{/* Submit */}
+						<div className='flex justify-center lg:justify-end'>
+							<Button
+								type='submit'
+								disabled={
+									!form.formState.isDirty ||
+									!form.formState.isValid ||
+									form.formState.isSubmitting
+								}
+								className='w-full lg:w-auto lg:min-w-32'
+							>
+								{mode === 'create' ? 'Complete Profile' : 'Save Changes'}
+							</Button>
+						</div>
+					</form>
+				</Form>
+			</Card>
 
-									<Popover open={open} onOpenChange={setOpen}>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant='outline'
-													className={cn(
-														'w-full justify-between bg-white/50 border-black/10',
-														!field.value && 'text-gray-400',
-													)}
-												>
-													{field.value
-														? countryOptions.find(
-																(country) => country.value === field.value,
-															)?.label
-														: 'Select your country'}
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
-
-										<PopoverContent className='p-0 bg-white border-black/10'>
-											<Command>
-												<CommandInput placeholder='Search country...' />
-
-												<CommandList>
-													<CommandEmpty>No country found.</CommandEmpty>
-
-													<CommandGroup>
-														{countryOptions.map((country) => (
-															<CommandItem
-																key={country.value}
-																value={country.label}
-																onSelect={() => {
-																	field.onChange(country.value);
-																	setOpen(false);
-																}}
-															>
-																<Check
-																	className={cn(
-																		'mr-2 h-4 w-4',
-																		field.value === country.value
-																			? 'opacity-100'
-																			: 'opacity-0',
-																	)}
-																/>
-																{country.label}
-															</CommandItem>
-														))}
-													</CommandGroup>
-												</CommandList>
-											</Command>
-										</PopoverContent>
-									</Popover>
-									<FormMessage className='text-sm text-red-400' />
-								</FormItem>
-							)}
-						/>
-					</div>
-
-					{/* Editable - Description */}
-					<FormField
-						control={form.control}
-						name='description'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel className='text-xs text-gray-400'>
-									About You
-								</FormLabel>
-								<FormControl>
-									<Textarea
-										placeholder='Tell people about yourself'
-										className='min-h-[140px] resize-none bg-white/50 border-black/10'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage className='text-sm text-red-400' />
-							</FormItem>
-						)}
-					/>
-
-					{/* Submit */}
-					<div className='flex justify-center lg:justify-end'>
-						<Button
-							type='submit'
-							disabled={
-								!form.formState.isDirty ||
-								!form.formState.isValid ||
-								form.formState.isSubmitting
-							}
-							className='w-full lg:w-auto lg:min-w-32'
-						>
-							{mode === 'create' ? 'Complete Profile' : 'Save Changes'}
-						</Button>
-					</div>
-				</form>
-			</Form>
-		</Card>
+			{/* Danger zone */}
+			{mode === 'edit' && <DeleteAccount />}
+		</>
 	);
 };
 
