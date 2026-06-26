@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { Gender, Member, SearchGender } from '@prisma/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { showToast } from '@/lib/toast';
 import { Check } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+
+import { Member } from '@prisma/client';
 
 import {
 	MemberCreateSchema,
@@ -50,10 +52,11 @@ import {
 } from '@/components/ui/command';
 import { Calendar } from '@/components/ui/calendar';
 
-import ReadOnlyField from '@/components/edit/ReadOnlyField';
-import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
+import ReadOnlyField from '@/components/edit/ReadOnlyField';
+import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
+import { genderOptions, searchGenderOptions } from '@/lib/constants/memberGenderOptions';
 import { GenderSelect } from './GenderSelect';
 import DeleteAccount from '../edit/DeleteAccount';
 
@@ -63,19 +66,6 @@ type Props = {
 };
 
 type MemberFormValues = MemberCreateSchema | MemberEditSchema;
-
-const genderOptions = [
-	{ value: Gender.MALE, label: 'Male' },
-	{ value: Gender.FEMALE, label: 'Female' },
-	{ value: Gender.NON_BINARY, label: 'Non Binary' },
-];
-
-const searchGenderOptions = [
-	{ value: SearchGender.MALE, label: 'Male' },
-	{ value: SearchGender.FEMALE, label: 'Female' },
-	{ value: SearchGender.NON_BINARY, label: 'Non Binary' },
-	{ value: SearchGender.ANY, label: 'Any' },
-];
 
 const MemberProfileForm = ({ member, mode }: Props) => {
 	// To handle open and close select country list
@@ -109,6 +99,10 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 		defaultValues,
 	});
 
+	const [isPending, startTransition] = useTransition();
+
+	const isLoading = form.formState.isSubmitting || isPending;
+
 	// For complete-profile(create)
 	const handleCreateSubmit = async (data: MemberCreateSchema) => {
 		const result = await createMemberProfile(data);
@@ -116,7 +110,9 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 		if (result.status === 'success') {
 			showToast('User profile created successfully', 'success');
 
-			router.push('/members/edit/photos');
+			startTransition(() => {
+				router.push('/members/edit/photos');
+			});
 			return;
 		}
 
@@ -138,8 +134,9 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 
 			form.reset(data);
 
-			router.refresh();
-
+			startTransition(() => {
+				router.refresh();
+			});
 			return;
 		}
 
@@ -277,8 +274,10 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									label='Gender'
 									placeholder='Select your gender'
 									options={genderOptions}
+									setValue={form.setValue}
 								/>
 							)}
+							
 							{/* Read only - Gender  edit*/}
 							{mode === 'edit' && member && (
 								<ReadOnlyField
@@ -295,6 +294,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 								label='Looking For'
 								placeholder="Select who you'd like to meet"
 								options={searchGenderOptions}
+								setValue={form.setValue}
 							/>
 
 							{/* Editable - City */}
@@ -359,8 +359,17 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																<CommandItem
 																	key={country.value}
 																	value={country.label}
+																	// onSelect={() => {
+																	// 	field.onChange(country.value);
+																	// 	setOpen(false);
+																	// }}
 																	onSelect={() => {
-																		field.onChange(country.value);
+																		form.setValue('country', country.value, {
+																			shouldDirty: true,
+																			shouldTouch: true,
+																			shouldValidate: true,
+																		});
+
 																		setOpen(false);
 																	}}
 																>
@@ -414,10 +423,11 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 								disabled={
 									!form.formState.isDirty ||
 									!form.formState.isValid ||
-									form.formState.isSubmitting
+									isLoading
 								}
 								className='w-full lg:w-auto lg:min-w-32'
 							>
+								{isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
 								{mode === 'create' ? 'Complete Profile' : 'Save Changes'}
 							</Button>
 						</div>

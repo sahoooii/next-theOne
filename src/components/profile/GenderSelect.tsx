@@ -1,4 +1,4 @@
-import { Control, FieldValues, Path} from 'react-hook-form';
+import { Control, FieldValues, Path, PathValue, UseFormSetValue } from 'react-hook-form';
 
 import {
 	FormControl,
@@ -15,18 +15,15 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { selectItemClass } from '@/lib/styles';
-
-type Option = {
-	value: string;
-	label: string;
-};
+import { Option } from '@/types/option';
 
 type GenderSelectProps<T extends FieldValues> = {
 	control: Control<T>;
 	name: Path<T>;
 	label: string;
 	placeholder: string;
-	options: Option[];
+	options: readonly Option[];
+	setValue: UseFormSetValue<T>;
 };
 
 export function GenderSelect<T extends FieldValues>({
@@ -35,6 +32,7 @@ export function GenderSelect<T extends FieldValues>({
 	label,
 	placeholder,
 	options,
+	setValue
 }: GenderSelectProps<T>) {
 	return (
 		<FormField
@@ -44,7 +42,16 @@ export function GenderSelect<T extends FieldValues>({
 				<FormItem>
 					<FormLabel className='text-xs text-gray-400'>{label}</FormLabel>
 
-					<Select onValueChange={field.onChange} defaultValue={field.value}>
+					<Select
+						onValueChange={(value) =>
+							setValue(name, value as PathValue<T, Path<T>>, {
+								shouldDirty: true,
+								shouldTouch: true,
+								shouldValidate: true,
+							})
+						}
+						defaultValue={field.value}
+					>
 						<FormControl>
 							<SelectTrigger className='bg-white/50 border-black/10'>
 								<SelectValue placeholder={placeholder} />
