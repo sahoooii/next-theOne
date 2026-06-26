@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
-import { Users } from 'lucide-react';
+import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const DropdownMenuDeskTop = ({
@@ -42,7 +42,7 @@ const DropdownMenuDeskTop = ({
 						/>
 
 						<AvatarFallback className='bg-purple-500/20 text-white'>
-							{userInfo?.name?.charAt(0) || <Users size={18} />}
+							{userInfo?.name?.charAt(0) || <User size={18} />}
 						</AvatarFallback>
 					</Avatar>
 				</button>
