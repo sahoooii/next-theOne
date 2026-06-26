@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterSchema } from '@/lib/schema/registerForm';
@@ -45,6 +46,8 @@ const RegisterForm = () => {
 		},
 	});
 
+	const [isPending, startTransition] = useTransition();
+
 	const onSubmit = async (data: RegisterSchema) => {
 		const result = await registerUser(data);
 
@@ -56,10 +59,12 @@ const RegisterForm = () => {
 				redirect: false,
 			});
 
-			router.push('/complete-profile');
-			router.refresh();
-
 			showToast('User registered successfully', 'success');
+
+			startTransition(async () => {
+				router.push('/complete-profile');
+				router.refresh();
+			});
 		} else {
 			// For entire of server error
 			const globalError = handleFormServerErrors(result.error, form.setError);
@@ -152,9 +157,13 @@ const RegisterForm = () => {
 						<Button
 							type='submit'
 							className='w-full h-11 text-base font-medium mt-2'
-							disabled={!form.formState.isValid || form.formState.isSubmitting}
+							disabled={
+								!form.formState.isValid ||
+								form.formState.isSubmitting ||
+								isPending
+							}
 						>
-							{form.formState.isSubmitting && (
+							{(form.formState.isSubmitting || isPending) && (
 								<Loader2 className='mr-2 h-4 w-4 animate-spin' />
 							)}
 							Register

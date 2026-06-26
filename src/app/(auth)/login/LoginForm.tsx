@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -43,14 +44,18 @@ const LoginForm = () => {
 		},
 	});
 
+	const [isPending, startTransition] = useTransition();
+
 	const onSubmit = async (data: LoginSchema) => {
 		const result = await signInUser(data);
 
 		if (result.status === 'success') {
-			router.push('/members');
-			router.refresh();
-
 			showToast('Welcome back to your journey', 'success');
+
+			startTransition(() => {
+				router.push('/members');
+				router.refresh();
+			});
 		} else {
 			showToast(result.error as string, 'error');
 		}
@@ -122,9 +127,13 @@ const LoginForm = () => {
 						<Button
 							type='submit'
 							className='w-full h-11 text-base font-medium mt-2'
-							disabled={!form.formState.isValid || form.formState.isSubmitting}
+							disabled={
+								!form.formState.isValid ||
+								form.formState.isSubmitting ||
+								isPending
+							}
 						>
-							{form.formState.isSubmitting && (
+							{(form.formState.isSubmitting || isPending) && (
 								<Loader2 className='mr-2 h-4 w-4 animate-spin' />
 							)}
 							Sign in
