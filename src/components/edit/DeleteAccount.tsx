@@ -1,3 +1,8 @@
+'use client';
+
+import { useTransition } from 'react';
+import { deleteAccount } from '@/app/actions/userActions';
+
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,9 +18,14 @@ import {
 } from '@/components/ui/alert-dialog';
 
 const DeleteAccount = () => {
-	const handleDelete = () => {
-		console.log('delete');
+	const [isPending, startTransition] = useTransition();
+
+	const handleDelete = async () => {
+		startTransition(async () => {
+			await deleteAccount();
+		});
 	};
+
 	return (
 		<Card
 			className='
@@ -92,13 +102,14 @@ const DeleteAccount = () => {
 
 									<AlertDialogAction
 										onClick={handleDelete}
+										disabled={isPending}
 										className='
 								bg-red-600
 								hover:bg-red-700
 								focus:ring-red-500
 							'
 									>
-										Delete Account
+										{isPending ? 'Deleting...' : 'Delete Account'}
 									</AlertDialogAction>
 								</AlertDialogFooter>
 							</AlertDialogContent>

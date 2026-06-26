@@ -13,6 +13,7 @@ import {
 	memberCreateSchema,
 	MemberCreateSchema,
 } from '@/lib/schema/memberCreateSchema';
+import { signOut } from '@/auth';
 
 export async function updateMemberProfile(
 	data: MemberEditSchema,
@@ -51,12 +52,12 @@ export async function updateMemberProfile(
 				description,
 				city,
 				country,
-				searchGender
+				searchGender,
 			},
 		});
 		return { status: 'success', data: member };
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 
 		return { status: 'error', error: 'Something went wrong' };
 	}
@@ -95,7 +96,7 @@ export async function addImage(url: string, publicId: string) {
 			},
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -118,7 +119,7 @@ export async function setMainImage(photo: Photo) {
 			},
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -142,7 +143,7 @@ export async function deleteImage(photo: Photo) {
 			},
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw error;
 	}
 }
@@ -157,12 +158,12 @@ export async function getUserInfoForNav() {
 			select: { name: true, image: true },
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		throw error;
 	}
 }
 
-// Register complete profile to make Member
+// After registered, complete profile to make Member
 export async function createMemberProfile(
 	data: MemberCreateSchema,
 ): Promise<ActionResult<Member>> {
@@ -221,11 +222,45 @@ export async function createMemberProfile(
 		});
 		return { status: 'success', data: member };
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 
 		return { status: 'error', error: 'Something went wrong' };
 	}
 }
 
+// Delete user account
+export async function deleteAccount() {
+	try {
+		const userId = await getAuthUserId();
 
-// Note: Delete Account
+		const member = await prisma.member.findUnique({
+			where: { userId },
+			include: {
+				photos: true,
+			},
+		});
+
+		if (!member) {
+			return { status: 'error', error: 'Member not found' };
+		}
+
+		// Delete pictures on cloudinary
+		for (const photo of member.photos) {
+			if (photo.publicId) {
+				await cloudinary.uploader.destroy(photo.publicId);
+			}
+		}
+
+		await prisma.user.delete({
+			where: { id: userId },
+		});
+
+		await signOut({
+			redirectTo: '/login',
+		});
+	} catch (error) {
+		console.error(error);
+
+		return { status: 'error', error: 'Something went wrong' };
+	}
+}
