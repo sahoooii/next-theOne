@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { navLinks } from './navLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-import { Users } from 'lucide-react';
+import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 const BottomNavClient = ({
@@ -112,7 +112,7 @@ const BottomNavClient = ({
 								src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 							/>
 							<AvatarFallback>
-								{userInfo?.name?.charAt(0) || <Users />}
+								{userInfo?.name?.charAt(0) || <User />}
 							</AvatarFallback>
 						</Avatar>
 					</motion.div>

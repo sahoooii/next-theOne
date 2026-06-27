@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Session } from 'next-auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import {
 	Sheet,
 	SheetContent,
@@ -11,22 +13,24 @@ import {
 	SheetTitle,
 } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { signOut } from 'next-auth/react';
-import { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
+
 import { Menu, LogIn, User, UserCircle, LogOut } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+
+import { SignOutProps } from '@/types';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
-const MobileMenu = ({
-	session,
-	userInfo,
-}: {
-	session: Session | null;
-	userInfo: {
-		name: string | null;
-		image: string | null;
-	} | null;
-}) => {
+type Props =
+	SignOutProps & {
+		session: Session | null;
+		userInfo: {
+			name: string | null;
+			image: string | null;
+		} | null;
+};
+
+const MobileMenu = ({ session, userInfo, isSigningOut, onSignOut }: Props) => {
 	// For hamburger menu button
 	const [open, setOpen] = useState(false);
 
@@ -100,17 +104,25 @@ const MobileMenu = ({
 										</Link>
 									</SheetClose>
 
+									{/* SignOut */}
 									<SheetClose asChild>
 										<button
-											onClick={() =>
-												signOut({
-													callbackUrl: '/login',
-												})
-											}
+											onClick={onSignOut}
+											disabled={isSigningOut}
 											className='menu-item text-red-400 hover:bg-red-500/10'
 										>
-											<LogOut size={20} />
-											Sign out
+											{isSigningOut ? (
+												<>
+													<Loader2 className='mr-2 h-4 w-4 animate-spin' />{' '}
+													<LogOut size={20} />
+													Signing out...
+												</>
+											) : (
+												<>
+													<LogOut size={20} />
+													Sign out
+												</>
+											)}
 										</button>
 									</SheetClose>
 								</>

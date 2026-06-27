@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { Session } from 'next-auth';
+
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -6,22 +8,27 @@ import {
 	DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Session } from 'next-auth';
-import { signOut } from 'next-auth/react';
 
-import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import { SignOutProps } from '@/types';
 
-const DropdownMenuDeskTop = ({
-	session,
-	userInfo,
-}: {
+import { User, Loader2, LogOut } from 'lucide-react';
+
+type Props = SignOutProps & {
 	session: Session | null;
 	userInfo: {
 		name: string | null;
 		image: string | null;
 	} | null;
-}) => {
+};
+
+
+const DropdownMenuDeskTop = ({
+	session,
+	userInfo,
+	isSigningOut,
+	onSignOut,
+}: Props) => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -73,15 +80,24 @@ const DropdownMenuDeskTop = ({
 				>
 					<Link href='/members/edit'>Edit Profile</Link>
 				</DropdownMenuItem>
+				{/* SignOut */}
 				<DropdownMenuItem
-					onClick={() =>
-						signOut({
-							callbackUrl: '/login',
-						})
-					}
+					onClick={onSignOut}
+					disabled={isSigningOut}
 					className='cursor-pointer text-red-400 hover:bg-red-500/10 transition'
 				>
-					Sign out
+					{isSigningOut ? (
+						<>
+							<Loader2 className='mr-2 h-4 w-4 animate-spin' />{' '}
+							<LogOut size={20} />
+							Signing out...
+						</>
+					) : (
+						<>
+							<LogOut size={20} />
+							Sign out
+						</>
+					)}
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

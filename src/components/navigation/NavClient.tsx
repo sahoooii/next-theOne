@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
-import { motion } from 'framer-motion';
+import { motion} from 'framer-motion';
+import { usePathname } from 'next/navigation';
+
+import { useSignOut } from '@/hooks/useSignOut';
 import { navLinks } from './navLinks';
 import MobileMenu from './MobileMenu';
 import DropdownMenuDeskTop from './DropdownMenuDeskTop';
@@ -23,6 +25,8 @@ const NavClient = ({
 		image: string | null;
 	} | null;
 }) => {
+	const { isSigningOut, handleSignOut } = useSignOut();
+
 	const pathname = usePathname();
 
 	// Filter by auth
@@ -128,11 +132,21 @@ const NavClient = ({
 							</Link>
 						</>
 					) : (
-						<DropdownMenuDeskTop session={session} userInfo={userInfo} />
+						<DropdownMenuDeskTop
+							session={session}
+							userInfo={userInfo}
+							isSigningOut={isSigningOut}
+							onSignOut={handleSignOut}
+						/>
 					)}
 				</div>
 				{/* Mobile hamburger menuー */}
-				<MobileMenu session={session} userInfo={userInfo} />
+				<MobileMenu
+					session={session}
+					userInfo={userInfo}
+					isSigningOut={isSigningOut}
+					onSignOut={handleSignOut}
+				/>
 			</div>
 		</nav>
 	);
