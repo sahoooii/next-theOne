@@ -43,3 +43,8 @@ export type ConversationDto = {
 
 	hasUnread: boolean; //Manage unread message
 };
+
+export type SignOutProps = {
+  isSigningOut: boolean;
+  onSignOut: () => Promise<void>;
+};
