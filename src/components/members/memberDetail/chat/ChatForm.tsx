@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
 
-import { MessageDto } from '@/types';
+import { ChatMessage } from '@/types';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import { createMessage, deleteMessage } from '@/app/actions/messageActions';
 
@@ -43,7 +43,7 @@ import ChatOptions from './ChatOptions';
 import { showToast } from '@/lib/toast';
 
 type Props = {
-	messages: MessageDto[];
+	messages: ChatMessage[];
 	currentUserId: string;
 };
 

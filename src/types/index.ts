@@ -20,7 +20,8 @@ export type MessageWithSenderRecipient = Prisma.MessageGetPayload<{
 	};
 }>;
 
-export type MessageDto = {
+// UI Model
+export type ChatMessage = {
 	id: string;
 	text: string;
 	created: Date;
@@ -33,6 +34,22 @@ export type MessageDto = {
 	recipientImage?: string | null;
 };
 
+// For pusher Date -> string
+// Pusherを流れる通信データ(JSON)の型
+export type MessagePayload = {
+	id: string;
+	text: string;
+	created: string;
+	dateRead: string | null;
+	senderId: string | null;
+	senderName: string;
+	senderImage?: string | null;
+	recipientId: string | null;
+	recipientName: string;
+	recipientImage?: string | null;
+};
+
+// Data Transfer Object
 export type ConversationDto = {
 	userId: string;
 	name: string;
