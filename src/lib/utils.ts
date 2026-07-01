@@ -50,7 +50,7 @@ export function formatConversationDate(date: Date) {
 export function handleFormServerErrors<T extends FieldValues>(
 	error: Record<string, string> | string, //{[key: string]: string}
 	setError: UseFormSetError<T>, //React Hook Form専用型
-):string | null {
+): string | null {
 	if (typeof error === 'string') {
 		return error;
 	} else {
@@ -62,4 +62,8 @@ export function handleFormServerErrors<T extends FieldValues>(
 		});
 		return null;
 	}
+}
+
+export function createChatId(a: string, b: string) {
+	return a > b ? `${b}-${a}` : `${a}-${b}`;
 }

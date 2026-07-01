@@ -1,6 +1,7 @@
-import { MessageWithSenderRecipient } from '@/types';
+import { ChatMessage, MessagePayload, MessageWithSenderRecipient } from '@/types';
 
-export function mapMessageToMessageDto(message: MessageWithSenderRecipient) {
+// Convert Prisma Message to ChatMessage for UI
+export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
 	return {
 		id: message.id,
 		text: message.text,
@@ -15,3 +16,39 @@ export function mapMessageToMessageDto(message: MessageWithSenderRecipient) {
 	};
 }
 
+// string-> Date
+// Convert Pusher payload (JSON) to ChatMessage by restoring Date objects
+export function mapMessagePayloadToChatMessage(
+	message: MessagePayload,
+): ChatMessage {
+	return {
+		...message,
+		created: new Date(message.created),
+		dateRead: message.dateRead ? new Date(message.dateRead) : null,
+	};
+}
+
+// Prisma Message
+// (created: Date)
+//         │
+//         ▼
+// mapMessageToChatMessage()
+//         │
+//         ▼
+// ChatMessage (UI)
+// (created: Date)
+//         │
+//         ├── Server Action → そのままUIへ
+//         │
+//         └── Pusher
+//               │
+//               ▼
+//         MessagePayload (JSON)
+//         (created: string)
+//               │
+//               ▼
+// mapMessagePayloadToChatMessage()
+//               │
+//               ▼
+// ChatMessage (UI)
+// (created: Date)

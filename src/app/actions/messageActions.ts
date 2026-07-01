@@ -1,16 +1,36 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { Message } from '@prisma/client';
-import { ActionResult, ConversationDto } from '@/types';
+import { ActionResult, ChatMessage, ConversationDto } from '@/types';
 import { getAuthUserId } from './authActions';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-import { mapMessageToMessageDto } from '@/lib/mappings';
+import { mapMessageToChatMessage } from '@/lib/mappings';
+
+const messageSelect = {
+	id: true,
+	text: true,
+	created: true,
+	dateRead: true,
+	sender: {
+		select: {
+			userId: true,
+			name: true,
+			image: true,
+		},
+	},
+	recipient: {
+		select: {
+			userId: true,
+			name: true,
+			image: true,
+		},
+	},
+};
 
 export async function createMessage(
 	recipientUserId: string,
 	data: MessageSchema,
-): Promise<ActionResult<Message>> {
+): Promise<ActionResult<ChatMessage>> {
 	try {
 		const userId = await getAuthUserId();
 
@@ -35,8 +55,12 @@ export async function createMessage(
 				recipientId: recipientUserId,
 				senderId: userId,
 			},
+			select: messageSelect,
 		});
-		return { status: 'success', data: message };
+
+		const chatMessage = mapMessageToChatMessage(message);
+
+		return { status: 'success', data: chatMessage };
 	} catch (error) {
 		console.log(error);
 
@@ -65,26 +89,7 @@ export async function getMessageThread(recipientId: string) {
 			orderBy: {
 				created: 'asc',
 			},
-			select: {
-				id: true,
-				text: true,
-				created: true,
-				dateRead: true,
-				sender: {
-					select: {
-						userId: true,
-						name: true,
-						image: true,
-					},
-				},
-				recipient: {
-					select: {
-						userId: true,
-						name: true,
-						image: true,
-					},
-				},
-			},
+			select: messageSelect,
 		});
 
 		// Add Date at date Read, when open up chat conversation
@@ -100,7 +105,7 @@ export async function getMessageThread(recipientId: string) {
 			data: { dateRead: new Date() },
 		});
 
-		return messages.map((message) => mapMessageToMessageDto(message));
+		return messages.map((message) => mapMessageToChatMessage(message));
 	} catch (error) {
 		console.log(error);
 		throw error;
@@ -120,26 +125,7 @@ export async function getConversationsList() {
 			orderBy: {
 				created: 'desc',
 			},
-			select: {
-				id: true,
-				text: true,
-				created: true,
-				dateRead: true,
-				sender: {
-					select: {
-						userId: true,
-						name: true,
-						image: true,
-					},
-				},
-				recipient: {
-					select: {
-						userId: true,
-						name: true,
-						image: true,
-					},
-				},
-			},
+			select: messageSelect,
 		});
 
 		// Map: Prevent set duplicate user

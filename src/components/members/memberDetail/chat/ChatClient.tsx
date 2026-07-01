@@ -1,10 +1,10 @@
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import ChatForm from './ChatForm';
-import { MessageDto } from '@/types';
+import { ChatMessage } from '@/types';
 
 type Props = {
-	messages: MessageDto[];
+	messages: ChatMessage[];
 	currentUserId: string;
 }
 
