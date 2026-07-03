@@ -1,15 +1,18 @@
-import PusherClient from 'pusher-js';
+import Pusher from 'pusher-js';
 
-const globalForPusherClient = globalThis as typeof globalThis & {
-	pusherClient?: PusherClient;
-};
+// Lazy Initialization（遅延初期化）
+let client: Pusher | null = null;
 
-export const pusherClient =
-	globalForPusherClient.pusherClient ??
-	new PusherClient(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-		cluster: 'ap3',
-	});
+export function getPusherClient() {
+	if (!client) {
+		client = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+			cluster: 'ap3',
+		});
 
-if (process.env.NODE_ENV !== 'production') {
-	globalForPusherClient.pusherClient = pusherClient;
+		client.connection.bind('connected', () => {
+			console.log('Connected');
+		});
+	}
+
+	return client;
 }

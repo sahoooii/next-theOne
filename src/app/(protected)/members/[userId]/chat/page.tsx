@@ -5,6 +5,7 @@ import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';
 import ChatSkeleton from '@/components/members/memberDetail/skeleton/ChatSkeleton';
 import ChatClient from '@/components/members/memberDetail/chat/ChatClient';
+import { createChatId } from '@/lib/utils';
 
 const ChatPage = async ({
 	params,
@@ -13,12 +14,17 @@ const ChatPage = async ({
 }) => {
 	const { userId } = await params;
 	const messages = await getMessageThread(userId);
-
 	const currentUserId = await getAuthUserId();
+
+	const chatId = createChatId(userId, currentUserId);
 
 	return (
 		<Suspense fallback={<ChatSkeleton />}>
-			<ChatClient messages={messages} currentUserId={currentUserId} />
+			<ChatClient
+				messages={messages}
+				currentUserId={currentUserId}
+				chatId={chatId}
+			/>
 		</Suspense>
 	);
 };
