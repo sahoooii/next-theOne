@@ -41,13 +41,31 @@ import {
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 import ChatOptions from './ChatOptions';
 import { showToast } from '@/lib/toast';
+import { getPusherClient } from '@/lib/pusher/client';
 
 type Props = {
 	messages: ChatMessage[];
 	currentUserId: string;
+	chatId: string;
 };
 
-const ChatForm = ({ messages, currentUserId }: Props) => {
+const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
+	useEffect(() => {
+		// Manage channel
+		const pusher = getPusherClient();
+		// Manage event
+		const channel = pusher.subscribe(chatId);
+
+		channel.bind('message:new', () => {
+			// TODO
+		});
+
+		return () => {
+			channel.unbind('message:new');
+			pusher.unsubscribe(chatId);
+		};
+	}, [chatId]);
+
 	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
 		null,

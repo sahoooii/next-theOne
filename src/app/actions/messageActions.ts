@@ -4,7 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { ActionResult, ChatMessage, ConversationDto } from '@/types';
 import { getAuthUserId } from './authActions';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-import { mapMessageToChatMessage } from '@/lib/mappings';
+import { mapChatMessageToPayload, mapMessageToChatMessage } from '@/lib/mappings';
+import { pusherServer } from '@/lib/pusher/server';
+import { createChatId } from '@/lib/utils';
 
 const messageSelect = {
 	id: true,
@@ -58,7 +60,17 @@ export async function createMessage(
 			select: messageSelect,
 		});
 
+		// Convert Prisma Message to ChatMessage for UI
 		const chatMessage = mapMessageToChatMessage(message);
+
+		// Convert to Date -> string for pusher
+		const payload = mapChatMessageToPayload(chatMessage);
+
+		await pusherServer.trigger(
+			createChatId(userId, recipientUserId),
+			'message:new',
+			payload,
+		);
 
 		return { status: 'success', data: chatMessage };
 	} catch (error) {

@@ -16,6 +16,15 @@ export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
 	};
 }
 
+// UIで使うDate型を、通信できるJSON型へ変換するMapper
+export function mapChatMessageToPayload(message: ChatMessage): MessagePayload {
+	return {
+		...message,
+		created: message.created.toISOString(),
+		dateRead: message.dateRead ? message.dateRead.toISOString() : null,
+	};
+}
+
 // string-> Date
 // Convert Pusher payload (JSON) to ChatMessage by restoring Date objects
 export function mapMessagePayloadToChatMessage(
