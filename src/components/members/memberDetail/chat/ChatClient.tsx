@@ -2,16 +2,16 @@
 
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import ChatForm from './ChatForm';
 import { ChatMessage } from '@/types';
+import ChatRoom from './ChatRoom';
 
 type Props = {
-	messages: ChatMessage[];
+	initialMessages: ChatMessage[];
 	currentUserId: string;
 	chatId: string;
 };
 
-const ChatClient = ({ messages, currentUserId, chatId }: Props) => {
+const ChatClient = ({ initialMessages, currentUserId, chatId }: Props) => {
 	return (
 		<Card
 			className='
@@ -25,8 +25,8 @@ const ChatClient = ({ messages, currentUserId, chatId }: Props) => {
 			{/* Header */}
 			<MemberDetailPageHeader title='Chat' />
 			{/* Chat contents */}
-			<ChatForm
-				messages={messages}
+			<ChatRoom
+				initialMessages={initialMessages}
 				currentUserId={currentUserId}
 				chatId={chatId}
 			/>

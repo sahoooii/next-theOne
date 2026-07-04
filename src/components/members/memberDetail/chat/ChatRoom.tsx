@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
 import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
 
-import { ChatMessage } from '@/types';
+import { ChatMessage, MessagePayload } from '@/types';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import { createMessage, deleteMessage } from '@/app/actions/messageActions';
 
@@ -42,29 +42,47 @@ import { transformImageUrl } from '@/lib/transFormImageUrl';
 import ChatOptions from './ChatOptions';
 import { showToast } from '@/lib/toast';
 import { getPusherClient } from '@/lib/pusher/client';
+import { mapMessagePayloadToChatMessage } from '@/lib/mappings';
 
 type Props = {
-	messages: ChatMessage[];
+	initialMessages: ChatMessage[];
 	currentUserId: string;
 	chatId: string;
 };
 
-const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
+const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
+	// 現在画面に表示している最新データ
+	const [chatMessages, setChatMessages] = useState(initialMessages);
+
+	// Message追加処理を共通化
+	const appendMessage = useCallback((message: ChatMessage) => {
+		setChatMessages((prev) => [...prev, message]);
+	}, []);
+
+	// 今受信した１件
+	const handleNewMessage = useCallback(
+		(payload: MessagePayload) => {
+			// Convert to UI string-> Date
+			const message = mapMessagePayloadToChatMessage(payload);
+
+			appendMessage(message);
+		},
+		[appendMessage],
+	);
+
 	useEffect(() => {
 		// Manage channel
 		const pusher = getPusherClient();
 		// Manage event
 		const channel = pusher.subscribe(chatId);
 
-		channel.bind('message:new', () => {
-			// TODO
-		});
+		channel.bind('message:new', handleNewMessage);
 
 		return () => {
-			channel.unbind('message:new');
+			channel.unbind('message:new', handleNewMessage);
 			pusher.unsubscribe(chatId);
 		};
-	}, [chatId]);
+	}, [chatId, handleNewMessage]);
 
 	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
@@ -91,7 +109,7 @@ const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
 		bottomRef.current?.scrollIntoView({
 			behavior: 'smooth',
 		});
-	}, [messages]);
+	}, [chatMessages]);
 
 	const form = useForm<MessageSchema>({
 		resolver: zodResolver(messageSchema),
@@ -112,7 +130,6 @@ const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
 			}
 		} else {
 			form.reset();
-			router.refresh();
 		}
 	};
 
@@ -146,7 +163,7 @@ const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
 			'
 			>
 				{/* Messages */}
-				{messages.length === 0 ? (
+				{chatMessages.length === 0 ? (
 					<div
 						className='
 					border-b
@@ -169,11 +186,11 @@ const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
 					p-6
 				'
 					>
-						{messages.map((message, index) => {
+						{chatMessages.map((message, index) => {
 							const isCurrentUser = message.senderId === currentUserId;
 
 							// If Double texting from sender
-							const previousMessage = messages[index - 1];
+							const previousMessage = chatMessages[index - 1];
 							// If not login user & not double texting and then show avatar
 							const showAvatar =
 								!isCurrentUser &&
@@ -454,4 +471,4 @@ const ChatForm = ({ messages, currentUserId, chatId }: Props) => {
 	);
 };
 
-export default ChatForm;
+export default ChatRoom;

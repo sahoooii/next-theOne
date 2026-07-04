@@ -21,7 +21,7 @@ const ChatPage = async ({
 	return (
 		<Suspense fallback={<ChatSkeleton />}>
 			<ChatClient
-				messages={messages}
+				initialMessages={messages}
 				currentUserId={currentUserId}
 				chatId={chatId}
 			/>
