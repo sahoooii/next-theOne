@@ -1,10 +1,13 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { ActionResult, ChatMessage, ConversationDto } from '@/types';
+import { ActionResult, ChatMessage, Conversation } from '@/types';
 import { getAuthUserId } from './authActions';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-import { mapChatMessageToPayload, mapMessageToChatMessage } from '@/lib/mappings';
+import {
+	mapChatMessageToPayload,
+	mapMessageToChatMessage,
+} from '@/lib/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
 import { createChatId } from '@/lib/utils';
 
@@ -124,7 +127,7 @@ export async function getMessageThread(recipientId: string) {
 	}
 }
 
-// ① Get all conversation(全メッセージ取得)s② Convert to list of conversation(会話一覧に変換)③ Get unread message info and add these(未読情報を付与)
+// ① Get all conversations(全メッセージ取得)② Convert to list of conversation(会話一覧に変換)③ Get unread message info and add these(未読情報を付与)
 export async function getConversationsList() {
 	try {
 		const userId = await getAuthUserId();
@@ -142,12 +145,12 @@ export async function getConversationsList() {
 
 		// Map: Prevent set duplicate user
 		// ex: Hannah,Hannah,Hannah,Amanda,Amanda→Hannah,Amanda
-		const conversationMap = new Map<string, ConversationDto>();
+		const conversationMap = new Map<string, Conversation>();
 
 		const unreadUsers = new Set<string>();
 
 		for (const message of messages) {
-			// nullの制御
+			// Control null, for Deleted User
 			if (!message.sender || !message.recipient) continue;
 
 			// Get conversation partner(会話相手の取得)
@@ -171,6 +174,7 @@ export async function getConversationsList() {
 					name: otherUser.name,
 					image: otherUser.image,
 					lastMessage: message.text,
+					lastMessageSenderId: message.sender.userId,
 					created: message.created,
 					dateRead: message.dateRead,
 					hasUnread: false, //Add later

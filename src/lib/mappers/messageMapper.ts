@@ -1,4 +1,4 @@
-import { ChatMessage, MessagePayload, MessageWithSenderRecipient } from '@/types';
+import { ChatMessage, Conversation, ConversationPayload, MessagePayload, MessageWithSenderRecipient } from '@/types';
 
 // Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
@@ -36,6 +36,21 @@ export function mapMessagePayloadToChatMessage(
 		dateRead: message.dateRead ? new Date(message.dateRead) : null,
 	};
 }
+
+// Date -> string
+// Convert Date objects to string for Pusher payload (JSON)
+export function mapConversationToPayload(
+	conversation: Conversation,
+): ConversationPayload {
+	return {
+		...conversation,
+		created: conversation.created.toISOString(),
+		dateRead: conversation.dateRead
+			? conversation.dateRead.toISOString()
+			: null,
+	};
+}
+
 
 // Prisma Message
 // (created: Date)

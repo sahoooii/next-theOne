@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { ConversationDto } from '@/types';
+import { Conversation } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 import { formatConversationDate } from '@/lib/utils';
 
 type Props = {
-	conversation: ConversationDto;
+	conversation: Conversation;
 };
 
 const ConversationCard = ({ conversation }: Props) => {
