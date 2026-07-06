@@ -1,10 +1,10 @@
-import { ConversationDto } from '@/types';
+import { Conversation } from '@/types';
 import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 
 type Props = {
-	conversations: ConversationDto[];
+	conversations: Conversation[];
 };
 
 const ConversationList = ({ conversations }: Props) => {

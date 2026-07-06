@@ -49,16 +49,26 @@ export type MessagePayload = {
 	recipientImage?: string | null;
 };
 
-// Data Transfer Object
-export type ConversationDto = {
+// UI Model
+export type Conversation = {
 	userId: string;
 	name: string;
 	image: string | null;
 	lastMessage: string;
+	lastMessageSenderId: string;
 	created: Date;
 	dateRead: Date | null;
-
 	hasUnread: boolean; //Manage unread message
+};
+
+// 通信で更新したいもの
+export type ConversationPayload = {
+	userId: string;
+	lastMessage: string;
+	lastMessageSenderId: string;
+	created: string;
+	dateRead: string | null;
+	hasUnread: boolean;
 };
 
 export type SignOutProps = {
