@@ -8,7 +8,7 @@ import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import { createUserChannel } from '@/lib/utils';
-import { mapConversationPayloadToConversation, mapConversationToPayload } from '@/lib/mappers/messageMapper';
+import { mapConversationPayloadToConversation } from '@/lib/mappers/messageMapper';
 
 type Props = {
 	conversations: Conversation[];
