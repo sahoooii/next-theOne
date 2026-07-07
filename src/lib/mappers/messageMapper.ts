@@ -1,4 +1,10 @@
-import { ChatMessage, Conversation, ConversationPayload, MessagePayload, MessageWithSenderRecipient } from '@/types';
+import {
+	ChatMessage,
+	Conversation,
+	ConversationPayload,
+	MessagePayload,
+	MessageWithSenderRecipient,
+} from '@/types';
 
 // Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
@@ -51,6 +57,16 @@ export function mapConversationToPayload(
 	};
 }
 
+// string-> Date
+export function mapConversationPayloadToConversation(
+	conversation: ConversationPayload,
+): Conversation {
+	return {
+		...conversation,
+		created: new Date(conversation.created),
+		dateRead: conversation.dateRead ? new Date(conversation.dateRead) : null,
+	};
+}
 
 // Prisma Message
 // (created: Date)

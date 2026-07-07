@@ -6,10 +6,11 @@ import { getAuthUserId } from './authActions';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import {
 	mapChatMessageToPayload,
+	mapConversationToPayload,
 	mapMessageToChatMessage,
 } from '@/lib/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
-import { createChatId } from '@/lib/utils';
+import { createChatId, createUserChannel } from '@/lib/utils';
 
 const messageSelect = {
 	id: true,
@@ -67,12 +68,74 @@ export async function createMessage(
 		const chatMessage = mapMessageToChatMessage(message);
 
 		// Convert to Date -> string for pusher
-		const payload = mapChatMessageToPayload(chatMessage);
+		const chatPayload = mapChatMessageToPayload(chatMessage);
 
+		// Chat room
 		await pusherServer.trigger(
 			createChatId(userId, recipientUserId),
 			'message:new',
-			payload,
+			chatPayload,
+		);
+
+		// Conversation List Sender: userId: conversation partner
+		const senderConversationPartner = {
+			userId: chatMessage.recipientId!,
+			name: chatMessage.recipientName,
+			image: chatMessage.recipientImage,
+		};
+
+		// Create conversation UI
+		const senderConversation: Conversation = {
+			userId: senderConversationPartner.userId,
+			name: senderConversationPartner.name,
+			image: senderConversationPartner.image ?? null,
+			lastMessage: chatMessage.text,
+			lastMessageSenderId: chatMessage.senderId!,
+			created: chatMessage.created,
+			dateRead: chatMessage.dateRead,
+			hasUnread: false,
+		};
+
+		// Covert to Date -> string
+		const senderConversationPayload =
+			mapConversationToPayload(senderConversation);
+
+		// Conversation list　sender side 通知先
+		await pusherServer.trigger(
+			createUserChannel(userId),
+			'conversation:update',
+			senderConversationPayload,
+		);
+
+		// Conversation List Recipient: conversation partner
+		const recipientConversationPartner = {
+			userId: chatMessage.senderId!,
+			name: chatMessage.senderName,
+			image: chatMessage.senderImage,
+		};
+
+		const recipientConversation: Conversation = {
+			userId: recipientConversationPartner.userId,
+			name: recipientConversationPartner.name,
+			image: recipientConversationPartner.image ?? null,
+			lastMessage: chatMessage.text,
+			lastMessageSenderId: chatMessage.senderId!,
+			created: chatMessage.created,
+			dateRead: chatMessage.dateRead,
+			hasUnread: true,
+		};
+
+		// Covert to Date -> string
+		const recipientConversationPayload = mapConversationToPayload(
+			recipientConversation,
+		);
+
+		// Conversation list　recipient side
+		// Trigger recipient user's conversation list
+		await pusherServer.trigger(
+			createUserChannel(recipientUserId),
+			'conversation:update',
+			recipientConversationPayload,
 		);
 
 		return { status: 'success', data: chatMessage };
