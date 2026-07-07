@@ -51,7 +51,7 @@ export type MessagePayload = {
 
 // UI Model
 export type Conversation = {
-	userId: string;
+	userId: string; //userId here means "conversation partner", not the channel owner.
 	name: string;
 	image: string | null;
 	lastMessage: string;
@@ -64,6 +64,8 @@ export type Conversation = {
 // 通信で更新したいもの
 export type ConversationPayload = {
 	userId: string;
+	name: string;
+	image: string | null;
 	lastMessage: string;
 	lastMessageSenderId: string;
 	created: string;
