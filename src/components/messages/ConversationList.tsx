@@ -20,13 +20,15 @@ const ConversationList = ({ conversations, currentUserId }: Props) => {
 
 	// Conversationを1件受け取り、Stateを更新する
 	const updateConversation = (conversation: Conversation) => {
+		// prev=今画面に表示されているConversation一覧
 		setConversationList((prev) => {
-			// 古いConversationを取り除く
+			// 古いConversationを取り除くex: Bob, Amanda, Chris, Bob -> Amanda, Chris
 			const filtered = prev.filter(
 				(item) => item.userId !== conversation.userId,
 			);
-			console.log(filtered);
-			return prev;
+
+			//  New Bob + Amanda, Chris
+			return [conversation, ...filtered];
 		});
 	};
 
@@ -40,8 +42,6 @@ const ConversationList = ({ conversations, currentUserId }: Props) => {
 		channel.bind('conversation:update', (payload: ConversationPayload) => {
 			const conversation = mapConversationPayloadToConversation(payload);
 
-			console.log(conversation);
-
 			updateConversation(conversation);
 		});
 
@@ -49,7 +49,7 @@ const ConversationList = ({ conversations, currentUserId }: Props) => {
 			channel.unbind('conversation:update');
 			pusher.unsubscribe(createUserChannel(currentUserId));
 		};
-	}, []);
+	}, [currentUserId]);
 
 	return (
 		<div className='flex justify-center px-4'>
