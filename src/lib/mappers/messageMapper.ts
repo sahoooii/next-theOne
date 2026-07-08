@@ -1,10 +1,6 @@
-import {
-	ChatMessage,
-	Conversation,
-	ConversationPayload,
-	MessagePayload,
-	MessageWithSenderRecipient,
-} from '@/types';
+import { Conversation, ConversationPayload } from '@/types/conversations';
+import { ChatMessage, MessagePayload } from '@/types/messages';
+import { MessageWithSenderRecipient } from '@/types/prisma';
 
 // Chat room: Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {

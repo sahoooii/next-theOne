@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Conversation, ConversationPayload } from '@/types';
 import { getPusherClient } from '@/lib/pusher/client';
+
+import { Conversation, ConversationPayload } from '@/types/conversations';
 
 import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';

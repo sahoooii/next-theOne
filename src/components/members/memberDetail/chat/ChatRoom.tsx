@@ -7,7 +7,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
 
-import { ChatMessage, MessagePayload } from '@/types';
+import { ChatMessage, MessagePayload } from '@/types/messages';
+
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import { createMessage, deleteMessage } from '@/app/actions/messageActions';
 
@@ -21,7 +22,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
 import {
 	AlertDialog,
 	AlertDialogAction,

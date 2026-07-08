@@ -1,8 +1,11 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { ActionResult, ChatMessage, Conversation } from '@/types';
 import { getAuthUserId } from './authActions';
+
+import { ActionResult } from '@/types';
+import { ChatMessage } from '@/types/messages';
+import { Conversation } from '@/types/conversations';
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import {
 	mapChatMessageToPayload,
