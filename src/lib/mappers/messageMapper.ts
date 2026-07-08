@@ -6,7 +6,7 @@ import {
 	MessageWithSenderRecipient,
 } from '@/types';
 
-// Convert Prisma Message to ChatMessage for UI
+// Chat room: Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
 	return {
 		id: message.id,
@@ -22,7 +22,7 @@ export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
 	};
 }
 
-// UIで使うDate型を、通信できるJSON型へ変換するMapper
+// Chat room: UIで使うDate型を、通信できるJSON型へ変換するMapper
 export function mapChatMessageToPayload(message: ChatMessage): MessagePayload {
 	return {
 		...message,
@@ -31,7 +31,7 @@ export function mapChatMessageToPayload(message: ChatMessage): MessagePayload {
 	};
 }
 
-// string-> Date
+// Chat room: string-> Date
 // Convert Pusher payload (JSON) to ChatMessage by restoring Date objects
 export function mapMessagePayloadToChatMessage(
 	message: MessagePayload,
@@ -43,7 +43,7 @@ export function mapMessagePayloadToChatMessage(
 	};
 }
 
-// Date -> string
+// Conversation list: Date -> string
 // Convert Date objects to string for Pusher payload (JSON)
 export function mapConversationToPayload(
 	conversation: Conversation,
@@ -57,7 +57,7 @@ export function mapConversationToPayload(
 	};
 }
 
-// string-> Date
+// Conversation list: string(通信)-> Date(UI)
 export function mapConversationPayloadToConversation(
 	conversation: ConversationPayload,
 ): Conversation {

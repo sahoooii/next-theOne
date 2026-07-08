@@ -61,7 +61,7 @@ export type Conversation = {
 	hasUnread: boolean; //Manage unread message
 };
 
-// 通信で更新したいもの
+// 通信で更新したいもの pusher
 export type ConversationPayload = {
 	userId: string;
 	name: string;
