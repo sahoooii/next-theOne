@@ -3,11 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
 
-import { ChatMessage, MessagePayload } from '@/types/messages';
+import {
+	ChatMessage,
+	MessageDeletePayload,
+	MessagePayload,
+} from '@/types/messages';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import { createMessage, deleteMessage } from '@/app/actions/messageActions';
@@ -51,6 +55,8 @@ type Props = {
 };
 
 const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
+	const params = useParams<{ userId: string }>();
+
 	// 現在画面に表示している最新データ
 	const [chatMessages, setChatMessages] = useState(initialMessages);
 
@@ -70,23 +76,23 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 		[appendMessage],
 	);
 
-	useEffect(() => {
-		// Manage channel
-		const pusher = getPusherClient();
-		// Manage event
-		const channel = pusher.subscribe(chatId);
-
-		channel.bind('message:new', handleNewMessage);
-
-		return () => {
-			channel.unbind('message:new', handleNewMessage);
-			pusher.unsubscribe(chatId);
-		};
-	}, [chatId, handleNewMessage]);
-
 	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
+	// 今、削除しようとしているメッセージはどれか管理する
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
 		null,
+	);
+
+	const removeMessage = useCallback((messageId: string) => {
+		setChatMessages((prev) =>
+			prev.filter((message) => message.id !== messageId),
+		);
+	}, []);
+
+	const handleDeleteMessage = useCallback(
+		(payload: MessageDeletePayload) => {
+			removeMessage(payload.messageId);
+		},
+		[removeMessage],
 	);
 
 	// Delete message action
@@ -95,12 +101,26 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 
 		await deleteMessage(selectedMessageId);
 		setSelectedMessageId(null);
-
-		router.refresh();
 	};
 
-	const router = useRouter();
-	const params = useParams<{ userId: string }>();
+	useEffect(() => {
+		// Manage channel
+		const pusher = getPusherClient();
+		// Manage event
+		const channel = pusher.subscribe(chatId);
+
+		// Create message
+		channel.bind('message:new', handleNewMessage);
+		// Delete message
+		channel.bind('message:delete', handleDeleteMessage);
+
+		return () => {
+			channel.unbind('message:new', handleNewMessage);
+			channel.unbind('message:delete', handleDeleteMessage);
+
+			pusher.unsubscribe(chatId);
+		};
+	}, [chatId, handleNewMessage, handleDeleteMessage]);
 
 	// Auto scroll to see the latest message
 	const bottomRef = useRef<HTMLDivElement>(null);

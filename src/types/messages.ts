@@ -34,3 +34,7 @@ export type MessagePayload = {
 	recipientName: string;
 	recipientImage?: string | null;
 };
+
+export type MessageDeletePayload = {
+	messageId: string;
+};

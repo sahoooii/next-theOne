@@ -11,9 +11,10 @@ import {
 	mapChatMessageToPayload,
 	mapConversationToPayload,
 	mapMessageToChatMessage,
+	mapMessageToDeletePayload,
 } from '@/lib/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
-import { createChatId, createUserChannel } from '@/lib/utils';
+import { createChatId, createUserChannel } from '@/lib/pusher/channels';
 
 const messageSelect = {
 	id: true,
@@ -263,12 +264,31 @@ export async function deleteMessage(messageId: string) {
 	try {
 		const userId = await getAuthUserId();
 
-		await prisma.message.deleteMany({
+		const message = await prisma.message.findUnique({
 			where: {
 				id: messageId,
-				senderId: userId,
 			},
 		});
+
+		if (!message) throw new Error('Message not found');
+
+		if (message.senderId !== userId) throw new Error('Unauthorized');
+
+		if (!message.senderId || !message.recipientId) {
+			throw new Error('Invalid message');
+		}
+
+		const chatId = createChatId(message.senderId, message.recipientId);
+
+		await prisma.message.delete({
+			where: {
+				id: messageId,
+			},
+		});
+
+		const payload = mapMessageToDeletePayload(messageId);
+
+		await pusherServer.trigger(chatId, 'message:delete', payload);
 	} catch (error) {
 		console.log(error);
 		throw error;
