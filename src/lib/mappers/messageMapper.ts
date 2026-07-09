@@ -1,10 +1,10 @@
+import { Conversation, ConversationPayload } from '@/types/conversations';
 import {
 	ChatMessage,
-	Conversation,
-	ConversationPayload,
+	MessageDeletePayload,
 	MessagePayload,
-	MessageWithSenderRecipient,
-} from '@/types';
+} from '@/types/messages';
+import { MessageWithSenderRecipient } from '@/types/prisma';
 
 // Chat room: Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
@@ -41,6 +41,13 @@ export function mapMessagePayloadToChatMessage(
 		created: new Date(message.created),
 		dateRead: message.dateRead ? new Date(message.dateRead) : null,
 	};
+}
+
+// For delete message at Chat room
+export function mapMessageToDeletePayload(
+	messageId: string,
+): MessageDeletePayload {
+	return { messageId };
 }
 
 // Conversation list: Date -> string

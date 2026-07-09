@@ -1,8 +1,8 @@
 'use client';
 
+import { ChatMessage } from '@/types/messages';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { ChatMessage } from '@/types';
 import ChatRoom from './ChatRoom';
 
 type Props = {

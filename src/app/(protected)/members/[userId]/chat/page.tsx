@@ -5,7 +5,7 @@ import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';
 import ChatSkeleton from '@/components/members/memberDetail/skeleton/ChatSkeleton';
 import ChatClient from '@/components/members/memberDetail/chat/ChatClient';
-import { createChatId } from '@/lib/utils';
+import { createChatId } from '@/lib/pusher/channels';
 
 const ChatPage = async ({
 	params,
