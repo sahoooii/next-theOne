@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Conversation } from '@/types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Conversation } from '@/types/conversations';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 import { formatConversationDate } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type Props = {
 	conversation: Conversation;
