@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { messageSelect } from '@/utils/conversations/memberSelect';
 
 // Note: For chat room aka members/[userId]/chat
 
@@ -16,4 +17,8 @@ export type MessageWithSenderRecipient = Prisma.MessageGetPayload<{
 			select: { userId: true; name: true; image: true };
 		};
 	};
+}>;
+
+export type ConversationMessage = Prisma.MessageGetPayload<{
+	select: typeof messageSelect;
 }>;
