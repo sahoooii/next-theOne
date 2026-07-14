@@ -17,8 +17,13 @@ import {
 } from '@/lib/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
 import { createChatId, createUserChannel } from '@/lib/pusher/channels';
+import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
+
 import { messageSelect } from '@/utils/conversations/memberSelect';
-import { buildConversation } from '@/utils/conversations/buildConversation';
+import {
+	buildConversation,
+	getConversation,
+} from '@/utils/conversations/buildConversation';
 
 export async function createMessage(
 	recipientUserId: string,
@@ -204,6 +209,7 @@ export async function deleteMessage(messageId: string) {
 	try {
 		const userId = await getAuthUserId();
 
+		// 削除された1件のメッセージ
 		const message = await prisma.message.findUnique({
 			where: {
 				id: messageId,
@@ -226,9 +232,58 @@ export async function deleteMessage(messageId: string) {
 			},
 		});
 
-		const payload = mapMessageToDeletePayload(messageId);
+		// 削除されたメッセージから、このチャットの参加者（送信者・受信者）を特定し、その2人の会話履歴だけを取得する
+		const messages = await prisma.message.findMany({
+			where: {
+				OR: [
+					{
+						senderId: message.senderId,
+						recipientId: message.recipientId,
+					},
+					{
+						senderId: message.recipientId,
+						recipientId: message.senderId,
+					},
+				],
+			},
+			orderBy: {
+				created: 'desc',
+			},
+			select: messageSelect,
+		});
 
-		await pusherServer.trigger(chatId, 'message:delete', payload);
+		// Sender side
+		const senderConversation = getConversation(
+			messages,
+			message.senderId,
+			message.recipientId,
+		);
+
+		// Recipient side
+		const recipientConversation = getConversation(
+			messages,
+			message.recipientId,
+			message.senderId,
+		);
+
+		// Sender side
+		await notifyConversationUpdate(
+			message.senderId,
+			message.recipientId,
+			senderConversation,
+		);
+
+		// Recipient side
+		await notifyConversationUpdate(
+			message.recipientId,
+			message.senderId,
+			recipientConversation,
+		);
+
+		// For Chat room
+		const chatRoomPayload = mapMessageToDeletePayload(messageId);
+
+		await pusherServer.trigger(chatId, 'message:delete', chatRoomPayload);
 	} catch (error) {
 		console.log(error);
 		throw error;

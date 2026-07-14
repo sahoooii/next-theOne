@@ -54,3 +54,16 @@ export function buildConversation(
 		hasUnread: unreadUsers.has(conversation.userId),
 	}));
 }
+
+// Message一覧からConversation一覧を組み立てた中から1件取得する
+export function getConversation(
+	messages: ConversationMessage[],
+	ownerUserId: string,
+	partnerUserId: string,
+): Conversation | undefined {
+	// messages(Message[]) -> Conversation[]
+	const conversations = buildConversation(messages, ownerUserId);
+
+	// 更新すべきConversationを1件取得
+	return conversations.find((c) => c.userId === partnerUserId);
+}
