@@ -29,3 +29,8 @@ export type ConversationPayload = {
 	dateRead: string | null;
 	hasUnread: boolean;
 };
+
+// Conversationがゼロになったとき（最後の会話が消された時）
+export type ConversationDeletePayload = {
+	userId: string;
+};

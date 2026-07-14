@@ -1,4 +1,8 @@
-import { Conversation, ConversationPayload } from '@/types/conversations';
+import {
+	Conversation,
+	ConversationDeletePayload,
+	ConversationPayload,
+} from '@/types/conversations';
 import {
 	ChatMessage,
 	MessageDeletePayload,
@@ -73,6 +77,14 @@ export function mapConversationPayloadToConversation(
 		created: new Date(conversation.created),
 		dateRead: conversation.dateRead ? new Date(conversation.dateRead) : null,
 	};
+}
+
+// For delete message at Conversation list
+// userId = ConversationListから消す相手
+export function mapConversationToDeletePayload(
+	userId: string,
+): ConversationDeletePayload {
+	return { userId };
 }
 
 // Prisma Message
