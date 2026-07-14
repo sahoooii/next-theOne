@@ -1,9 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getPusherClient } from '@/lib/pusher/client';
 
-import { Conversation, ConversationPayload } from '@/types/conversations';
+import {
+	Conversation,
+	ConversationDeletePayload,
+	ConversationPayload,
+} from '@/types/conversations';
 
 import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';
@@ -19,20 +23,45 @@ type Props = {
 const ConversationList = ({ conversations, currentUserId }: Props) => {
 	const [conversationList, setConversationList] = useState(conversations);
 
-	// Conversationを1件受け取り、Stateを更新する
-	const updateConversation = (conversation: Conversation) => {
+	// UI更新担当: Conversationを1件受け取り、Stateを更新する
+	const updateConversation = useCallback((conversation: Conversation) => {
 		// prev=今画面に表示されているConversation一覧
 		setConversationList((prev) => {
 			// 古いConversationを取り除くex: Bob, Amanda, Chris, Bob -> Amanda, Chris
 			const filtered = prev.filter(
 				(item) => item.userId !== conversation.userId,
 			);
-
 			//  New Bob + Amanda, Chris
 			return [conversation, ...filtered];
 		});
-	};
+	}, []);
 
+	// For event: Pusher Payload → Conversationへ変換 → updateConversation()
+	const handleConversationUpdate = useCallback(
+		(payload: ConversationPayload) => {
+			const conversation = mapConversationPayloadToConversation(payload);
+
+			updateConversation(conversation);
+		},
+		[updateConversation],
+	);
+
+	// UI更新担当: partnerUserId → Conversationを削除 → State更新
+	const removeConversation = useCallback((partnerUserId: string) => {
+		setConversationList((prev) =>
+			prev.filter((item) => item.userId !== partnerUserId),
+		);
+	}, []);
+
+	// For event: Payload → removeConversation()
+	const handleConversationDelete = useCallback(
+		(payload: ConversationDeletePayload) => {
+			removeConversation(payload.userId);
+		},
+		[removeConversation],
+	);
+
+	// Pusherへイベントを登録・解除
 	useEffect(() => {
 		// Manage channel
 		const pusher = getPusherClient();
@@ -40,17 +69,18 @@ const ConversationList = ({ conversations, currentUserId }: Props) => {
 		// Manage event
 		const channel = pusher.subscribe(createUserChannel(currentUserId));
 
-		channel.bind('conversation:update', (payload: ConversationPayload) => {
-			const conversation = mapConversationPayloadToConversation(payload);
+		channel.bind('conversation:update', handleConversationUpdate);
 
-			updateConversation(conversation);
-		});
+		channel.bind('conversation:delete', handleConversationDelete);
 
 		return () => {
-			channel.unbind('conversation:update');
+			channel.unbind('conversation:update', handleConversationUpdate);
+
+			channel.unbind('conversation:delete', handleConversationDelete);
+
 			pusher.unsubscribe(createUserChannel(currentUserId));
 		};
-	}, [currentUserId]);
+	}, [currentUserId, handleConversationUpdate, handleConversationDelete]);
 
 	return (
 		<div className='flex justify-center px-4'>
