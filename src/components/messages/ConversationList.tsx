@@ -12,7 +12,7 @@ import {
 import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { mapConversationPayloadToConversation } from '@/lib/mappers/messageMapper';
+import { mapConversationPayloadToConversation } from '@/utils/conversations/mappers/messageMapper';
 import { createUserChannel } from '@/lib/pusher/channels';
 
 type Props = {

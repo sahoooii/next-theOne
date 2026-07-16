@@ -6,32 +6,33 @@ import { getAuthUserId } from './authActions';
 
 import { ActionResult } from '@/types';
 import { ChatMessage } from '@/types/messages';
-import { Conversation } from '@/types/conversations';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import {
 	mapChatMessageToPayload,
-	mapConversationToPayload,
 	mapMessageToChatMessage,
 	mapMessageToDeletePayload,
-} from '@/lib/mappers/messageMapper';
+} from '@/utils/conversations/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
-import { createChatId, createUserChannel } from '@/lib/pusher/channels';
+import { createChatId } from '@/lib/pusher/channels';
 import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
 
-import { messageSelect } from '@/utils/conversations/memberSelect';
+import { messageSelect } from '@/utils/conversations/messageQuery';
 import {
 	buildConversation,
 	getConversation,
 } from '@/utils/conversations/buildConversation';
+import { getConversationMessages } from '@/utils/conversations/getConversationMessages';
 
+// Chat room: Create a new message
 export async function createMessage(
-	recipientUserId: string,
+	recipientId: string,
 	data: MessageSchema,
 ): Promise<ActionResult<ChatMessage>> {
 	try {
 		const userId = await getAuthUserId();
 
+		// Validation
 		const validated = messageSchema.safeParse(data);
 
 		if (!validated.success) {
@@ -47,10 +48,11 @@ export async function createMessage(
 		}
 		const { text } = validated.data;
 
+		// Update DB: create a new message
 		const message = await prisma.message.create({
 			data: {
 				text,
-				recipientId: recipientUserId,
+				recipientId: recipientId,
 				senderId: userId,
 			},
 			select: messageSelect,
@@ -62,72 +64,37 @@ export async function createMessage(
 		// Convert to Date -> string for pusher
 		const chatPayload = mapChatMessageToPayload(chatMessage);
 
-		// Chat room
+		// Update: Chat room
 		await pusherServer.trigger(
-			createChatId(userId, recipientUserId),
+			createChatId(userId, recipientId),
 			'message:new',
 			chatPayload,
 		);
 
-		// Conversation List Sender: userId: conversation partner
-		const senderConversationPartner = {
-			userId: chatMessage.recipientId!,
-			name: chatMessage.recipientName,
-			image: chatMessage.recipientImage,
-		};
+		// Messageの一覧取得(Conversationを作るためにチャット全体を取得)
+		const messages = await getConversationMessages(userId, recipientId);
 
-		// Create conversation UI
-		const senderConversation: Conversation = {
-			userId: senderConversationPartner.userId,
-			name: senderConversationPartner.name,
-			image: senderConversationPartner.image ?? null,
-			lastMessage: chatMessage.text,
-			lastMessageSenderId: chatMessage.senderId!,
-			created: chatMessage.created,
-			dateRead: chatMessage.dateRead,
-			hasUnread: false,
-		};
-
-		// Covert to Date -> string
-		const senderConversationPayload =
-			mapConversationToPayload(senderConversation);
-
-		// Conversation list　sender side 通知先
-		await pusherServer.trigger(
-			createUserChannel(userId),
-			'conversation:update',
-			senderConversationPayload,
+		// Conversation取得
+		const senderUserConversation = getConversation(
+			messages,
+			userId,
+			recipientId,
 		);
 
-		// Conversation List Recipient: conversation partner
-		const recipientConversationPartner = {
-			userId: chatMessage.senderId!,
-			name: chatMessage.senderName,
-			image: chatMessage.senderImage,
-		};
-
-		const recipientConversation: Conversation = {
-			userId: recipientConversationPartner.userId,
-			name: recipientConversationPartner.name,
-			image: recipientConversationPartner.image ?? null,
-			lastMessage: chatMessage.text,
-			lastMessageSenderId: chatMessage.senderId!,
-			created: chatMessage.created,
-			dateRead: chatMessage.dateRead,
-			hasUnread: true,
-		};
-
-		// Covert to Date -> string
-		const recipientConversationPayload = mapConversationToPayload(
-			recipientConversation,
+		const recipientUserConversation = getConversation(
+			messages,
+			recipientId,
+			userId,
 		);
 
-		// Conversation list　recipient side
-		// Trigger recipient user's conversation list
-		await pusherServer.trigger(
-			createUserChannel(recipientUserId),
-			'conversation:update',
-			recipientConversationPayload,
+		// Update: ConversationList: currentUser side
+		await notifyConversationUpdate(userId, recipientId, senderUserConversation);
+
+		// Update: ConversationList: conversation partner side
+		await notifyConversationUpdate(
+			recipientId,
+			userId,
+			recipientUserConversation,
 		);
 
 		return { status: 'success', data: chatMessage };
@@ -138,29 +105,12 @@ export async function createMessage(
 	}
 }
 
-// 自分 と 相手 の会話一覧を取得
+// Chat room: 自分 と 相手 の会話一覧を取得
 export async function getMessageThread(recipientId: string) {
 	try {
 		const userId = await getAuthUserId();
 
-		const messages = await prisma.message.findMany({
-			where: {
-				OR: [
-					{
-						senderId: userId,
-						recipientId,
-					},
-					{
-						senderId: recipientId,
-						recipientId: userId,
-					},
-				],
-			},
-			orderBy: {
-				created: 'asc',
-			},
-			select: messageSelect,
-		});
+		const messages = await getConversationMessages(userId, recipientId, 'asc');
 
 		// Add Date at date Read, when open up chat conversation
 		const currentUserId = userId;
@@ -182,7 +132,7 @@ export async function getMessageThread(recipientId: string) {
 	}
 }
 
-// ① Get all conversations(全メッセージ取得)
+// Conversation list:  Get all conversations(全メッセージ取得)
 export async function getConversationsList() {
 	try {
 		const userId = await getAuthUserId();
@@ -205,6 +155,7 @@ export async function getConversationsList() {
 	}
 }
 
+// Chatroom & Conversation list: delete
 export async function deleteMessage(messageId: string) {
 	try {
 		const userId = await getAuthUserId();
@@ -233,24 +184,10 @@ export async function deleteMessage(messageId: string) {
 		});
 
 		// 削除されたメッセージから、このチャットの参加者（送信者・受信者）を特定し、その2人の会話履歴だけを取得する
-		const messages = await prisma.message.findMany({
-			where: {
-				OR: [
-					{
-						senderId: message.senderId,
-						recipientId: message.recipientId,
-					},
-					{
-						senderId: message.recipientId,
-						recipientId: message.senderId,
-					},
-				],
-			},
-			orderBy: {
-				created: 'desc',
-			},
-			select: messageSelect,
-		});
+		const messages = await getConversationMessages(
+			message.senderId,
+			message.recipientId,
+		);
 
 		// Sender side
 		const senderConversation = getConversation(
@@ -266,23 +203,24 @@ export async function deleteMessage(messageId: string) {
 			message.senderId,
 		);
 
-		// Sender side
+		// Conversation list: Sender side
 		await notifyConversationUpdate(
 			message.senderId,
 			message.recipientId,
 			senderConversation,
 		);
 
-		// Recipient side
+		// Conversation list: Recipient side
 		await notifyConversationUpdate(
 			message.recipientId,
 			message.senderId,
 			recipientConversation,
 		);
 
-		// For Chat room
+		// Chat room
 		const chatRoomPayload = mapMessageToDeletePayload(messageId);
 
+		// Chat room: delete
 		await pusherServer.trigger(chatId, 'message:delete', chatRoomPayload);
 	} catch (error) {
 		console.log(error);
