@@ -6,17 +6,15 @@ import { getAuthUserId } from './authActions';
 
 import { ActionResult } from '@/types';
 import { ChatMessage } from '@/types/messages';
-import { Conversation } from '@/types/conversations';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import {
 	mapChatMessageToPayload,
-	mapConversationToPayload,
 	mapMessageToChatMessage,
 	mapMessageToDeletePayload,
 } from '@/lib/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
-import { createChatId, createUserChannel } from '@/lib/pusher/channels';
+import { createChatId } from '@/lib/pusher/channels';
 import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
 
 import { messageSelect } from '@/utils/conversations/memberSelect';
@@ -32,6 +30,7 @@ export async function createMessage(
 	try {
 		const userId = await getAuthUserId();
 
+		// Validation
 		const validated = messageSchema.safeParse(data);
 
 		if (!validated.success) {
@@ -47,6 +46,7 @@ export async function createMessage(
 		}
 		const { text } = validated.data;
 
+		// Update DB
 		const message = await prisma.message.create({
 			data: {
 				text,
@@ -62,72 +62,57 @@ export async function createMessage(
 		// Convert to Date -> string for pusher
 		const chatPayload = mapChatMessageToPayload(chatMessage);
 
-		// Chat room
+		// Update: Chat room
 		await pusherServer.trigger(
 			createChatId(userId, recipientUserId),
 			'message:new',
 			chatPayload,
 		);
 
-		// Conversation List Sender: userId: conversation partner
-		const senderConversationPartner = {
-			userId: chatMessage.recipientId!,
-			name: chatMessage.recipientName,
-			image: chatMessage.recipientImage,
-		};
+		// Messageの一覧取得(Conversationを作るためにチャット全体を取得)
+		const messages = await prisma.message.findMany({
+			where: {
+				OR: [
+					{
+						senderId: userId,
+						recipientId: recipientUserId,
+					},
+					{
+						senderId: recipientUserId,
+						recipientId: userId,
+					},
+				],
+			},
+			orderBy: {
+				created: 'desc',
+			},
+			select: messageSelect,
+		});
 
-		// Create conversation UI
-		const senderConversation: Conversation = {
-			userId: senderConversationPartner.userId,
-			name: senderConversationPartner.name,
-			image: senderConversationPartner.image ?? null,
-			lastMessage: chatMessage.text,
-			lastMessageSenderId: chatMessage.senderId!,
-			created: chatMessage.created,
-			dateRead: chatMessage.dateRead,
-			hasUnread: false,
-		};
-
-		// Covert to Date -> string
-		const senderConversationPayload =
-			mapConversationToPayload(senderConversation);
-
-		// Conversation list　sender side 通知先
-		await pusherServer.trigger(
-			createUserChannel(userId),
-			'conversation:update',
-			senderConversationPayload,
+		// Conversation取得
+		const senderUserConversation = getConversation(
+			messages,
+			userId,
+			recipientUserId,
 		);
 
-		// Conversation List Recipient: conversation partner
-		const recipientConversationPartner = {
-			userId: chatMessage.senderId!,
-			name: chatMessage.senderName,
-			image: chatMessage.senderImage,
-		};
-
-		const recipientConversation: Conversation = {
-			userId: recipientConversationPartner.userId,
-			name: recipientConversationPartner.name,
-			image: recipientConversationPartner.image ?? null,
-			lastMessage: chatMessage.text,
-			lastMessageSenderId: chatMessage.senderId!,
-			created: chatMessage.created,
-			dateRead: chatMessage.dateRead,
-			hasUnread: true,
-		};
-
-		// Covert to Date -> string
-		const recipientConversationPayload = mapConversationToPayload(
-			recipientConversation,
+		const recipientUserConversation = getConversation(
+			messages,
+			recipientUserId,
+			userId,
 		);
 
-		// Conversation list　recipient side
-		// Trigger recipient user's conversation list
-		await pusherServer.trigger(
-			createUserChannel(recipientUserId),
-			'conversation:update',
-			recipientConversationPayload,
+		// ConversationList更新
+		await notifyConversationUpdate(
+			userId,
+			recipientUserId,
+			senderUserConversation,
+		);
+
+		await notifyConversationUpdate(
+			recipientUserId,
+			userId,
+			recipientUserConversation,
 		);
 
 		return { status: 'success', data: chatMessage };
