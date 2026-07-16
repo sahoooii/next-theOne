@@ -3,7 +3,7 @@ import { Conversation } from '@/types/conversations';
 import {
 	mapConversationToDeletePayload,
 	mapConversationToPayload,
-} from '../mappers/messageMapper';
+} from '../../utils/conversations/mappers/messageMapper';
 import { createUserChannel } from './channels';
 
 // This function is for only Conversation list!

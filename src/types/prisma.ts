@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { messageSelect } from '@/utils/conversations/memberSelect';
+import { messageSelect } from '@/utils/conversations/messageQuery';
 
 // Note: For chat room aka members/[userId]/chat
 

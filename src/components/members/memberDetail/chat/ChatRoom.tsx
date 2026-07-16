@@ -46,7 +46,7 @@ import { transformImageUrl } from '@/lib/transFormImageUrl';
 import ChatOptions from './ChatOptions';
 import { showToast } from '@/lib/toast';
 import { getPusherClient } from '@/lib/pusher/client';
-import { mapMessagePayloadToChatMessage } from '@/lib/mappers/messageMapper';
+import { mapMessagePayloadToChatMessage } from '@/utils/conversations/mappers/messageMapper';
 
 type Props = {
 	initialMessages: ChatMessage[];

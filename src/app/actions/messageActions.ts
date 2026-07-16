@@ -12,17 +12,19 @@ import {
 	mapChatMessageToPayload,
 	mapMessageToChatMessage,
 	mapMessageToDeletePayload,
-} from '@/lib/mappers/messageMapper';
+} from '@/utils/conversations/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
 import { createChatId } from '@/lib/pusher/channels';
 import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
 
-import { messageSelect } from '@/utils/conversations/memberSelect';
+import { messageSelect } from '@/utils/conversations/messageQuery';
 import {
 	buildConversation,
 	getConversation,
 } from '@/utils/conversations/buildConversation';
+import { getConversationMessages } from '@/utils/conversations/getConversationMessages';
 
+// Chat room: Create a new message
 export async function createMessage(
 	recipientId: string,
 	data: MessageSchema,
@@ -46,7 +48,7 @@ export async function createMessage(
 		}
 		const { text } = validated.data;
 
-		// Update DB
+		// Update DB: create a new message
 		const message = await prisma.message.create({
 			data: {
 				text,
@@ -70,24 +72,7 @@ export async function createMessage(
 		);
 
 		// Messageの一覧取得(Conversationを作るためにチャット全体を取得)
-		const messages = await prisma.message.findMany({
-			where: {
-				OR: [
-					{
-						senderId: userId,
-						recipientId: recipientId,
-					},
-					{
-						senderId: recipientId,
-						recipientId: userId,
-					},
-				],
-			},
-			orderBy: {
-				created: 'desc',
-			},
-			select: messageSelect,
-		});
+		const messages = await getConversationMessages(userId, recipientId);
 
 		// Conversation取得
 		const senderUserConversation = getConversation(
@@ -120,29 +105,12 @@ export async function createMessage(
 	}
 }
 
-// 自分 と 相手 の会話一覧を取得
+// Chat room: 自分 と 相手 の会話一覧を取得
 export async function getMessageThread(recipientId: string) {
 	try {
 		const userId = await getAuthUserId();
 
-		const messages = await prisma.message.findMany({
-			where: {
-				OR: [
-					{
-						senderId: userId,
-						recipientId,
-					},
-					{
-						senderId: recipientId,
-						recipientId: userId,
-					},
-				],
-			},
-			orderBy: {
-				created: 'asc',
-			},
-			select: messageSelect,
-		});
+		const messages = await getConversationMessages(userId, recipientId, 'asc');
 
 		// Add Date at date Read, when open up chat conversation
 		const currentUserId = userId;
@@ -164,7 +132,7 @@ export async function getMessageThread(recipientId: string) {
 	}
 }
 
-// ① Get all conversations(全メッセージ取得)
+// Conversation list:  Get all conversations(全メッセージ取得)
 export async function getConversationsList() {
 	try {
 		const userId = await getAuthUserId();
@@ -187,6 +155,7 @@ export async function getConversationsList() {
 	}
 }
 
+// Chatroom & Conversation list: delete
 export async function deleteMessage(messageId: string) {
 	try {
 		const userId = await getAuthUserId();
@@ -215,24 +184,10 @@ export async function deleteMessage(messageId: string) {
 		});
 
 		// 削除されたメッセージから、このチャットの参加者（送信者・受信者）を特定し、その2人の会話履歴だけを取得する
-		const messages = await prisma.message.findMany({
-			where: {
-				OR: [
-					{
-						senderId: message.senderId,
-						recipientId: message.recipientId,
-					},
-					{
-						senderId: message.recipientId,
-						recipientId: message.senderId,
-					},
-				],
-			},
-			orderBy: {
-				created: 'desc',
-			},
-			select: messageSelect,
-		});
+		const messages = await getConversationMessages(
+			message.senderId,
+			message.recipientId,
+		);
 
 		// Sender side
 		const senderConversation = getConversation(
@@ -248,24 +203,24 @@ export async function deleteMessage(messageId: string) {
 			message.senderId,
 		);
 
-		// Delete: Conversation list Sender side
+		// Conversation list: Sender side
 		await notifyConversationUpdate(
 			message.senderId,
 			message.recipientId,
 			senderConversation,
 		);
 
-		// Delete: Conversation list Recipient side
+		// Conversation list: Recipient side
 		await notifyConversationUpdate(
 			message.recipientId,
 			message.senderId,
 			recipientConversation,
 		);
 
-		// For Chat room
+		// Chat room
 		const chatRoomPayload = mapMessageToDeletePayload(messageId);
 
-		// Delete: Chat room
+		// Chat room: delete
 		await pusherServer.trigger(chatId, 'message:delete', chatRoomPayload);
 	} catch (error) {
 		console.log(error);
