@@ -24,7 +24,7 @@ import {
 } from '@/utils/conversations/buildConversation';
 
 export async function createMessage(
-	recipientUserId: string,
+	recipientId: string,
 	data: MessageSchema,
 ): Promise<ActionResult<ChatMessage>> {
 	try {
@@ -50,7 +50,7 @@ export async function createMessage(
 		const message = await prisma.message.create({
 			data: {
 				text,
-				recipientId: recipientUserId,
+				recipientId: recipientId,
 				senderId: userId,
 			},
 			select: messageSelect,
@@ -64,7 +64,7 @@ export async function createMessage(
 
 		// Update: Chat room
 		await pusherServer.trigger(
-			createChatId(userId, recipientUserId),
+			createChatId(userId, recipientId),
 			'message:new',
 			chatPayload,
 		);
@@ -75,10 +75,10 @@ export async function createMessage(
 				OR: [
 					{
 						senderId: userId,
-						recipientId: recipientUserId,
+						recipientId: recipientId,
 					},
 					{
-						senderId: recipientUserId,
+						senderId: recipientId,
 						recipientId: userId,
 					},
 				],
@@ -93,24 +93,21 @@ export async function createMessage(
 		const senderUserConversation = getConversation(
 			messages,
 			userId,
-			recipientUserId,
+			recipientId,
 		);
 
 		const recipientUserConversation = getConversation(
 			messages,
-			recipientUserId,
+			recipientId,
 			userId,
 		);
 
-		// ConversationList更新
-		await notifyConversationUpdate(
-			userId,
-			recipientUserId,
-			senderUserConversation,
-		);
+		// Update: ConversationList: currentUser side
+		await notifyConversationUpdate(userId, recipientId, senderUserConversation);
 
+		// Update: ConversationList: conversation partner side
 		await notifyConversationUpdate(
-			recipientUserId,
+			recipientId,
 			userId,
 			recipientUserConversation,
 		);
@@ -251,14 +248,14 @@ export async function deleteMessage(messageId: string) {
 			message.senderId,
 		);
 
-		// Sender side
+		// Delete: Conversation list Sender side
 		await notifyConversationUpdate(
 			message.senderId,
 			message.recipientId,
 			senderConversation,
 		);
 
-		// Recipient side
+		// Delete: Conversation list Recipient side
 		await notifyConversationUpdate(
 			message.recipientId,
 			message.senderId,
@@ -268,6 +265,7 @@ export async function deleteMessage(messageId: string) {
 		// For Chat room
 		const chatRoomPayload = mapMessageToDeletePayload(messageId);
 
+		// Delete: Chat room
 		await pusherServer.trigger(chatId, 'message:delete', chatRoomPayload);
 	} catch (error) {
 		console.log(error);

@@ -6,6 +6,7 @@ import {
 } from '../mappers/messageMapper';
 import { createUserChannel } from './channels';
 
+// This function is for only Conversation list!
 // ConversationをConversationListへ通知する
 // update / delete の判定と通知
 export async function notifyConversationUpdate(
