@@ -7,3 +7,8 @@ export function createChatId(a: string, b: string) {
 export function createUserChannel(userId: string) {
 	return `user-${userId}`;
 }
+
+// For Chat room channel: read receipt
+export function createChatChannel(chatId: string) {
+	return `chat-${chatId}`;
+}

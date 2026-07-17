@@ -23,6 +23,8 @@ import {
 	getConversation,
 } from '@/utils/conversations/buildConversation';
 import { getConversationMessages } from '@/utils/conversations/getConversationMessages';
+import { markMessagesAsRead } from '@/utils/conversations/markMessageAsRead';
+import { notifyReadReceipt } from '@/lib/pusher/notifyReadReceipt';
 
 // Chat room: Create a new message
 export async function createMessage(
@@ -109,22 +111,47 @@ export async function createMessage(
 export async function getMessageThread(recipientId: string) {
 	try {
 		const userId = await getAuthUserId();
+		const chatId = createChatId(userId, recipientId);
 
+		// Update: dateRead(DB)
+		const readAt = await markMessagesAsRead(userId, recipientId);
+
+		// Chat room: Get latest chat room history(display: 'asc')
 		const messages = await getConversationMessages(userId, recipientId, 'asc');
 
-		// Add Date at date Read, when open up chat conversation
-		const currentUserId = userId;
-		const otherUserId = recipientId;
+		// Chat room: notification(ChatRoomへ message:read を送信)
+		await notifyReadReceipt(chatId, userId, readAt);
 
-		await prisma.message.updateMany({
-			where: {
-				senderId: otherUserId,
-				recipientId: currentUserId,
-				dateRead: null,
-			},
-			data: { dateRead: new Date() },
-		});
+		// For conversation: Conversation生成用（desc）(最新のMessage取得)
+		const conversationMessages = await getConversationMessages(
+			userId,
+			recipientId,
+			'desc',
+		);
 
+		// Conversationを1件作る
+		// Sender side
+		const senderConversation = getConversation(
+			conversationMessages,
+			userId,
+			recipientId,
+		);
+
+		// Recipient side
+		const recipientConversation = getConversation(
+			conversationMessages,
+			recipientId,
+			userId,
+		);
+
+		// ConversationList: update
+		// Sender side
+		await notifyConversationUpdate(userId, recipientId, senderConversation);
+
+		// Recipient side
+		await notifyConversationUpdate(recipientId, userId, recipientConversation);
+
+		// Convert to ChatMessage
 		return messages.map((message) => mapMessageToChatMessage(message));
 	} catch (error) {
 		console.log(error);

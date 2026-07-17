@@ -7,8 +7,11 @@ import {
 	ChatMessage,
 	MessageDeletePayload,
 	MessagePayload,
+	ReadReceiptPayload,
 } from '@/types/messages';
 import { MessageWithSenderRecipient } from '@/types/prisma';
+
+// アプリケーションで使う値 → 通信用の値
 
 // Chat room: Convert Prisma Message to ChatMessage for UI
 export function mapMessageToChatMessage(message: MessageWithSenderRecipient) {
@@ -85,6 +88,23 @@ export function mapConversationToDeletePayload(
 	userId: string,
 ): ConversationDeletePayload {
 	return { userId };
+}
+
+// Read receipt Date-> string
+export function mapReadReceiptToPayload({
+	chatId,
+	readerId,
+	readAt,
+}: {
+	chatId: string;
+	readerId: string;
+	readAt: Date;
+}): ReadReceiptPayload {
+	return {
+		chatId,
+		readerId,
+		readAt: readAt.toISOString(),
+	};
 }
 
 // Prisma Message

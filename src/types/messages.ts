@@ -38,3 +38,9 @@ export type MessagePayload = {
 export type MessageDeletePayload = {
 	messageId: string;
 };
+
+export type ReadReceiptPayload = {
+	chatId: string;
+	readerId: string;
+	readAt: string;
+};
