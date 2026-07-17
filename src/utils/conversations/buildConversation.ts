@@ -1,3 +1,7 @@
+// TODO:
+// Refactor buildConversation() to be order-independent.
+// Currently assumes messages are sorted in descending order.
+
 import { Conversation } from '@/types/conversations';
 import { ConversationMessage } from '@/types/prisma';
 
