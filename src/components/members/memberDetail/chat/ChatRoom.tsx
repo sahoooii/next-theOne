@@ -11,6 +11,7 @@ import {
 	ChatMessage,
 	MessageDeletePayload,
 	MessagePayload,
+	ReadReceiptPayload,
 } from '@/types/messages';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
@@ -47,6 +48,7 @@ import ChatOptions from './ChatOptions';
 import { showToast } from '@/lib/toast';
 import { getPusherClient } from '@/lib/pusher/client';
 import { mapMessagePayloadToChatMessage } from '@/utils/conversations/mappers/messageMapper';
+import { createChatChannel } from '@/lib/pusher/channels';
 
 type Props = {
 	initialMessages: ChatMessage[];
@@ -103,24 +105,53 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 		setSelectedMessageId(null);
 	};
 
+	// Read receipt
+	const updateReadReceipt = useCallback(
+		(payload: ReadReceiptPayload) => {
+			setChatMessages((current) => {
+				const updated = current.map((message) => {
+					if (message.senderId === currentUserId && message.dateRead === null) {
+						return {
+							...message,
+							dateRead: new Date(payload.readAt),
+						};
+					}
+					return message;
+				});
+				return updated;
+			});
+		},
+		[currentUserId],
+	);
+
+	const handleReadReceipt = useCallback(
+		(payload: ReadReceiptPayload) => {
+			updateReadReceipt(payload);
+		},
+		[updateReadReceipt],
+	);
+
 	useEffect(() => {
 		// Manage channel
 		const pusher = getPusherClient();
 		// Manage event
-		const channel = pusher.subscribe(chatId);
+		const channel = pusher.subscribe(createChatChannel(chatId));
 
 		// Create message
 		channel.bind('message:new', handleNewMessage);
 		// Delete message
 		channel.bind('message:delete', handleDeleteMessage);
+		// Read receipt
+		channel.bind('message:read', handleReadReceipt);
 
 		return () => {
 			channel.unbind('message:new', handleNewMessage);
 			channel.unbind('message:delete', handleDeleteMessage);
+			channel.unbind('message:read', handleReadReceipt);
 
 			pusher.unsubscribe(chatId);
 		};
-	}, [chatId, handleNewMessage, handleDeleteMessage]);
+	}, [chatId, handleNewMessage, handleDeleteMessage, handleReadReceipt]);
 
 	// Auto scroll to see the latest message
 	const bottomRef = useRef<HTMLDivElement>(null);
