@@ -14,7 +14,7 @@ import {
 	mapMessageToDeletePayload,
 } from '@/utils/conversations/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
-import { createChatId } from '@/lib/pusher/channels';
+import { createChatChannel, createChatId } from '@/lib/pusher/channels';
 import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
 
 import { messageSelect } from '@/utils/conversations/messageQuery';
@@ -66,9 +66,11 @@ export async function createMessage(
 		// Convert to Date -> string for pusher
 		const chatPayload = mapChatMessageToPayload(chatMessage);
 
+		const chatId = createChatId(userId, recipientId);
+
 		// Update: Chat room
 		await pusherServer.trigger(
-			createChatId(userId, recipientId),
+			createChatChannel(chatId),
 			'message:new',
 			chatPayload,
 		);
@@ -248,7 +250,11 @@ export async function deleteMessage(messageId: string) {
 		const chatRoomPayload = mapMessageToDeletePayload(messageId);
 
 		// Chat room: delete
-		await pusherServer.trigger(chatId, 'message:delete', chatRoomPayload);
+		await pusherServer.trigger(
+			createChatChannel(chatId),
+			'message:delete',
+			chatRoomPayload,
+		);
 	} catch (error) {
 		console.log(error);
 		throw error;
