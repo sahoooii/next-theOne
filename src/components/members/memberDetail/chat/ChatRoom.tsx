@@ -373,7 +373,7 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 												{isCurrentUser &&
 													message.dateRead &&
 													showReadReceipt && (
-														<p className='text-[11px] font-medium text-righttext-gray-500'>
+														<p className='text-[11px] font-medium text-right text-gray-500'>
 															Read {formatChatTime(new Date(message.dateRead))}
 														</p>
 													)}
