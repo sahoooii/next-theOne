@@ -311,11 +311,7 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 										{/* Empty spacing */}
 										{!isCurrentUser && !showAvatar && <div className='w-10' />}
 
-										<div
-											className={`group flex gap-2 ${
-												isCurrentUser ? 'justify-end' : 'justify-start'
-											}`}
-										>
+										<div className='group flex gap-2'>
 											{/* Chat Options ex: delete */}
 											{isCurrentUser && (
 												<ChatOptions
@@ -324,11 +320,14 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 											)}
 
 											{/* Bubble + Time */}
-											<div className='flex flex-col'>
+											<div
+												className='first-letter:mt-1 flex
+flex-col'
+											>
 												<div
 													className={`
 						relative
-						max-w-[80%]
+						max-w-[80%] md:max-w-[90%]
 						min-w-[80px]
 						px-4
 						py-2.5
@@ -358,17 +357,28 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 												>
 													{message.text}
 												</div>
-
+												{/* Message send time */}
 												<p
-													className={`
-						mt-1
-						text-[11px]
-						text-gray-400
-						${isCurrentUser ? 'text-right' : 'text-left'}
-					`}
+													className='mt-1
+						text-[11px] text-right
+						text-gray-400'
 												>
 													{formatChatTime(new Date(message.created))}
 												</p>
+
+												{/* Message receipt time */}
+												{isCurrentUser && message.dateRead && (
+													<p
+														className='
+            text-[11px]
+            font-medium
+						text-right
+            text-gray-500
+        '
+													>
+														Read {formatChatTime(new Date(message.dateRead))}
+													</p>
+												)}
 											</div>
 										</div>
 									</div>
