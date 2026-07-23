@@ -240,12 +240,20 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 						{chatMessages.map((message, index) => {
 							const isCurrentUser = message.senderId === currentUserId;
 
-							// If Double texting from sender
+							// Double texting from sender
 							const previousMessage = chatMessages[index - 1];
 							// If not login user & not double texting and then show avatar
 							const showAvatar =
 								!isCurrentUser &&
 								previousMessage?.senderId !== message.senderId;
+
+							// Prevent show read time every text, when sender double texting
+							const nextMessage = chatMessages[index + 1];
+
+							const showReadReceipt =
+								isCurrentUser &&
+								message.dateRead &&
+								(!nextMessage || nextMessage.senderId !== currentUserId);
 
 							// Display separator when change a date
 							const showDateSeparator =
@@ -261,7 +269,6 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 									{showDateSeparator && (
 										<div className='my-6 flex items-center gap-4'>
 											<div className='h-px flex-1 bg-black/10' />
-
 											<p
 												className='
 						text-[11px]
@@ -271,7 +278,6 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 											>
 												{formatMessageDate(new Date(message.created))}
 											</p>
-
 											<div className='h-px flex-1 bg-black/10' />
 										</div>
 									)}
@@ -320,10 +326,7 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 											)}
 
 											{/* Bubble + Time */}
-											<div
-												className='first-letter:mt-1 flex
-flex-col'
-											>
+											<div className='first-letter:mt-1 flex flex-col'>
 												<div
 													className={`
 						relative
@@ -367,18 +370,13 @@ flex-col'
 												</p>
 
 												{/* Message receipt time */}
-												{isCurrentUser && message.dateRead && (
-													<p
-														className='
-            text-[11px]
-            font-medium
-						text-right
-            text-gray-500
-        '
-													>
-														Read {formatChatTime(new Date(message.dateRead))}
-													</p>
-												)}
+												{isCurrentUser &&
+													message.dateRead &&
+													showReadReceipt && (
+														<p className='text-[11px] font-medium text-righttext-gray-500'>
+															Read {formatChatTime(new Date(message.dateRead))}
+														</p>
+													)}
 											</div>
 										</div>
 									</div>
@@ -390,7 +388,7 @@ flex-col'
 					</div>
 				)}
 
-				{/* Form */}
+				{/* Form: Chat send */}
 				<div
 					className='
 					border-t

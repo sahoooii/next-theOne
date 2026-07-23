@@ -7,7 +7,6 @@ import { getConversationsList } from '@/app/actions/messageActions';
 import ConversationList from '@/components/messages/ConversationList';
 import ConversationListSkeleton from '@/components/messages/skeleton/ConversationListSkeleton';
 
-// loading
 const MessagesPage = async () => {
 	const conversations = await getConversationsList();
 	const currentUserId = await getAuthUserId();
