@@ -12,10 +12,15 @@ import {
 	MessageDeletePayload,
 	MessagePayload,
 	ReadReceiptPayload,
+	TypingPayload,
 } from '@/types/messages';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
-import { createMessage, deleteMessage } from '@/app/actions/messageActions';
+import {
+	createMessage,
+	deleteMessage,
+	sendTypingEvent,
+} from '@/app/actions/messageActions';
 
 import {
 	Form,
@@ -49,6 +54,7 @@ import { showToast } from '@/lib/toast';
 import { getPusherClient } from '@/lib/pusher/client';
 import { mapMessagePayloadToChatMessage } from '@/utils/conversations/mappers/messageMapper';
 import { createChatChannel } from '@/lib/pusher/channels';
+import TypingIndicator from './TypingIndicator';
 
 type Props = {
 	initialMessages: ChatMessage[];
@@ -131,27 +137,130 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 		[updateReadReceipt],
 	);
 
+	// Typing indicator: Manage typing
+	// Partner typing state (UI)
+	const [isPartnerTyping, setIsPartnerTyping] = useState(false);
+	// 自分が入力中かの内部管理 / Current user's typing status (internal)
+	const isTypingRef = useRef(false);
+	// タイマーの保持: 現在動いているタイマー
+	const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	// 受信側の処理 UI
+	// 「相手が入力しています」というイベントを受け取ってUIを更新する
+	const handleTypingStart = useCallback(
+		(payload: TypingPayload) => {
+			if (payload.typingUserId === currentUserId) return;
+
+			setIsPartnerTyping(true);
+		},
+		[currentUserId],
+	);
+
+	// 受信側の処理
+	const handleTypingStop = useCallback(
+		(payload: TypingPayload) => {
+			if (payload.typingUserId === currentUserId) return;
+
+			setIsPartnerTyping(false);
+		},
+		[currentUserId],
+	);
+
+	// 送信側の処理: 実際に何を送るか"を担当する
+	const startTyping = useCallback(async () => {
+		if (isTypingRef.current) {
+			return;
+		}
+		await sendTypingEvent(chatId, 'typing:start');
+
+		isTypingRef.current = true;
+	}, [chatId]);
+
+	// 1. Empty input, 2. Stop after 2 seconds of inactivity, 3. Success send a message
+	const stopTyping = useCallback(async () => {
+		if (!isTypingRef.current) {
+			return;
+		}
+		await sendTypingEvent(chatId, 'typing:stop');
+
+		isTypingRef.current = false;
+	}, [chatId]);
+
+	// タイマー処理
+	const resetTypingTimeout = useCallback(() => {
+		// 前回のタイマーが残っていればキャンセル
+		// Cancel the previous timeout before starting a new one.
+		if (typingTimeoutRef.current) {
+			clearTimeout(typingTimeoutRef.current);
+		}
+		// Send typing:stop after 2 seconds of inactivity.
+		typingTimeoutRef.current = setTimeout(async () => {
+			await stopTyping();
+			typingTimeoutRef.current = null;
+		}, 2000);
+	}, [stopTyping]);
+
+	// Decide when to start or stop typing.
+	// 入力内容に応じて、Typing の開始・停止タイミングを判断する
+	const handleTypingChange = async (text: string) => {
+		if (text === '') {
+			await stopTyping();
+			return;
+		}
+		await startTyping();
+		// Manage time
+		resetTypingTimeout();
+	};
+
 	useEffect(() => {
 		// Manage channel
 		const pusher = getPusherClient();
 		// Manage event
-		const channel = pusher.subscribe(createChatChannel(chatId));
+		const channelName = createChatChannel(chatId);
+
+		const channel = pusher.subscribe(channelName);
 
 		// Create message
 		channel.bind('message:new', handleNewMessage);
+
 		// Delete message
 		channel.bind('message:delete', handleDeleteMessage);
+
 		// Read receipt
 		channel.bind('message:read', handleReadReceipt);
 
+		// Typing indicator
+		channel.bind('typing:start', handleTypingStart);
+		channel.bind('typing:stop', handleTypingStop);
+
 		return () => {
+			// Notify partner that typing has stopped.
+			void stopTyping();
+
+			// Clear the pending typing timeout.
+			if (typingTimeoutRef.current) {
+				clearTimeout(typingTimeoutRef.current);
+			}
+
+			// Unbind realtime events.
 			channel.unbind('message:new', handleNewMessage);
 			channel.unbind('message:delete', handleDeleteMessage);
 			channel.unbind('message:read', handleReadReceipt);
+			channel.unbind('typing:start', handleTypingStart);
+			channel.unbind('typing:stop', handleTypingStop);
 
-			pusher.unsubscribe(chatId);
+			// Leave the chat channel.
+			pusher.unsubscribe(channelName);
 		};
-	}, [chatId, handleNewMessage, handleDeleteMessage, handleReadReceipt]);
+	}, [
+		chatId,
+		handleNewMessage,
+		handleDeleteMessage,
+		handleReadReceipt,
+		handleTypingStart,
+		handleTypingStop,
+		stopTyping,
+	]);
 
 	// Auto scroll to see the latest message
 	const bottomRef = useRef<HTMLDivElement>(null);
@@ -180,6 +289,9 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 				showToast(globalError, 'error');
 			}
 		} else {
+			// Typing indicator: Stop
+			await stopTyping();
+
 			form.reset();
 		}
 	};
@@ -412,8 +524,13 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 
 										<FormControl>
 											<Textarea
+												{...field}
 												placeholder='Write a message...'
 												onKeyDown={handleKeyDown}
+												onChange={(e) => {
+													field.onChange(e);
+													handleTypingChange(e.target.value);
+												}}
 												className='
 												min-h-[56px]
 												resize-none
@@ -425,7 +542,6 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 												focus-visible:ring-1
 												focus-visible:ring-purple-400
 											'
-												{...field}
 											/>
 										</FormControl>
 									</FormItem>
@@ -526,6 +642,9 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
+
+			{/* Typing indicator Debug*/}
+			{isPartnerTyping && <TypingIndicator />}
 		</>
 	);
 };
