@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { getAuthUserId } from './authActions';
 
 import { ActionResult } from '@/types';
-import { ChatMessage } from '@/types/messages';
+import { ChatMessage, TypingEvent, TypingPayload } from '@/types/messages';
 
 import { messageSchema, MessageSchema } from '@/lib/schema/messageSchema';
 import {
@@ -25,6 +25,7 @@ import {
 import { getConversationMessages } from '@/utils/conversations/getConversationMessages';
 import { markMessagesAsRead } from '@/utils/conversations/markMessageAsRead';
 import { notifyReadReceipt } from '@/lib/pusher/notifyReadReceipt';
+import { notifyTyping } from '@/lib/pusher/notifyTyping';
 
 // Chat room: Create a new message
 export async function createMessage(
@@ -259,4 +260,16 @@ export async function deleteMessage(messageId: string) {
 		console.log(error);
 		throw error;
 	}
+}
+
+// typing indicator
+export async function sendTypingEvent(chatId: string, event: TypingEvent) {
+	const userId = await getAuthUserId();
+
+	const payload: TypingPayload = {
+		chatId,
+		typingUserId: userId,
+	};
+
+	await notifyTyping(chatId, event, payload)
 }

@@ -44,3 +44,11 @@ export type ReadReceiptPayload = {
 	readerId: string;
 	readAt: string;
 };
+
+// typing indicator
+export type TypingEvent = 'typing:start' | 'typing:stop';
+
+export type TypingPayload = {
+	chatId: string;
+	typingUserId: string; //sender(文字を入力しているユーザー)
+};
