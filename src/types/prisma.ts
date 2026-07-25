@@ -22,3 +22,12 @@ export type MessageWithSenderRecipient = Prisma.MessageGetPayload<{
 export type ConversationMessage = Prisma.MessageGetPayload<{
 	select: typeof messageSelect;
 }>;
+
+// For Chat room
+export type ChatPartner = Prisma.MemberGetPayload<{
+	select: {
+		userId: true;
+		name: true;
+		image: true;
+	};
+}>;

@@ -4,14 +4,21 @@ import { ChatMessage } from '@/types/messages';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 import ChatRoom from './ChatRoom';
+import { ChatPartner } from '@/types/prisma';
 
 type Props = {
 	initialMessages: ChatMessage[];
 	currentUserId: string;
 	chatId: string;
+	partner: ChatPartner;
 };
 
-const ChatClient = ({ initialMessages, currentUserId, chatId }: Props) => {
+const ChatClient = ({
+	initialMessages,
+	currentUserId,
+	chatId,
+	partner,
+}: Props) => {
 	return (
 		<Card
 			className='
@@ -29,6 +36,7 @@ const ChatClient = ({ initialMessages, currentUserId, chatId }: Props) => {
 				initialMessages={initialMessages}
 				currentUserId={currentUserId}
 				chatId={chatId}
+				partner={partner}
 			/>
 		</Card>
 	);

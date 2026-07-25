@@ -55,14 +55,16 @@ import { getPusherClient } from '@/lib/pusher/client';
 import { mapMessagePayloadToChatMessage } from '@/utils/conversations/mappers/messageMapper';
 import { createChatChannel } from '@/lib/pusher/channels';
 import TypingIndicator from './TypingIndicator';
+import { ChatPartner } from '@/types/prisma';
 
 type Props = {
 	initialMessages: ChatMessage[];
 	currentUserId: string;
 	chatId: string;
+	partner: ChatPartner;
 };
 
-const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
+const ChatRoom = ({ initialMessages, currentUserId, chatId, partner }: Props) => {
 	const params = useParams<{ userId: string }>();
 
 	// 現在画面に表示している最新データ
@@ -495,6 +497,10 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 								</div>
 							);
 						})}
+
+						{/* Typing indicator Debug*/}
+						{isPartnerTyping && <TypingIndicator partner={partner} />}
+
 						{/* For auto scroll to the latest chat */}
 						<div ref={bottomRef} />
 					</div>
@@ -642,9 +648,6 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId }: Props) => {
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
-
-			{/* Typing indicator Debug*/}
-			{isPartnerTyping && <TypingIndicator />}
 		</>
 	);
 };
