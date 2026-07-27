@@ -23,7 +23,7 @@ export type ConversationMessage = Prisma.MessageGetPayload<{
 	select: typeof messageSelect;
 }>;
 
-// For Chat room
+// For Chat room: Chat partner info
 export type ChatPartner = Prisma.MemberGetPayload<{
 	select: {
 		userId: true;
