@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
+import { AnimatePresence } from 'framer-motion';
 import { isSameDay } from 'date-fns';
 import { SendHorizonal } from 'lucide-react';
 
@@ -64,7 +65,12 @@ type Props = {
 	partner: ChatPartner;
 };
 
-const ChatRoom = ({ initialMessages, currentUserId, chatId, partner }: Props) => {
+const ChatRoom = ({
+	initialMessages,
+	currentUserId,
+	chatId,
+	partner,
+}: Props) => {
 	const params = useParams<{ userId: string }>();
 
 	// 現在画面に表示している最新データ
@@ -272,6 +278,15 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId, partner }: Props) =>
 			behavior: 'smooth',
 		});
 	}, [chatMessages]);
+
+	// For typing indicator: Typing が始まったらスクロール
+	useEffect(() => {
+		if (!isPartnerTyping) return;
+
+		bottomRef.current?.scrollIntoView({
+			behavior: 'smooth',
+		});
+	}, [isPartnerTyping]);
 
 	const form = useForm<MessageSchema>({
 		resolver: zodResolver(messageSchema),
@@ -498,8 +513,10 @@ const ChatRoom = ({ initialMessages, currentUserId, chatId, partner }: Props) =>
 							);
 						})}
 
-						{/* Typing indicator Debug*/}
-						{isPartnerTyping && <TypingIndicator partner={partner} />}
+						{/* Typing indicator */}
+						<AnimatePresence>
+							{isPartnerTyping && <TypingIndicator partner={partner} />}
+						</AnimatePresence>
 
 						{/* For auto scroll to the latest chat */}
 						<div ref={bottomRef} />
