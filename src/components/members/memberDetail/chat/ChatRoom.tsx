@@ -4,9 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from 'next/navigation';
-import { AnimatePresence } from 'framer-motion';
-import { isSameDay } from 'date-fns';
-import { SendHorizonal } from 'lucide-react';
 
 import {
 	ChatMessage,
@@ -23,40 +20,15 @@ import {
 	sendTypingEvent,
 } from '@/app/actions/messageActions';
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-
-import {
-	formatChatTime,
-	formatMessageDate,
-	handleFormServerErrors,
-} from '@/lib/utils';
-import { transformImageUrl } from '@/lib/transFormImageUrl';
-import ChatOptions from './ChatOptions';
+import { handleFormServerErrors } from '@/lib/utils';
 import { showToast } from '@/lib/toast';
 import { getPusherClient } from '@/lib/pusher/client';
 import { mapMessagePayloadToChatMessage } from '@/utils/conversations/mappers/messageMapper';
 import { createChatChannel } from '@/lib/pusher/channels';
-import TypingIndicator from './TypingIndicator';
 import { ChatPartner } from '@/types/prisma';
+import ChatMessages from './chatRoom/ChatMessages';
+import ChatInput from './chatRoom/ChatInput';
+import DeleteMessageDialog from './chatRoom/DeleteMessageDialog';
 
 type Props = {
 	initialMessages: ChatMessage[];
@@ -73,8 +45,30 @@ const ChatRoom = ({
 }: Props) => {
 	const params = useParams<{ userId: string }>();
 
+	// State
 	// 現在画面に表示している最新データ
 	const [chatMessages, setChatMessages] = useState(initialMessages);
+
+	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
+	// 今、削除しようとしているメッセージはどれか管理する
+	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+		null,
+	);
+
+	// Typing indicator: Manage typing
+	// Partner typing state (UI)
+	const [isPartnerTyping, setIsPartnerTyping] = useState(false);
+
+	// Ref
+
+	// Auto scroll to see the latest message
+	const bottomRef = useRef<HTMLDivElement>(null);
+
+	// タイマーの保持: 現在動いているタイマー
+	const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	// 自分が入力中かの内部管理 / Current user's typing status (internal)
+	const isTypingRef = useRef(false);
 
 	// Message追加処理を共通化
 	const appendMessage = useCallback((message: ChatMessage) => {
@@ -92,12 +86,7 @@ const ChatRoom = ({
 		[appendMessage],
 	);
 
-	// DropdownMenuの状態,Radix内部管理,AlertDialogの状態,React state管理の競合を防ぐ
-	// 今、削除しようとしているメッセージはどれか管理する
-	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
-		null,
-	);
-
+	// Delete
 	const removeMessage = useCallback((messageId: string) => {
 		setChatMessages((prev) =>
 			prev.filter((message) => message.id !== messageId),
@@ -144,14 +133,6 @@ const ChatRoom = ({
 		},
 		[updateReadReceipt],
 	);
-
-	// Typing indicator: Manage typing
-	// Partner typing state (UI)
-	const [isPartnerTyping, setIsPartnerTyping] = useState(false);
-	// 自分が入力中かの内部管理 / Current user's typing status (internal)
-	const isTypingRef = useRef(false);
-	// タイマーの保持: 現在動いているタイマー
-	const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// 受信側の処理 UI
 	// 「相手が入力しています」というイベントを受け取ってUIを更新する
@@ -208,7 +189,7 @@ const ChatRoom = ({
 		}, 2000);
 	}, [stopTyping]);
 
-	// Decide when to start or stop typing.
+	// Judge to when is typing start or stop
 	// 入力内容に応じて、Typing の開始・停止タイミングを判断する
 	const handleTypingChange = async (text: string) => {
 		if (text === '') {
@@ -270,9 +251,6 @@ const ChatRoom = ({
 		stopTyping,
 	]);
 
-	// Auto scroll to see the latest message
-	const bottomRef = useRef<HTMLDivElement>(null);
-
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({
 			behavior: 'smooth',
@@ -313,20 +291,6 @@ const ChatRoom = ({
 		}
 	};
 
-	// Press enter to submit message
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (
-			e.key === 'Enter' &&
-			!e.shiftKey &&
-			form.formState.isValid &&
-			!form.formState.isSubmitting
-		) {
-			e.preventDefault();
-
-			form.handleSubmit(onSubmit)();
-		}
-	};
-
 	return (
 		<>
 			<div
@@ -358,313 +322,30 @@ const ChatRoom = ({
 						<p className='mt-1 text-sm'>Say hello when you are ready.</p>
 					</div>
 				) : (
-					<div
-						className='
-					flex-1
-					space-y-2
-					overflow-y-auto
-					p-6
-				'
-					>
-						{chatMessages.map((message, index) => {
-							const isCurrentUser = message.senderId === currentUserId;
-
-							// Double texting from sender
-							const previousMessage = chatMessages[index - 1];
-							// If not login user & not double texting and then show avatar
-							const showAvatar =
-								!isCurrentUser &&
-								previousMessage?.senderId !== message.senderId;
-
-							// Prevent show read time every text, when sender double texting
-							const nextMessage = chatMessages[index + 1];
-
-							const showReadReceipt =
-								isCurrentUser &&
-								message.dateRead &&
-								(!nextMessage || nextMessage.senderId !== currentUserId);
-
-							// Display separator when change a date
-							const showDateSeparator =
-								!previousMessage ||
-								!isSameDay(
-									new Date(previousMessage.created),
-									new Date(message.created),
-								);
-
-							return (
-								<div key={message.id}>
-									{/* Date Separator */}
-									{showDateSeparator && (
-										<div className='my-6 flex items-center gap-4'>
-											<div className='h-px flex-1 bg-black/10' />
-											<p
-												className='
-						text-[11px]
-						tracking-wide
-						text-gray-400
-					'
-											>
-												{formatMessageDate(new Date(message.created))}
-											</p>
-											<div className='h-px flex-1 bg-black/10' />
-										</div>
-									)}
-
-									{/* Message Row */}
-									<div
-										className={`flex gap-2 ${
-											isCurrentUser ? 'justify-end' : 'justify-start'
-										}`}
-									>
-										{/* Avatar */}
-										{showAvatar && (
-											<Avatar
-												className='
-											mt-1
-						h-10
-						w-10
-						overflow-hidden
-						border
-						border-black/10
-					'
-											>
-												<AvatarImage
-													className='object-cover object-[center_10%]'
-													src={
-														transformImageUrl(message.senderImage, 'avatar') ??
-														''
-													}
-												/>
-
-												<AvatarFallback>
-													{message.senderName?.charAt(0)}
-												</AvatarFallback>
-											</Avatar>
-										)}
-
-										{/* Empty spacing */}
-										{!isCurrentUser && !showAvatar && <div className='w-10' />}
-
-										<div className='group flex gap-2'>
-											{/* Chat Options ex: delete */}
-											{isCurrentUser && (
-												<ChatOptions
-													onDeleteClick={() => setSelectedMessageId(message.id)}
-												/>
-											)}
-
-											{/* Bubble + Time */}
-											<div className='first-letter:mt-1 flex flex-col'>
-												<div
-													className={`
-						relative
-						max-w-[80%] md:max-w-[90%]
-						min-w-[80px]
-						px-4
-						py-2.5
-						text-sm
-						leading-relaxed
-						shadow-sm
-						transition-all
-						duration-300
-						${
-							isCurrentUser
-								? `
-									rounded-3xl
-									rounded-br-sm
-									bg-purple-500/90
-									text-white
-								`
-								: `
-									rounded-3xl
-									rounded-bl-sm
-									border
-									border-black/5
-									bg-black/5
-									text-gray-800
-								`
-						}
-					`}
-												>
-													{message.text}
-												</div>
-												{/* Message send time */}
-												<p
-													className='mt-1
-						text-[11px] text-right
-						text-gray-400'
-												>
-													{formatChatTime(new Date(message.created))}
-												</p>
-
-												{/* Message receipt time */}
-												{isCurrentUser &&
-													message.dateRead &&
-													showReadReceipt && (
-														<p className='text-[11px] font-medium text-right text-gray-500'>
-															Read {formatChatTime(new Date(message.dateRead))}
-														</p>
-													)}
-											</div>
-										</div>
-									</div>
-								</div>
-							);
-						})}
-
-						{/* Typing indicator */}
-						<AnimatePresence>
-							{isPartnerTyping && <TypingIndicator partner={partner} />}
-						</AnimatePresence>
-
-						{/* For auto scroll to the latest chat */}
-						<div ref={bottomRef} />
-					</div>
+					<ChatMessages
+						chatMessages={chatMessages}
+						currentUserId={currentUserId}
+						partner={partner}
+						isPartnerTyping={isPartnerTyping}
+						bottomRef={bottomRef}
+						onDeleteClick={(messageId) => setSelectedMessageId(messageId)}
+					/>
 				)}
 
-				{/* Form: Chat send */}
-				<div
-					className='
-					border-t
-					border-black/10
-					bg-white/40
-					p-4
-					backdrop-blur-xl
-				'
-				>
-					<Form {...form}>
-						<form
-							onSubmit={form.handleSubmit(onSubmit)}
-							className='flex items-end gap-3'
-						>
-							<FormField
-								control={form.control}
-								name='text'
-								render={({ field }) => (
-									<FormItem className='flex-1'>
-										<FormMessage className='text-sm text-red-700' />
-
-										<FormControl>
-											<Textarea
-												{...field}
-												placeholder='Write a message...'
-												onKeyDown={handleKeyDown}
-												onChange={(e) => {
-													field.onChange(e);
-													handleTypingChange(e.target.value);
-												}}
-												className='
-												min-h-[56px]
-												resize-none
-												rounded-2xl
-												border-black/10
-												bg-white/80
-												text-sm
-												placeholder:text-gray-400
-												focus-visible:ring-1
-												focus-visible:ring-purple-400
-											'
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<Button
-								type='submit'
-								size='icon'
-								disabled={
-									!form.formState.isDirty ||
-									!form.formState.isValid ||
-									form.formState.isSubmitting
-								}
-								className='
-								h-12
-								w-12
-								rounded-full
-								bg-purple-500
-								transition-all
-								duration-300
-								hover:bg-purple-400
-							'
-							>
-								<SendHorizonal className='h-5 w-5' />
-							</Button>
-						</form>
-					</Form>
-				</div>
+				{/* Form: Chat message send */}
+				<ChatInput
+					form={form}
+					onSubmit={onSubmit}
+					handleTypingChange={handleTypingChange}
+				/>
 			</div>
 
 			{/* Show alert dialog to delete message */}
-			<AlertDialog
+			<DeleteMessageDialog
 				open={!!selectedMessageId}
-				onOpenChange={(open) => {
-					if (!open) {
-						setSelectedMessageId(null);
-					}
-				}}
-			>
-				<AlertDialogContent
-					className='
-	w-[90%]
-	max-w-sm
-	rounded-3xl
-	border-black/10
-	bg-white/90
-	p-6
-	md:p-8
-	backdrop-blur-xl
-'
-				>
-					<AlertDialogHeader>
-						<AlertDialogTitle
-							className='
-						pt-4
-						text-xl
-						font-semibold
-						text-gray-900
-					'
-						>
-							Delete message?
-						</AlertDialogTitle>
-						<div className='h-[2px] w-10 rounded-full bg-purple-500' />
-
-						<AlertDialogDescription
-							className='
-						pt-1
-						text-sm
-						text-gray-500
-					'
-						>
-							This message will be permanently removed.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-
-					<AlertDialogFooter>
-						<AlertDialogCancel
-							className='
-						rounded-2xl
-						border-black/10
-					'
-						>
-							Cancel
-						</AlertDialogCancel>
-
-						<AlertDialogAction
-							onClick={handleDelete}
-							className='
-						rounded-2xl
-						bg-purple-500
-						text-white
-						hover:bg-purple-400
-					'
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+				onClose={() => setSelectedMessageId(null)}
+				onDelete={handleDelete}
+			/>
 		</>
 	);
 };
