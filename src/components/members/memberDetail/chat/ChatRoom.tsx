@@ -145,7 +145,9 @@ const ChatRoom = ({
 		[currentUserId],
 	);
 
-	// 受信側の処理
+	// ==========================
+	// Typing (Receive)
+	// ==========================
 	const handleTypingStop = useCallback(
 		(payload: TypingPayload) => {
 			if (payload.typingUserId === currentUserId) return;
@@ -155,7 +157,9 @@ const ChatRoom = ({
 		[currentUserId],
 	);
 
-	// 送信側の処理: 実際に何を送るか"を担当する
+	// ==========================
+	// Typing (Send): 送信側の処理: 実際に何を送るか"を担当する
+	// ==========================
 	const startTyping = useCallback(async () => {
 		if (isTypingRef.current) {
 			return;
