@@ -306,31 +306,15 @@ const ChatRoom = ({
 				backdrop-blur-md
 			'
 			>
-				{/* Messages */}
-				{chatMessages.length === 0 ? (
-					<div
-						className='
-					border-b
-					border-black/10
-					px-6
-					py-4
-				'
-					>
-						<p className='text-lg font-medium'>
-							Your conversation starts here.
-						</p>
-						<p className='mt-1 text-sm'>Say hello when you are ready.</p>
-					</div>
-				) : (
-					<ChatMessages
-						chatMessages={chatMessages}
-						currentUserId={currentUserId}
-						partner={partner}
-						isPartnerTyping={isPartnerTyping}
-						bottomRef={bottomRef}
-						onDeleteClick={(messageId) => setSelectedMessageId(messageId)}
-					/>
-				)}
+				{/* Messages一覧 */}
+				<ChatMessages
+					chatMessages={chatMessages}
+					currentUserId={currentUserId}
+					partner={partner}
+					isPartnerTyping={isPartnerTyping}
+					bottomRef={bottomRef}
+					onDeleteClick={(messageId) => setSelectedMessageId(messageId)}
+				/>
 
 				{/* Form: Chat message send */}
 				<ChatInput
