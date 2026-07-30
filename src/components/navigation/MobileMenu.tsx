@@ -78,7 +78,7 @@ const MobileMenu = ({ session, userInfo, isSigningOut, onSignOut }: Props) => {
 							</div>
 						)}
 
-						{/* Menu */}
+						{/* Side bar: Menu */}
 						<div className='flex flex-col gap-2 px-2'>
 							{!session ? (
 								<>

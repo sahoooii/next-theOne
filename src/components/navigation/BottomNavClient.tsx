@@ -34,6 +34,7 @@ const BottomNavClient = ({
         shadow-lg
       '
 			>
+				{/* Members, Lists, Messages */}
 				{userLinks.map((link) => {
 					const Icon = link.icon;
 					if (!Icon) return null;

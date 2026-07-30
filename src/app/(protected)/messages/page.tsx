@@ -6,18 +6,21 @@ import { getConversationsList } from '@/app/actions/messageActions';
 
 import ConversationList from '@/components/messages/ConversationList';
 import ConversationListSkeleton from '@/components/messages/skeleton/ConversationListSkeleton';
+import { ConversationProvider } from '@/providers/ConversationProvider';
 
 const MessagesPage = async () => {
 	const conversations = await getConversationsList();
 	const currentUserId = await getAuthUserId();
 
 	return (
-		<Suspense fallback={<ConversationListSkeleton />}>
-			<ConversationList
-				conversations={conversations}
-				currentUserId={currentUserId}
-			/>
-		</Suspense>
+		<ConversationProvider
+			initialConversations={conversations}
+			currentUserId={currentUserId}
+		>
+			<Suspense fallback={<ConversationListSkeleton />}>
+				<ConversationList />
+			</Suspense>
+		</ConversationProvider>
 	);
 };
 

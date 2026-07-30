@@ -64,6 +64,7 @@ const NavClient = ({
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
+					{/* Members, Lists, Messages */}
 					{leftLinks.map((link) => {
 						// For ex:/messages/123
 						const isActive = pathname.startsWith(link.href);
