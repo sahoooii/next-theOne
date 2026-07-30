@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { Session } from 'next-auth';
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
 import { useSignOut } from '@/hooks/useSignOut';
-import { navLinks } from './navLinks';
-import MobileMenu from './MobileMenu';
+import { navLinks } from '../navLinks';
+import MobileMenu from '../mobie/MobileMenu';
 import DropdownMenuDeskTop from './DropdownMenuDeskTop';
 
 import { IoSparkles } from 'react-icons/io5';
