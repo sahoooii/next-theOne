@@ -6,7 +6,6 @@ import ConversationCard from './ConversationCard';
 import { Card } from '@/components/ui/card';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 
-
 const ConversationList = () => {
 	const { conversations } = useConversation();
 
