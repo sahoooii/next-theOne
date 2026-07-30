@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Providers from '@/components/Providers';
 import { Inter, Cormorant } from 'next/font/google';
-import TopNav from '@/components/navigation/TopNav';
+
+import AppProviders from '@/providers/AppProviders';
+import TopNav from '@/components/navigation/desktop/TopNav';
 import { Toaster } from 'sonner';
-import BottomNavWrapper from '@/components/navigation/BottomNavWrapper';
+import BottomNavWrapper from '@/components/navigation/mobie/BottomNavWrapper';
 
 export const metadata: Metadata = {
 	title: 'The One',
@@ -30,14 +31,14 @@ export default function RootLayout({
 	return (
 		<html lang='en' className={`${inter.variable} ${cormorant.variable}`}>
 			<body className='font-sans'>
-				<Providers>
+				<AppProviders>
 					<TopNav />
 					<main className='min-h-[calc(100vh-80px)] mx-auto px-6 p-10 pb-36 lg:pb-24'>
 						<div className='max-w-6xl mx-auto'>{children}</div>
 					</main>
 					<Toaster position='bottom-right' />
 					<BottomNavWrapper />
-				</Providers>
+				</AppProviders>
 			</body>
 		</html>
 	);

@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { Session } from 'next-auth';
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
 import { useSignOut } from '@/hooks/useSignOut';
-import { navLinks } from './navLinks';
-import MobileMenu from './MobileMenu';
+import { navLinks } from '../navLinks';
+import MobileMenu from '../mobie/MobileMenu';
 import DropdownMenuDeskTop from './DropdownMenuDeskTop';
 
 import { IoSparkles } from 'react-icons/io5';
@@ -64,6 +64,7 @@ const NavClient = ({
 				</Link>
 				{/* Center Nav（Only desktop） */}
 				<div className='hidden lg:flex items-center gap-8 relative'>
+					{/* Members, Lists, Messages */}
 					{leftLinks.map((link) => {
 						// For ex:/messages/123
 						const isActive = pathname.startsWith(link.href);

@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import BottomNavClient from './BottomNavClient';
 import { getUserInfoForNav } from '@/app/actions/userActions';
 
+// Mobile bottom nav
 const BottomNavWrapper = async () => {
 	const session = await auth();
 
