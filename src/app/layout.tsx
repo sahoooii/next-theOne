@@ -5,7 +5,7 @@ import { Inter, Cormorant } from 'next/font/google';
 import AppProviders from '@/providers/AppProviders';
 import TopNav from '@/components/navigation/desktop/TopNav';
 import { Toaster } from 'sonner';
-import BottomNavWrapper from '@/components/navigation/mobie/BottomNavWrapper';
+import BottomNavWrapper from '@/components/navigation/mobile/BottomNavWrapper';
 
 export const metadata: Metadata = {
 	title: 'The One',
