@@ -3,7 +3,6 @@ import './globals.css';
 import { Inter, Cormorant } from 'next/font/google';
 
 import AppProviders from '@/providers/AppProviders';
-import TopNav from '@/components/navigation/desktop/TopNav';
 import { Toaster } from 'sonner';
 import BottomNavWrapper from '@/components/navigation/mobile/BottomNavWrapper';
 
@@ -32,11 +31,9 @@ export default function RootLayout({
 		<html lang='en' className={`${inter.variable} ${cormorant.variable}`}>
 			<body className='font-sans'>
 				<AppProviders>
-					<TopNav />
-					<main className='min-h-[calc(100vh-80px)] mx-auto px-6 p-10 pb-36 lg:pb-24'>
-						<div className='max-w-6xl mx-auto'>{children}</div>
-					</main>
+					{children}
 					<Toaster position='bottom-right' />
+					{/* ↓ここもGuest, Authに分ける */}
 					<BottomNavWrapper />
 				</AppProviders>
 			</body>

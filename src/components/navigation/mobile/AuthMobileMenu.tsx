@@ -11,15 +11,16 @@ import {
 	SheetTrigger,
 	SheetClose,
 	SheetTitle,
+	SheetDescription,
 } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-import { Menu, User, UserCircle, LogOut } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
+import { Menu, User, UserCircle} from 'lucide-react';
 
 import { SignOutProps } from '@/types';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import { SignOutButton } from '../shared/SignOutButton';
 
 type Props = SignOutProps & {
 	session: Session | null;
@@ -32,7 +33,6 @@ type Props = SignOutProps & {
 const AuthMobileMenu = ({
 	session,
 	userInfo,
-	isSigningOut,
 	onSignOut,
 }: Props) => {
 	// For hamburger menu button
@@ -59,6 +59,10 @@ const AuthMobileMenu = ({
 					className='bg-purple-950/95 backdrop-blur-xl border-l border-white/10 text-white'
 				>
 					<SheetTitle className='sr-only'>Mobile navigation menu</SheetTitle>
+					<SheetDescription className='sr-only'>
+						User account navigation menu
+					</SheetDescription>
+
 					<div className='mt-8 flex flex-col gap-6'>
 						{/* User Info */}
 						<div className='flex items-center gap-4 px-4 pb-4 border-b border-white/10'>
@@ -91,24 +95,11 @@ const AuthMobileMenu = ({
 
 							{/* SignOut */}
 							<SheetClose asChild>
-								<button
-									onClick={onSignOut}
-									disabled={isSigningOut}
-									className='menu-item text-red-400 hover:bg-red-500/10'
-								>
-									{isSigningOut ? (
-										<>
-											<Loader2 className='mr-2 h-4 w-4 animate-spin' />{' '}
-											<LogOut size={20} />
-											Signing out...
-										</>
-									) : (
-										<>
-											<LogOut size={20} />
-											Sign out
-										</>
-									)}
-								</button>
+								<SignOutButton
+									variant='menu'
+									onSignOut={onSignOut}
+									onSuccess={() => setOpen(false)}
+								/>
 							</SheetClose>
 						</div>
 					</div>

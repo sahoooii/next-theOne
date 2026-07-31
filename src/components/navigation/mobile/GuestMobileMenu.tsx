@@ -10,6 +10,7 @@ import {
 	SheetTrigger,
 	SheetClose,
 	SheetTitle,
+	SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
@@ -40,6 +41,10 @@ const GuestMobileMenu = () => {
 					className='bg-purple-950/95 backdrop-blur-xl border-l border-white/10 text-white'
 				>
 					<SheetTitle className='sr-only'>Mobile navigation menu</SheetTitle>
+					<SheetDescription className='sr-only'>
+						Guest account navigation menu
+					</SheetDescription>
+
 					<div className='mt-8 flex flex-col gap-6'>
 						{/* Side bar: Menu */}
 						<div className='flex flex-col gap-2 px-2'>

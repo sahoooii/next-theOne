@@ -7,27 +7,24 @@ import { motion } from 'framer-motion';
 import { Session } from 'next-auth';
 import { useSignOut } from '@/hooks/useSignOut';
 
-import { authNavLinks } from '../navLinks';
+import { authNavLinks } from './navLinks';
 import BrandLogo from './BrandLogo';
-import DropdownMenuDeskTop from './DropdownMenuDeskTop';
-import AuthMobileMenu from '../mobile/AuthMobileMenu';
+import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
+import AuthMobileMenu from './mobile/AuthMobileMenu';
 
 const navMenuStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
 
-	type Props =  {
-		session: Session | null;
-		userInfo: {
-			name: string | null;
-			image: string | null;
-		} | null;
-	};
+type Props = {
+	session: Session | null;
+	userInfo: {
+		name: string | null;
+		image: string | null;
+	} | null;
+};
 
 /* Center Nav（Only desktop） */
-const AuthNav = ({
-	session,
-	userInfo,
-}: Props) => {
+const AuthNav = ({ session, userInfo }: Props) => {
 	const pathname = usePathname();
 
 	const { isSigningOut, handleSignOut } = useSignOut();
