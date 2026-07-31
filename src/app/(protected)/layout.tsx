@@ -6,6 +6,9 @@ import { getAuthUserId } from '../actions/authActions';
 import { getMemberByUserId } from '../actions/memberActions';
 import { getConversationsList } from '../actions/messageActions';
 
+import { PageLayout } from '@/components/layout/PageLayout';
+import TopNav from '@/components/navigation/TopNav';
+
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 	const userId = await getAuthUserId();
 
@@ -16,7 +19,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 
 	const member = await getMemberByUserId(userId);
 
-	// Guard user not create complete-profile
+	// Guard user not create complete-profile(Not have Member)
 	if (!member) {
 		redirect('/complete-profile');
 	}
@@ -29,7 +32,9 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 			initialConversations={conversations}
 			currentUserId={userId}
 		>
-			{children}
+			<TopNav />
+			<PageLayout>{children}</PageLayout>
+			{/* BottomNav */}
 		</ConversationProvider>
 	);
 };

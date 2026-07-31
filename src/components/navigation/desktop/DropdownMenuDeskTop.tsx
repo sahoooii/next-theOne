@@ -22,7 +22,6 @@ type Props = SignOutProps & {
 	} | null;
 };
 
-
 const DropdownMenuDeskTop = ({
 	session,
 	userInfo,
