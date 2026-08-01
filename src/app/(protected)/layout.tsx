@@ -7,7 +7,7 @@ import { getMemberByUserId } from '../actions/memberActions';
 import { getConversationsList } from '../actions/messageActions';
 
 import { PageLayout } from '@/components/layout/PageLayout';
-import TopNav from '@/components/navigation/TopNav';
+import TopNav from '@/components/navigation/nav/TopNav';
 
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 	const userId = await getAuthUserId();

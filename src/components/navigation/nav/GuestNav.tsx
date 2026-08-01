@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import BrandLogo from '../BrandLogo';
+import { guestNavLinks } from '../navLinks';
+import GuestMobileMenu from '../mobile/GuestMobileMenu';
 
-import { guestNavLinks } from './navLinks';
-import BrandLogo from './BrandLogo';
-import GuestMobileMenu from './mobile/GuestMobileMenu';
 
 const GuestNav = () => {
 	const pathname = usePathname();

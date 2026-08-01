@@ -12,10 +12,11 @@ import {
 	SheetDescription,
 } from '@/components/ui/sheet';
 
-import { Button } from '../ui/button';
 import { Menu } from 'lucide-react';
-import BrandLogo from './BrandLogo';
-import { SignOutButton } from './shared/SignOutButton';
+
+import { Button } from '@/components/ui/button';
+import BrandLogo from '../BrandLogo';
+import { SignOutButton } from '../shared/SignOutButton';
 
 const ProfileCompletionNav = () => {
 	// For hamburger menu button
@@ -53,7 +54,7 @@ const ProfileCompletionNav = () => {
 							<SheetDescription className='sr-only'>
 								User account navigation menu
 							</SheetDescription>
-							
+
 							<div className='mt-8 flex flex-col gap-6'>
 								{/* Side bar: Menu */}
 								<div className='flex flex-col gap-2 px-2'>

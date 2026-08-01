@@ -1,4 +1,4 @@
-import TopNav from '@/components/navigation/TopNav';
+import TopNav from '@/components/navigation/nav/TopNav';
 import { PageLayout } from '@/components/layout/PageLayout';
 
 const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
