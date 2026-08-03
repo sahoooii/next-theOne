@@ -42,19 +42,26 @@ const ConversationCard = ({ conversation }: Props) => {
 				<div className='flex-1 min-w-0'>
 					<div className='flex items-center justify-between gap-4'>
 						<div className='flex items-center gap-2'>
-							{/* Add purple dot when user have unread message */}
-							{conversation.hasUnread && (
-								<div
+							{/* Add purple dot with unread count number, when user have unread message */}
+							{conversation.unreadCount > 0 && (
+								<span
 									className='
-					h-2
-					w-2
-					shrink-0
-					rounded-full
-					bg-purple-500
-				'
-								/>
+min-w-5
+h-5
+px-1.5
+rounded-full
+bg-purple-500
+text-white
+text-xs
+font-medium
+flex
+items-center
+justify-center
+'
+								>
+									{conversation.unreadCount}
+								</span>
 							)}
-
 
 							<h3 className='truncate text-gray-900'>{conversation.name}</h3>
 						</div>

@@ -15,7 +15,7 @@ export type Conversation = {
 	lastMessageSenderId: string;
 	created: Date;
 	dateRead: Date | null;
-	hasUnread: boolean; //Manage unread message
+	unreadCount: number; //Manage unread message
 };
 
 // 通信で更新したいもの pusher
@@ -34,4 +34,3 @@ export type ConversationPayload = {
 export type ConversationDeletePayload = {
 	userId: string;
 };
-
