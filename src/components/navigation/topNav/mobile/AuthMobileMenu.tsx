@@ -16,11 +16,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
-import { Menu, User, UserCircle} from 'lucide-react';
+import { Menu, User, UserCircle } from 'lucide-react';
 
 import { SignOutProps } from '@/types';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
-import { SignOutButton } from '../shared/SignOutButton';
+import { SignOutButton } from '../../shared/SignOutButton';
 
 type Props = SignOutProps & {
 	session: Session | null;
@@ -30,11 +30,7 @@ type Props = SignOutProps & {
 	} | null;
 };
 
-const AuthMobileMenu = ({
-	session,
-	userInfo,
-	onSignOut,
-}: Props) => {
+const AuthMobileMenu = ({ session, userInfo, onSignOut }: Props) => {
 	// For hamburger menu button
 	const [open, setOpen] = useState(false);
 

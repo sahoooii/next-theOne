@@ -11,11 +11,11 @@ import {
 	SheetTitle,
 	SheetDescription,
 } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
 import { Menu } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import BrandLogo from '../BrandLogo';
+import BrandLogo from '../shared/BrandLogo';
 import { SignOutButton } from '../shared/SignOutButton';
 
 const ProfileCompletionNav = () => {

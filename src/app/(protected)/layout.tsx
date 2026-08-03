@@ -8,6 +8,7 @@ import { getConversationsList } from '../actions/messageActions';
 
 import { PageLayout } from '@/components/layout/PageLayout';
 import TopNav from '@/components/navigation/topNav/TopNav';
+import BottomNav from '@/components/navigation/bottomNav/BottomNav';
 
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 	const userId = await getAuthUserId();
@@ -34,7 +35,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 		>
 			<TopNav />
 			<PageLayout>{children}</PageLayout>
-			{/* BottomNav */}
+			<BottomNav />
 		</ConversationProvider>
 	);
 };
