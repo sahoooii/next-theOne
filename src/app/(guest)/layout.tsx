@@ -6,7 +6,6 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 		<>
 			<TopNav />
 			<PageLayout>{children}</PageLayout>
-			{/* BottomNav */}
 		</>
 	);
 };

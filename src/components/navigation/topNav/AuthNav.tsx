@@ -6,11 +6,11 @@ import { motion } from 'framer-motion';
 
 import { Session } from 'next-auth';
 import { useSignOut } from '@/hooks/useSignOut';
-import BrandLogo from '../BrandLogo';
-import { authNavLinks } from '../navLinks';
-import DropdownMenuDeskTop from '../desktop/DropdownMenuDeskTop';
-import AuthMobileMenu from '../mobile/AuthMobileMenu';
 
+import { authNavLinks } from '../shared/navLinks';
+import BrandLogo from '../shared/BrandLogo';
+import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
+import AuthMobileMenu from './mobile/AuthMobileMenu';
 
 const navMenuStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';

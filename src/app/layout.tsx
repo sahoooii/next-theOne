@@ -4,7 +4,6 @@ import { Inter, Cormorant } from 'next/font/google';
 
 import AppProviders from '@/providers/AppProviders';
 import { Toaster } from 'sonner';
-import BottomNavWrapper from '@/components/navigation/mobile/BottomNavWrapper';
 
 export const metadata: Metadata = {
 	title: 'The One',
@@ -33,8 +32,6 @@ export default function RootLayout({
 				<AppProviders>
 					{children}
 					<Toaster position='bottom-right' />
-					{/* ↓ここもGuest, Authに分ける */}
-					<BottomNavWrapper />
 				</AppProviders>
 			</body>
 		</html>

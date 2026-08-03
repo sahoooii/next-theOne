@@ -2,24 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { motion } from 'framer-motion';
-import { navLinks } from '../navLinks';
+import { authNavLinks } from '../shared/navLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
-const BottomNavClient = ({
-	userInfo,
-}: {
+type Props = {
 	userInfo: {
 		name: string | null;
 		image: string | null;
 	} | null;
-}) => {
-	const pathname = usePathname();
+};
 
-	const userLinks = navLinks.filter((link) => link.auth === 'user');
+const AuthBottomNav = ({ userInfo }: Props) => {
+	const pathname = usePathname();
 
 	return (
 		<div className='lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50'>
@@ -35,10 +34,11 @@ const BottomNavClient = ({
       '
 			>
 				{/* Members, Lists, Messages */}
-				{userLinks.map((link) => {
+				{authNavLinks.map((link) => {
 					const Icon = link.icon;
 					if (!Icon) return null;
-					const isActive = pathname === link.href;
+					// For ex:/messages/123
+					const isActive = pathname.startsWith(link.href);
 
 					return (
 						<Link
@@ -77,6 +77,7 @@ const BottomNavClient = ({
 						</Link>
 					);
 				})}
+
 				{/* Profile Icon */}
 				<Link
 					href='/members/edit'
@@ -113,7 +114,7 @@ const BottomNavClient = ({
 								src={transformImageUrl(userInfo?.image, 'avatar') || ''}
 							/>
 							<AvatarFallback>
-								{userInfo?.name?.charAt(0) || <User />}
+								{userInfo?.name?.charAt(0) || <User size={18} />}
 							</AvatarFallback>
 						</Avatar>
 					</motion.div>
@@ -123,4 +124,4 @@ const BottomNavClient = ({
 	);
 };
 
-export default BottomNavClient;
+export default AuthBottomNav;
