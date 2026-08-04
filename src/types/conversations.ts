@@ -27,7 +27,7 @@ export type ConversationPayload = {
 	lastMessageSenderId: string;
 	created: string;
 	dateRead: string | null;
-	hasUnread: boolean;
+	unreadCount: number;
 };
 
 // Conversationがゼロになったとき（最後の会話が消された時）
