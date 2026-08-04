@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import ListsTab from '@/components/lists/ListsTab';
+import ListsTab from '@/components/likes/ListsTab';
 import {
 	fetchCurrentUserLikeIds,
 	fetchLikedMembers,
 } from '@/app/actions/likeActions';
-import ListsSkeleton from '@/components/lists/ListsSkeleton';
+import ListsSkeleton from '@/components/likes/ListsSkeleton';
 
 const ListsPage = async ({
 	searchParams,
