@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { motion } from 'framer-motion';
-import { authNavLinks } from '../shared/navLinks';
+import { getAuthNavLinks } from '../shared/navLinks';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import { useConversation } from '@/providers/ConversationProvider';
+import UnreadBadge from '../shared/UnreadBadge';
 
 type Props = {
 	userInfo: {
@@ -19,6 +21,15 @@ type Props = {
 
 const AuthBottomNav = ({ userInfo }: Props) => {
 	const pathname = usePathname();
+
+	// Count unread message
+	const { conversations } = useConversation();
+
+	const unreadConversationCount = conversations.filter(
+		(conversation) => conversation.unreadCount > 0,
+	).length;
+
+	const navLinks = getAuthNavLinks(unreadConversationCount);
 
 	return (
 		<div className='lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50'>
@@ -34,7 +45,7 @@ const AuthBottomNav = ({ userInfo }: Props) => {
       '
 			>
 				{/* Members, Lists, Messages */}
-				{authNavLinks.map((link) => {
+				{navLinks.map((link) => {
 					const Icon = link.icon;
 					if (!Icon) return null;
 					// For ex:/messages/123
@@ -72,6 +83,11 @@ const AuthBottomNav = ({ userInfo }: Props) => {
 											? 'text-primary'
 											: 'text-gray-300 hover:text-primary'
 									}`}
+								/>
+
+								<UnreadBadge
+									count={link.badge ?? 0}
+									className='absolute -top-3 -right-4'
 								/>
 							</motion.div>
 						</Link>

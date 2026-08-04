@@ -7,10 +7,12 @@ import { motion } from 'framer-motion';
 import { Session } from 'next-auth';
 import { useSignOut } from '@/hooks/useSignOut';
 
-import { authNavLinks } from '../shared/navLinks';
+import { getAuthNavLinks } from '../shared/navLinks';
 import BrandLogo from '../shared/BrandLogo';
 import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
 import AuthMobileMenu from './mobile/AuthMobileMenu';
+import { useConversation } from '@/providers/ConversationProvider';
+import UnreadBadge from '../shared/UnreadBadge';
 
 const navMenuStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
@@ -29,6 +31,15 @@ const AuthNav = ({ session, userInfo }: Props) => {
 
 	const { isSigningOut, handleSignOut } = useSignOut();
 
+	// Count unread message
+	const { conversations } = useConversation();
+
+	const unreadConversationCount = conversations.filter(
+		(conversation) => conversation.unreadCount > 0,
+	).length;
+
+	const navLinks = getAuthNavLinks(unreadConversationCount);
+
 	return (
 		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
 			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 h-20'>
@@ -36,7 +47,7 @@ const AuthNav = ({ session, userInfo }: Props) => {
 				<BrandLogo />
 
 				<div className='hidden lg:flex items-center gap-8 relative'>
-					{authNavLinks.map((link) => {
+					{navLinks.map((link) => {
 						// For ex:/messages/123
 						const isActive = pathname.startsWith(link.href);
 						return (
@@ -48,6 +59,11 @@ const AuthNav = ({ session, userInfo }: Props) => {
 								<span className={`${navMenuStyleLg} relative z-10`}>
 									{link.label}
 								</span>
+
+								<UnreadBadge
+									count={link.badge ?? 0}
+									className='absolute -top-1 -right-2'
+								/>
 
 								{/* hover underline */}
 								{!isActive && (
