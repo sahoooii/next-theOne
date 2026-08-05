@@ -1,10 +1,12 @@
 import { Suspense } from 'react';
-import ListsTab from '@/components/likes/ListsTab';
+
 import {
 	fetchCurrentUserLikeIds,
 	fetchLikedMembers,
 } from '@/app/actions/likeActions';
-import ListsSkeleton from '@/components/likes/ListsSkeleton';
+
+import LikesSkeleton from '@/components/likes/LikesSkeleton';
+import LikesMenuTab from '@/components/likes/LikesMenuTab';
 
 const ListsPage = async ({
 	searchParams,
@@ -15,9 +17,10 @@ const ListsPage = async ({
 
 	const likeIds = await fetchCurrentUserLikeIds();
 	const members = await fetchLikedMembers(type);
+	
 	return (
-		<Suspense fallback={<ListsSkeleton />}>
-			<ListsTab members={members} likeIds={likeIds} />
+		<Suspense fallback={<LikesSkeleton />}>
+			<LikesMenuTab members={members} likeIds={likeIds} />
 		</Suspense>
 	);
 };

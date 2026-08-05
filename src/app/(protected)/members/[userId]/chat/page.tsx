@@ -8,6 +8,8 @@ import ChatClient from '@/components/members/memberDetail/chat/ChatClient';
 import { createChatId } from '@/lib/pusher/channels';
 import { getChatPartner } from '@/app/actions/memberActions';
 import NotFound from '../not-found';
+import { isMatched } from '@/lib/matching/isMatched';
+import { redirect } from 'next/navigation';
 
 const ChatPage = async ({
 	params,
@@ -17,6 +19,12 @@ const ChatPage = async ({
 	const { userId } = await params;
 	const messages = await getMessageThread(userId);
 	const currentUserId = await getAuthUserId();
+
+	const matched = await isMatched(currentUserId, userId);
+
+	if (!matched) {
+		redirect(`/members/${userId}/profile`);
+	}
 
 	const chatId = createChatId(userId, currentUserId);
 
