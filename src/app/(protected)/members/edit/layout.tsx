@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
+
 import { getMemberByUserId } from '@/app/actions/memberActions';
 import MemberSidebar from '@/components/members/memberDetail/MemberSidebar';
+
 import NotFound from '@/app/not-found';
 import BreadCrumb from '@/components/BreadCrumb';
 import { getAuthUserId } from '@/app/actions/authActions';
@@ -18,7 +20,6 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 		{ name: 'Photos', href: `${basePath}/photos` },
 	];
 
-	// Add loading
 	// Add update
 	return (
 		<>
