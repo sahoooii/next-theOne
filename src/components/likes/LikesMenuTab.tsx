@@ -2,18 +2,21 @@
 
 import { useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Member } from '@prisma/client';
+
 import { motion } from 'framer-motion';
+
+import { Member } from '@prisma/client';
+
+import { tabs } from './Tabs';
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
-import { tabs } from './Tabs';
 
 type Props = {
 	members: Member[];
 	likeIds: string[];
 };
 
-const ListsTab = ({ members, likeIds }: Props) => {
+const LikesMenuTab = ({ members, likeIds }: Props) => {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -102,4 +105,4 @@ const ListsTab = ({ members, likeIds }: Props) => {
 	);
 };
 
-export default ListsTab;
+export default LikesMenuTab;

@@ -109,7 +109,7 @@ const AuthBottomNav = ({ userInfo }: Props) => {
         bg-primary/30
         shadow-[0_0_20px_rgba(168,85,247,0.5)]
         blur-[1px]
-				ring-2 ring-purple-400/60
+				ring-2 ring-purple-400/60 
       '
 							transition={{
 								type: 'spring',

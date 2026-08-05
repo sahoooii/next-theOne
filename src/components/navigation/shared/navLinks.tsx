@@ -1,5 +1,5 @@
 import { IconType } from 'react-icons';
-import { Users, List, MessageCircle } from 'lucide-react';
+import { Users, MessageCircle, Heart } from 'lucide-react';
 
 export type NavLink = {
 	href: string;
@@ -15,9 +15,9 @@ export const getAuthNavLinks = (unreadConversationCount: number): NavLink[] => [
 		icon: Users,
 	},
 	{
-		href: '/lists',
-		label: 'Lists',
-		icon: List,
+		href: '/likes',
+		label: 'Likes',
+		icon: Heart,
 	},
 	{
 		href: '/messages',

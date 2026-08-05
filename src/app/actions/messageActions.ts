@@ -26,6 +26,7 @@ import { getConversationMessages } from '@/utils/conversations/getConversationMe
 import { markMessagesAsRead } from '@/utils/conversations/markMessageAsRead';
 import { notifyReadReceipt } from '@/lib/pusher/notifyReadReceipt';
 import { notifyTyping } from '@/lib/pusher/notifyTyping';
+import { isMatched } from '@/lib/matching/isMatched';
 
 // Chat room: Create a new message
 export async function createMessage(
@@ -50,6 +51,16 @@ export async function createMessage(
 			return { status: 'error', error: fieldErrors };
 		}
 		const { text } = validated.data;
+
+		// Check if users are matched
+		const matched = await isMatched(userId, recipientId);
+
+		if (!matched) {
+			return {
+				status: 'error',
+				error: 'You can only message users after matching.',
+			};
+		}
 
 		// Update DB: create a new message
 		const message = await prisma.message.create({
@@ -271,5 +282,5 @@ export async function sendTypingEvent(chatId: string, event: TypingEvent) {
 		typingUserId: userId,
 	};
 
-	await notifyTyping(chatId, event, payload)
+	await notifyTyping(chatId, event, payload);
 }
