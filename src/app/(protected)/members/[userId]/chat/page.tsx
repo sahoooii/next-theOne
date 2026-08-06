@@ -1,15 +1,18 @@
 export const dynamic = 'force-dynamic';
 
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+
 import { getAuthUserId } from '@/app/actions/authActions';
 import { getMessageThread } from '@/app/actions/messageActions';
+import { getChatPartner } from '@/app/actions/memberActions';
+
 import ChatSkeleton from '@/components/members/memberDetail/skeleton/ChatSkeleton';
 import ChatClient from '@/components/members/memberDetail/chat/ChatClient';
-import { createChatId } from '@/lib/pusher/channels';
-import { getChatPartner } from '@/app/actions/memberActions';
 import NotFound from '../not-found';
+
+import { createChatId } from '@/lib/pusher/channels';
 import { isMatched } from '@/lib/matching/isMatched';
-import { redirect } from 'next/navigation';
 
 const ChatPage = async ({
 	params,
@@ -23,7 +26,7 @@ const ChatPage = async ({
 	const matched = await isMatched(currentUserId, userId);
 
 	if (!matched) {
-		redirect(`/members/${userId}/profile`);
+		redirect(`/members/${userId}`);
 	}
 
 	const chatId = createChatId(userId, currentUserId);

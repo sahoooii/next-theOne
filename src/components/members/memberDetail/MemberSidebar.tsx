@@ -4,17 +4,25 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+
 import { Member } from '@prisma/client';
 import { Card } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import LikeButton from '../utils/LikeButton';
+
+type LikeInfo = {
+	targetId: string;
+	hasLiked: boolean;
+};
 
 type Props = {
 	member: Member;
 	navLinks: { name: string; href: string }[];
+	likeInfo?: LikeInfo;
 };
 
-const MemberSidebar = ({ member, navLinks }: Props) => {
+const MemberSidebar = ({ member, navLinks, likeInfo }: Props) => {
 	const pathname = usePathname();
 	return (
 		<Card
@@ -33,17 +41,30 @@ const MemberSidebar = ({ member, navLinks }: Props) => {
 			<div className='relative p-6 flex flex-col h-full'>
 				{/* Profile */}
 				<div className='flex flex-col items-center text-center space-y-3'>
-					<div className='relative w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden border border-white/20'>
-						<Image
-							src={
-								transformImageUrl(member.image, 'avatar') || '/images/user.png'
-							}
-							fill
-							priority
-							sizes='128px'
-							alt='User Profile'
-							className='object-cover object-[center_20%] transition-transform duration-500 hover:scale-105'
-						/>
+					<div className='relative w-24 h-24 lg:w-32 lg:h-32'>
+						<div className='relative w-full h-full rounded-full overflow-hidden border border-white/20'>
+							<Image
+								src={
+									transformImageUrl(member.image, 'avatar') ||
+									'/images/user.png'
+								}
+								fill
+								priority
+								sizes='128px'
+								alt='User Profile'
+								className='object-cover object-[center_20%] transition-transform duration-500 hover:scale-105'
+							/>
+						</div>
+
+						{/* Display when see user profile */}
+						{likeInfo && (
+							<div className='absolute -right-1 -top-2'>
+								<LikeButton
+									targetId={likeInfo.targetId}
+									hasLiked={likeInfo.hasLiked ?? false}
+								/>
+							</div>
+						)}
 					</div>
 
 					<div className='text-white font-semibold tracking-wide text-base'>

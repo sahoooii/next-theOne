@@ -100,7 +100,7 @@ async function fetchTargetLikes(userId: string) {
 
 // お互いにいいねしている関係達
 // likedUser.map((x) => x.targetUserId)
-async function fetchMutualLikes(userId: string) {
+export async function fetchMutualLikes(userId: string) {
 	// 自分がいいねした人を取る
 	const likedUser = await prisma.like.findMany({
 		where: {
