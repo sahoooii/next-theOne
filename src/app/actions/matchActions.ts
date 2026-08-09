@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { fetchMutualLikes } from './likeActions';
 import { Member } from '@prisma/client';
 
-export async function getNewMatches(currentUserId: string) {
+export async function getNewMatches(currentUserId: string): Promise<Member[]> {
 	//  matches= ex: Amanda, Lizz, Misato...
 	const matches = await fetchMutualLikes(currentUserId);
 
@@ -30,8 +30,8 @@ export async function getNewMatches(currentUserId: string) {
 		if (!hasMessage) {
 			newMatches.push(member);
 		}
-		return newMatches;
 	}
+	return newMatches;
 }
 
 // Refactor: future
@@ -42,3 +42,18 @@ export async function getNewMatches(currentUserId: string) {
 // 		return hasMessage ? null : member;
 // 	})
 // );
+
+
+// Note: Conversation list用の　mutual matchを作成する
+// prisma.like.findMany({
+//   where: ...
+//   select: {
+//     sourceMember: {
+//       select: {
+//         id: true,
+//         name: true,
+//         photos: true,
+//       }
+//     }
+//   }
+// })
