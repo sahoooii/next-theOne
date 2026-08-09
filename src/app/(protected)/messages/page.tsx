@@ -4,12 +4,17 @@ import { Suspense } from 'react';
 
 import ConversationList from '@/components/messages/ConversationList';
 import ConversationListSkeleton from '@/components/messages/skeleton/ConversationListSkeleton';
+import NewMatches from '@/components/messages/newMatches/NewMatches';
 
 const MessagesPage = async () => {
 	return (
-		<Suspense fallback={<ConversationListSkeleton />}>
-			<ConversationList />
-		</Suspense>
+		<>
+			{/* Suspense for NewMatches */}
+			<NewMatches />
+			<Suspense fallback={<ConversationListSkeleton />}>
+				<ConversationList />
+			</Suspense>
+		</>
 	);
 };
 
