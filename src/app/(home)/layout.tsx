@@ -5,8 +5,10 @@ import { ConversationProvider } from '@/providers/ConversationProvider';
 import { getMemberByUserId } from '../actions/memberActions';
 import { getConversationsList } from '../actions/messageActions';
 
-import TopNav from '@/components/navigation/topNav/TopNav';
 import { PageLayout } from '@/components/layout/PageLayout';
+
+import TopNav from '@/components/navigation/topNav/TopNav';
+import BottomNav from '@/components/navigation/bottomNav/BottomNav';
 
 const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 	const session = await auth();
@@ -24,6 +26,7 @@ const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 				>
 					<TopNav />
 					<PageLayout>{children}</PageLayout>
+					<BottomNav />
 				</ConversationProvider>
 			);
 		}
