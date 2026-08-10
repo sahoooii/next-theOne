@@ -83,12 +83,15 @@ model Photo {
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 }
 
+// source = 行動を起こした人
+// target = 行動を受けた人
 model Like {
-  sourceUserId String //いいねした人のID
-  // sourceUserId は Member.userId を参照してる
+  sourceUserId String //Likeした人のID
+  // Likeした人のMember / sourceUserId は Member.userId を参照してる
   sourceMember Member @relation("source", fields: [sourceUserId], references: [userId], onDelete: Cascade)
 
-  targetUserId String //いいねされた人のID
+  targetUserId String //Likeされた人のID
+  // Likeされた人のMember
   targetMember Member @relation("target", fields: [targetUserId], references: [userId], onDelete: Cascade)
 
   // sourceUserId_targetUserId 複合キー用のユニーク識別子、同じペアは1つだけ
