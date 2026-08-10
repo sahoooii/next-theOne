@@ -7,6 +7,7 @@ import { getMemberByUserId } from '../actions/memberActions';
 import { getConversationsList } from '../actions/messageActions';
 
 import { PageLayout } from '@/components/layout/PageLayout';
+
 import TopNav from '@/components/navigation/topNav/TopNav';
 import BottomNav from '@/components/navigation/bottomNav/BottomNav';
 
