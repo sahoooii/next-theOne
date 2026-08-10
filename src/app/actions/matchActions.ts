@@ -1,59 +1,61 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { fetchMutualLikes } from './likeActions';
-import { Member } from '@prisma/client';
+import { NewMatch } from '@/types/matches';
 
-export async function getNewMatches(currentUserId: string): Promise<Member[]> {
-	//  matches= ex: Amanda, Lizz, Misato...
-	const matches = await fetchMutualLikes(currentUserId);
+// source = Likeした人
+// target = Likeされた人
+export async function getNewMatches(
+	currentUserId: string,
+): Promise<NewMatch[]> {
+	// Get users that the current user has liked / 自分がLikeしたユーザーのIDを取得
+	const likedUsers = await prisma.like.findMany({
+		where: {
+			sourceUserId: currentUserId,
+		},
+		select: {
+			targetUserId: true,
+		},
+	});
 
-	const newMatches: Member[] = [];
+	// IDだけの配列にする
+	// [{ targetUserId: "B" },{ targetUserId: "C" }] → ['B', 'C'];
+	const likedUserIds = likedUsers.map((like) => like.targetUserId);
 
-	// Check have a message from matched users
-	for (const member of matches) {
-		const hasMessage = await prisma.message.findFirst({
-			where: {
-				OR: [
-					{
-						senderId: currentUserId,
-						recipientId: member.userId,
-					},
-					{
-						senderId: member.userId,
-						recipientId: currentUserId,
-					},
-				],
+	// 相互Likeかつ、まだメッセージを交換していないユーザーを取得
+	// Find the users who liked the current user back and have not exchanged any messages with them yet.
+	const matches = await prisma.like.findMany({
+		where: {
+			sourceUserId: {
+				in: likedUserIds,
 			},
-		});
+			targetUserId: currentUserId,
 
-		if (!hasMessage) {
-			newMatches.push(member);
-		}
-	}
-	return newMatches;
+			// Check that the matched partner and current user have never exchanged messages.
+			sourceMember: {
+				// No message from the partner to the current user.
+				senderMessages: {
+					none: { recipientId: currentUserId },
+				},
+				// No message from the partner to the current user.
+				recipientMessages: {
+					none: {
+						senderId: currentUserId,
+					},
+				},
+			},
+		},
+		select: {
+			// Return only the data needed by the New Matches UI.
+			sourceMember: {
+				select: {
+					userId: true,
+					name: true,
+					image: true,
+				},
+			},
+		},
+	});
+
+	return matches.map((match) => match.sourceMember);
 }
-
-// Refactor: future
-// const newMatches = await Promise.all(
-// 	matches.map(async (member) => {
-// 		const hasMessage = await prisma.message.findFirst(...)
-
-// 		return hasMessage ? null : member;
-// 	})
-// );
-
-
-// Note: Conversation list用の　mutual matchを作成する
-// prisma.like.findMany({
-//   where: ...
-//   select: {
-//     sourceMember: {
-//       select: {
-//         id: true,
-//         name: true,
-//         photos: true,
-//       }
-//     }
-//   }
-// })

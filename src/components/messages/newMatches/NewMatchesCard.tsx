@@ -4,13 +4,13 @@ import Link from 'next/link';
 
 import { motion } from 'framer-motion';
 
-import { Member } from '@prisma/client';
+import { NewMatch } from '@/types/matches';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
-	newMatch: Member;
+	newMatch: NewMatch;
 };
 
 // Avatarをムラサキリングで囲む。　focus effect
