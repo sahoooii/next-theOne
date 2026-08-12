@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { ConversationProvider } from '@/providers/ConversationProvider';
+import { LikeProvider } from '@/providers/LikeProvider';
 
 import { getAuthUserId } from '../actions/authActions';
 import { getMemberByUserId } from '../actions/memberActions';
@@ -34,9 +35,11 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 			initialConversations={conversations}
 			currentUserId={userId}
 		>
-			<TopNav />
-			<PageLayout>{children}</PageLayout>
-			<BottomNav />
+			<LikeProvider>
+				<TopNav />
+				<PageLayout>{children}</PageLayout>
+				<BottomNav />
+			</LikeProvider>
 		</ConversationProvider>
 	);
 };

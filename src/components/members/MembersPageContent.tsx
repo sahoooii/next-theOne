@@ -1,11 +1,9 @@
 import MemberCard from '@/components/members/utils/MemberCard';
 import { GiBigDiamondRing } from 'react-icons/gi';
 import { getMembers } from '@/app/actions/memberActions';
-import { fetchCurrentUserLikeIds } from '@/app/actions/likeActions';
 
 const MembersPageContent = async () => {
 	const members = await getMembers();
-	const likeIds = await fetchCurrentUserLikeIds();
 	return (
 		<div className='max-w-5xl mx-auto px-4'>
 			{/* Header */}
@@ -46,7 +44,7 @@ const MembersPageContent = async () => {
 			{/* Members Section */}
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
 				{members?.map((member) => (
-					<MemberCard member={member} key={member.id} likeIds={likeIds} />
+					<MemberCard member={member} key={member.id} />
 				))}
 			</div>
 		</div>

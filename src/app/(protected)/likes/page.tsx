@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 
 import {
-	fetchCurrentUserLikeIds,
 	fetchLikedMembers,
 } from '@/app/actions/likeActions';
 
@@ -14,13 +13,11 @@ const LikesPage = async ({
 	searchParams: Promise<{ type: string }>;
 }) => {
 	const { type } = await searchParams;
-
-	const likeIds = await fetchCurrentUserLikeIds();
 	const members = await fetchLikedMembers(type);
 
 	return (
 		<Suspense fallback={<LikesSkeleton />}>
-			<LikesMenuTab members={members} likeIds={likeIds} />
+			<LikesMenuTab members={members} />
 		</Suspense>
 	);
 };

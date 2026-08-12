@@ -13,7 +13,6 @@ import LikeButton from '../utils/LikeButton';
 
 type LikeInfo = {
 	targetId: string;
-	hasLiked: boolean;
 };
 
 type Props = {
@@ -61,7 +60,6 @@ const MemberSidebar = ({ member, navLinks, likeInfo }: Props) => {
 							<div className='absolute -right-1 -top-2'>
 								<LikeButton
 									targetId={likeInfo.targetId}
-									hasLiked={likeInfo.hasLiked ?? false}
 								/>
 							</div>
 						)}

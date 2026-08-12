@@ -13,10 +13,9 @@ import { LoadingDisplay } from '@/components/LoadingDisplay';
 
 type Props = {
 	members: Member[];
-	likeIds: string[];
 };
 
-const LikesMenuTab = ({ members, likeIds }: Props) => {
+const LikesMenuTab = ({ members }: Props) => {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -85,7 +84,7 @@ const LikesMenuTab = ({ members, likeIds }: Props) => {
 					{members.length > 0 ? (
 						<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
 							{members.map((member) => (
-								<MemberCard key={member.id} member={member} likeIds={likeIds} />
+								<MemberCard key={member.id} member={member} />
 							))}
 						</div>
 					) : (
