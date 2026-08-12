@@ -8,7 +8,7 @@ import {
 import LikesSkeleton from '@/components/likes/LikesSkeleton';
 import LikesMenuTab from '@/components/likes/LikesMenuTab';
 
-const ListsPage = async ({
+const LikesPage = async ({
 	searchParams,
 }: {
 	searchParams: Promise<{ type: string }>;
@@ -17,7 +17,7 @@ const ListsPage = async ({
 
 	const likeIds = await fetchCurrentUserLikeIds();
 	const members = await fetchLikedMembers(type);
-	
+
 	return (
 		<Suspense fallback={<LikesSkeleton />}>
 			<LikesMenuTab members={members} likeIds={likeIds} />
@@ -25,4 +25,4 @@ const ListsPage = async ({
 	);
 };
 
-export default ListsPage;
+export default LikesPage;

@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import MemberCardSkeleton from '@/components/members/utils/MemberCardSkeleton';
 
-const ListsSkeleton = () => {
+const LikesSkeleton = () => {
 	return (
 		<div className='max-w-5xl mx-auto px-4'>
 			<div className='overflow-x-auto'>
@@ -29,4 +29,4 @@ const ListsSkeleton = () => {
 	);
 };
 
-export default ListsSkeleton;
+export default LikesSkeleton;
