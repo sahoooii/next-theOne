@@ -1,23 +1,25 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 import { Member } from '@prisma/client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { calculateAge } from '@/lib/utils';
 import LikeButton from './LikeButton';
-import { useRouter } from 'next/navigation';
+
+import { calculateAge } from '@/lib/utils';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
 	member: Member;
-	likeIds: string[];
 };
 
-const MemberCard = ({ member, likeIds }: Props) => {
-	const hasLiked = likeIds.includes(member.userId);
-	const age = calculateAge(member.dateOfBirth);
+const MemberCard = ({ member }: Props) => {
 	const router = useRouter();
+
+	const age = calculateAge(member.dateOfBirth);
 	return (
 		<Card
 			className='group bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/30 pb-2 group cursor-pointer'
@@ -33,9 +35,7 @@ const MemberCard = ({ member, likeIds }: Props) => {
 				<div className='relative aspect-[3/4] w-full overflow-hidden rounded-xl'>
 					<Image
 						alt={member.name}
-						src={
-							transformImageUrl(member.image, 'card') || '/images/user.png'
-						}
+						src={transformImageUrl(member.image, 'card') || '/images/user.png'}
 						fill
 						sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
 						className='object-cover transition-transform duration-500 group-hover:scale-105'
@@ -67,7 +67,7 @@ const MemberCard = ({ member, likeIds }: Props) => {
 					</Button>
 					{/* Like button */}
 					<div className='z-30'>
-						<LikeButton targetId={member.userId} hasLiked={hasLiked} />
+						<LikeButton targetId={member.userId} />
 					</div>
 				</div>
 			</CardContent>

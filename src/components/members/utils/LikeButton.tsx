@@ -1,21 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { toggleLikeMember } from '@/app/actions/likeActions';
 import { Button } from '@/components/ui/button';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { useLike } from '@/providers/LikeProvider';
+
 type Props = {
 	targetId: string;
-	hasLiked: boolean;
 };
 
-const LikeButton = ({ targetId, hasLiked }: Props) => {
-	const router = useRouter();
+const LikeButton = ({ targetId }: Props) => {
+	const { likeIds, toggleLike } = useLike();
 
-	async function toggleLike() {
-		await toggleLikeMember(targetId, hasLiked);
-		router.refresh();
-	}
+	const hasLiked = likeIds.includes(targetId);
+
 	return (
 		<Button
 			variant='ghost'
@@ -34,7 +31,7 @@ const LikeButton = ({ targetId, hasLiked }: Props) => {
 			onClick={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
-				toggleLike();
+				toggleLike(targetId);
 			}}
 		>
 			{hasLiked ? (

@@ -86,6 +86,7 @@ async function fetchSourceLikes(userId: string) {
 }
 
 //自分にいいねしてきた相手達
+// Likes You= 自分にLikeしてきた AND まだMatchしていないに変更予定
 async function fetchTargetLikes(userId: string) {
 	const targetList = await prisma.like.findMany({
 		where: {
