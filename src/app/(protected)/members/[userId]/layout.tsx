@@ -1,12 +1,15 @@
 import React, { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import { getMemberByUserId } from '@/app/actions/memberActions';
-import MemberSidebar from '@/components/members/memberDetail/MemberSidebar';
-import BreadCrumb from '@/components/BreadCrumb';
-import { getAuthUserId } from '@/app/actions/authActions';
-import { isMatched } from '@/lib/matching/isMatched';
-import { fetchCurrentUserLikeIds } from '@/app/actions/likeActions';
 
+import { getAuthUserId } from '@/app/actions/authActions'
+import { getMemberByUserId } from '@/app/actions/memberActions';
+
+import { isMatched } from '@/lib/matching/isMatched';
+
+import BreadCrumb from '@/components/BreadCrumb';
+import MemberSidebar from '@/components/members/memberDetail/MemberSidebar';
+
+// Complete-profile
 const Layout = async ({
 	children,
 	params,
@@ -23,9 +26,6 @@ const Layout = async ({
 	if (!member) notFound();
 
 	const matched = await isMatched(currentUserId, userId);
-
-	const likeIds = await fetchCurrentUserLikeIds();
-	const hasLiked = likeIds.includes(member.userId);
 
 	const basePath = `/members/${member.userId}`;
 
@@ -46,7 +46,6 @@ const Layout = async ({
 						navLinks={navLinks}
 						likeInfo={{
 							targetId: member.userId,
-							hasLiked,
 						}}
 					/>
 				</div>
