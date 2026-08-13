@@ -35,7 +35,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 			initialConversations={conversations}
 			currentUserId={userId}
 		>
-			<LikeProvider>
+			<LikeProvider currentUserId={userId}>
 				<TopNav />
 				<PageLayout>{children}</PageLayout>
 				<BottomNav />

@@ -1,10 +1,12 @@
 import { pusherServer } from './server';
+
+import { createUserChannel } from './channels';
+
 import { Conversation } from '@/types/conversations';
 import {
 	mapConversationToDeletePayload,
 	mapConversationToPayload,
-} from '../../utils/conversations/mappers/messageMapper';
-import { createUserChannel } from './channels';
+} from '@/utils/conversations/mappers/messageMapper';
 
 // This function is for only Conversation list!
 // ConversationをConversationListへ通知する
