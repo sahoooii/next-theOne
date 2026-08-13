@@ -2,15 +2,25 @@
 
 import { prisma } from '@/lib/prisma';
 import { getAuthUserId } from './authActions';
+import { LikeNewPayload } from '@/types/likes';
+import { notifyLikeNew } from '@/lib/pusher/notifyLikeNew';
 
+
+// Future:
+// Like作成
+//  ↓
+// mutual?
+//  ├─ No → like:new
+//  └─ Yes → match:new
 export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 	try {
 		const userId = await getAuthUserId();
+
 		// if already liked, delete the like
 		if (isLiked) {
 			await prisma.like.delete({
 				where: {
-					// 複合キーは「まとめて1つのIDだけど、その中身は2つ必要
+					// 複合キーは「まとめて1つのIDだけど、その中身は2つ必要」
 					sourceUserId_targetUserId: {
 						sourceUserId: userId,
 						targetUserId,
@@ -24,6 +34,13 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 					targetUserId,
 				},
 			});
+
+			const payload: LikeNewPayload = {
+				sourceUserId: userId,
+				targetUserId,
+			};
+
+			await notifyLikeNew(targetUserId, payload);
 		}
 	} catch (error) {
 		console.log(error);
@@ -76,10 +93,10 @@ export async function fetchLikedMembers(type = 'source') {
 async function fetchSourceLikes(userId: string) {
 	const sourceList = await prisma.like.findMany({
 		where: {
-			sourceUserId: userId,//自分
+			sourceUserId: userId, //自分
 		},
 		select: {
-			targetMember: true,//自分がlikeした誰か
+			targetMember: true, //自分がlikeした誰か
 		},
 	});
 	return sourceList.map((x) => x.targetMember);
@@ -90,10 +107,10 @@ async function fetchSourceLikes(userId: string) {
 async function fetchTargetLikes(userId: string) {
 	const targetList = await prisma.like.findMany({
 		where: {
-			targetUserId: userId,//targetは自分
+			targetUserId: userId, //targetは自分
 		},
 		select: {
-			sourceMember: true,//相手は自分にlikeしてきた誰か
+			sourceMember: true, //相手は自分にlikeしてきた誰か
 		},
 	});
 	return targetList.map((x) => x.sourceMember);
