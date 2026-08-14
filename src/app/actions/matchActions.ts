@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { NewMatch } from '@/types/matches';
 
+// Matchしていて、まだメッセージを送り合っていない人を取得
 // source = Likeした人
 // target = Likeされた人
 export async function getNewMatches(
