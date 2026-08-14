@@ -14,6 +14,7 @@ import { LikeNewPayload } from '@/types/likes';
 
 type LikeContextType = {
 	likeIds: string[];
+	latestLike: LikeNewPayload | null;
 	toggleLike: (targetId: string) => Promise<void>;
 };
 
@@ -26,6 +27,9 @@ const LikeContext = createContext<LikeContextType | undefined>(undefined);
 
 export function LikeProvider({ children, currentUserId }: Props) {
 	const [likeIds, setLikeIds] = useState<string[]>([]);
+
+	// Providerが Realtimeイベントを受け取って、必要なコンポーネントに知らせる、 最後にRealtimeで届いた like:new を一時的に保存しておくstate
+	const [latestLike, setLatestLike] = useState<LikeNewPayload | null>(null);
 
 	useEffect(() => {
 		async function loadLikeIds() {
@@ -46,6 +50,7 @@ export function LikeProvider({ children, currentUserId }: Props) {
 
 		const handleLikeNew = (payload: LikeNewPayload) => {
 			console.log('like:new', payload);
+			setLatestLike(payload);
 		};
 
 		channel.bind('like:new', handleLikeNew);
@@ -73,7 +78,7 @@ export function LikeProvider({ children, currentUserId }: Props) {
 	};
 
 	return (
-		<LikeContext.Provider value={{ likeIds, toggleLike }}>
+		<LikeContext.Provider value={{ likeIds, latestLike, toggleLike }}>
 			{children}
 		</LikeContext.Provider>
 	);

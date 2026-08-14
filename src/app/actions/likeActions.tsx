@@ -5,7 +5,6 @@ import { getAuthUserId } from './authActions';
 import { LikeNewPayload } from '@/types/likes';
 import { notifyLikeNew } from '@/lib/pusher/notifyLikeNew';
 
-
 // Future:
 // Like作成
 //  ↓
@@ -34,7 +33,7 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 					targetUserId,
 				},
 			});
-			
+
 			const payload: LikeNewPayload = {
 				sourceUserId: userId,
 				targetUserId,
@@ -108,6 +107,9 @@ async function fetchTargetLikes(userId: string) {
 	const targetList = await prisma.like.findMany({
 		where: {
 			targetUserId: userId, //targetは自分
+		},
+		orderBy: {
+			createdAt: 'desc',
 		},
 		select: {
 			sourceMember: true, //相手は自分にlikeしてきた誰か
