@@ -94,6 +94,8 @@ model Like {
   // Likeされた人のMember
   targetMember Member @relation("target", fields: [targetUserId], references: [userId], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+
   // sourceUserId_targetUserId 複合キー用のユニーク識別子、同じペアは1つだけ
   @@id([sourceUserId, targetUserId])
 }

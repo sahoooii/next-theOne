@@ -1,15 +1,18 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { motion } from 'framer-motion';
+
+import { useLike } from '@/providers/LikeProvider';
 
 import { Member } from '@prisma/client';
 
 import { tabs } from './Tabs';
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
+import { getMemberByUserId } from '@/app/actions/memberActions';
 
 type Props = {
 	members: Member[];
@@ -24,6 +27,35 @@ const LikesMenuTab = ({ members }: Props) => {
 
 	const [isPending, startTransition] = useTransition();
 
+	const { latestLike } = useLike();
+
+	// 今このタブで表示するMember一覧
+	const [displayedMembers, setDisplayedMembers] = useState(members);
+
+	useEffect(() => {
+		// Menu: Likes You
+		if (current !== 'target') return;
+		if (!latestLike) return;
+
+		const sourceUserId = latestLike.sourceUserId;
+
+		// Get member info using latest like
+		async function fetchNewMember() {
+			const newMember = await getMemberByUserId(sourceUserId);
+
+			if (!newMember) return;
+
+			setDisplayedMembers((current) => {
+				if (current.some((member) => member.userId === newMember.userId)) {
+					return current;
+				}
+
+				return [newMember, ...current];
+			});
+		}
+
+		fetchNewMember();
+	}, [current, latestLike]);
 
 	const handleTabChange = (key: string) => {
 		startTransition(() => {
@@ -81,9 +113,9 @@ const LikesMenuTab = ({ members }: Props) => {
 			) : (
 				<>
 					{/* Show members  */}
-					{members.length > 0 ? (
+					{displayedMembers.length > 0 ? (
 						<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-							{members.map((member) => (
+							{displayedMembers.map((member) => (
 								<MemberCard key={member.id} member={member} />
 							))}
 						</div>
