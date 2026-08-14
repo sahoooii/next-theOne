@@ -1,9 +1,14 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
+
 import { getAuthUserId } from './authActions';
+
 import { LikeNewPayload } from '@/types/likes';
+
 import { notifyLikeNew } from '@/lib/pusher/notifyLikeNew';
+import { notifyMatchNew } from '@/lib/pusher/notifyMatchNew';
+import { isMatched } from '@/lib/matching/isMatched';
 
 // Future:
 // Like作成
@@ -33,6 +38,13 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 					targetUserId,
 				},
 			});
+
+			// Check whether the new Like creates a mutual Like (Match)
+			const isMatch = await isMatched(userId, targetUserId);
+
+			if (isMatch) {
+				await notifyMatchNew(userId, targetUserId);
+			}
 
 			const payload: LikeNewPayload = {
 				sourceUserId: userId,

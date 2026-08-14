@@ -13,7 +13,6 @@ type Props = {
 	newMatch: NewMatch;
 };
 
-// Avatarをムラサキリングで囲む。　focus effect
 const NewMatchesCard = ({ newMatch }: Props) => {
 	return (
 		<Link
