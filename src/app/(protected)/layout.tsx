@@ -11,6 +11,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 
 import TopNav from '@/components/navigation/topNav/TopNav';
 import BottomNav from '@/components/navigation/bottomNav/BottomNav';
+import { MatchProvider } from '@/providers/MatchProvider';
 
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 	const userId = await getAuthUserId();
@@ -36,10 +37,11 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 			currentUserId={userId}
 		>
 			<LikeProvider currentUserId={userId}>
-				{/* MatchProvider */}
-				<TopNav />
-				<PageLayout>{children}</PageLayout>
-				<BottomNav />
+				<MatchProvider currentUserId={userId}>
+					<TopNav />
+					<PageLayout>{children}</PageLayout>
+					<BottomNav />
+				</MatchProvider>
 			</LikeProvider>
 		</ConversationProvider>
 	);
