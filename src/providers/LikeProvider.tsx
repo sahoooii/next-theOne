@@ -25,6 +25,7 @@ type Props = {
 
 const LikeContext = createContext<LikeContextType | undefined>(undefined);
 
+// LikeProvider: Like状態そのものを管理する
 export function LikeProvider({ children, currentUserId }: Props) {
 	const [likeIds, setLikeIds] = useState<string[]>([]);
 
