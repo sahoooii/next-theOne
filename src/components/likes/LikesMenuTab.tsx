@@ -36,6 +36,11 @@ const LikesMenuTab = ({ members }: Props) => {
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
 
+	// 親からmembers が渡されたら、displayedMembers も同期される
+	useEffect(() => {
+		setDisplayedMembers(members);
+	}, [members]);
+
 	// Menu: Likes You
 	useEffect(() => {
 		if (current !== 'target') return;
@@ -80,7 +85,9 @@ const LikesMenuTab = ({ members }: Props) => {
 			if (!newMember) return;
 
 			setDisplayedMembers((currentMembers) => {
-				if (currentMembers.some((member) => member.userId === newMember.userId)) {
+				if (
+					currentMembers.some((member) => member.userId === newMember.userId)
+				) {
 					return currentMembers;
 				}
 
