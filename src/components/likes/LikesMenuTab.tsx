@@ -13,6 +13,7 @@ import { tabs } from './Tabs';
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
 import { getMemberByUserId } from '@/app/actions/memberActions';
+import { useMatch } from '@/providers/MatchProvider';
 
 type Props = {
 	members: Member[];
@@ -23,39 +24,72 @@ const LikesMenuTab = ({ members }: Props) => {
 	const router = useRouter();
 	const pathname = usePathname();
 
+	// 現在どのTabを見ているか
 	const current = searchParams.get('type') || 'source';
 
 	const [isPending, startTransition] = useTransition();
 
 	const { latestLike } = useLike();
 
+	const { latestMatch } = useMatch();
+
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
 
+	// Menu: Likes You
 	useEffect(() => {
-		// Menu: Likes You
 		if (current !== 'target') return;
 		if (!latestLike) return;
 
 		const sourceUserId = latestLike.sourceUserId;
 
-		// Get member info using latest like
+		// Get member info using the latest like
 		async function fetchNewMember() {
+			// Realtimeで新しくLikeしてきたMember
 			const newMember = await getMemberByUserId(sourceUserId);
 
 			if (!newMember) return;
 
-			setDisplayedMembers((current) => {
-				if (current.some((member) => member.userId === newMember.userId)) {
-					return current;
+			// currentMembers= 現在表示されているMember一覧
+			// 同じmemberがすでにいないかチェック/ Already displayed
+			setDisplayedMembers((currentMembers) => {
+				if (
+					currentMembers.some((member) => member.userId === newMember.userId)
+				) {
+					return currentMembers;
 				}
 
-				return [newMember, ...current];
+				// Add the new member to the beginning
+				return [newMember, ...currentMembers];
+			});
+		}
+		fetchNewMember();
+	}, [current, latestLike]);
+
+	// Menu: Matches
+	useEffect(() => {
+		if (current !== 'mutual') return;
+		if (!latestMatch) return;
+
+		const partnerUserId = latestMatch.partnerUserId;
+
+		// Get member info using the latest match
+		async function fetchNewMember() {
+			const newMember = await getMemberByUserId(partnerUserId);
+
+			if (!newMember) return;
+
+			setDisplayedMembers((currentMembers) => {
+				if (currentMembers.some((member) => member.userId === newMember.userId)) {
+					return currentMembers;
+				}
+
+				return [newMember, ...currentMembers];
 			});
 		}
 
 		fetchNewMember();
-	}, [current, latestLike]);
+	}, [current, latestMatch]);
 
 	const handleTabChange = (key: string) => {
 		startTransition(() => {
