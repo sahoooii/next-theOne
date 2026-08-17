@@ -1,9 +1,12 @@
+type TabId = 'source' | 'target' | 'mutual';
+
 type Tab = {
-	id: string;
+	id: TabId;
 	label: string;
 	emptyTitle: string;
 	emptyDescription: string;
 };
+
 
 export const tabs: Tab[] = [
 	{
