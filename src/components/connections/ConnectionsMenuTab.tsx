@@ -6,20 +6,21 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import { useLike } from '@/providers/LikeProvider';
+import { useMatch } from '@/providers/MatchProvider';
 
 import { Member } from '@prisma/client';
+
+import { getMemberByUserId } from '@/app/actions/memberActions';
 
 import { tabs } from './Tabs';
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
-import { getMemberByUserId } from '@/app/actions/memberActions';
-import { useMatch } from '@/providers/MatchProvider';
 
 type Props = {
 	members: Member[];
 };
 
-const LikesMenuTab = ({ members }: Props) => {
+const ConnectionsMenuTab = ({ members }: Props) => {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -177,4 +178,4 @@ const LikesMenuTab = ({ members }: Props) => {
 	);
 };
 
-export default LikesMenuTab;
+export default ConnectionsMenuTab;
