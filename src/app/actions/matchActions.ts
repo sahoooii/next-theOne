@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { NewMatch } from '@/types/matches';
 
-// Matchしていて、まだメッセージを送り合っていない人を取得
+// 初期表示用: Matchしていて、まだメッセージを送り合っていない人を全件取得
 // source = Likeした人
 // target = Likeされた人
 export async function getNewMatches(
@@ -59,4 +59,33 @@ export async function getNewMatches(
 	});
 
 	return matches.map((match) => match.sourceMember);
+}
+
+// Realtime用: 特定の1人だけNew Matchか確認
+export async function getNewMatch(
+	currentUserId: string,
+	partnerUserId: string,
+): Promise<NewMatch | null> {
+	const member = await prisma.member.findFirst({
+		where: {
+			userId: partnerUserId,
+			senderMessages: {
+				none: {
+					recipientId: currentUserId,
+				},
+			},
+			recipientMessages: {
+				none: {
+					senderId: currentUserId,
+				},
+			},
+		},
+		select: {
+			userId: true,
+			name: true,
+			image: true,
+		},
+	});
+
+	return member;
 }

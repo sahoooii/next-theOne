@@ -6,7 +6,7 @@ import { useMatch } from '@/providers/MatchProvider';
 
 import { NewMatch } from '@/types/matches';
 
-import { getNewMatches } from '@/app/actions/matchActions';
+import { getNewMatch } from '@/app/actions/matchActions';
 
 import { Card } from '@/components/ui/card';
 
@@ -24,6 +24,7 @@ const NewMatchesClient = ({ initialMatches, currentUserId }: Props) => {
 	const [displayedNewMatches, setDisplayedNewMatches] =
 		useState(initialMatches);
 
+	// 親からinitialMatches が渡されたら、displayedNewMatches も同期される
 	useEffect(() => {
 		setDisplayedNewMatches(initialMatches);
 	}, [initialMatches]);
@@ -34,12 +35,7 @@ const NewMatchesClient = ({ initialMatches, currentUserId }: Props) => {
 		const partnerUserId = latestMatch.partnerUserId;
 
 		async function fetchNewMatch() {
-			// Note: getNewMatches -> refactor later
-			const newMatches = await getNewMatches(currentUserId);
-
-			const newMatch = newMatches.find(
-				(match) => match.userId === partnerUserId,
-			);
+			const newMatch = await getNewMatch(currentUserId, partnerUserId);
 
 			if (!newMatch) return;
 
@@ -54,7 +50,7 @@ const NewMatchesClient = ({ initialMatches, currentUserId }: Props) => {
 		}
 
 		fetchNewMatch();
-	}, [latestMatch, currentUserId]);
+	}, [currentUserId, latestMatch]);
 
 	if (displayedNewMatches.length === 0) {
 		return null;
