@@ -15,8 +15,8 @@ export const getAuthNavLinks = (unreadConversationCount: number): NavLink[] => [
 		icon: Users,
 	},
 	{
-		href: '/likes',
-		label: 'Likes',
+		href: '/connections',
+		label: 'Connections',
 		icon: Heart,
 	},
 	{
