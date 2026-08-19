@@ -15,6 +15,7 @@ import { getMemberByUserId } from '@/app/actions/memberActions';
 import { tabs } from './Tabs';
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
+import { useConnections } from '@/providers/ConnectionsProvider';
 
 type Props = {
 	members: Member[];
@@ -33,6 +34,8 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 	const { latestLike } = useLike();
 
 	const { latestMatch } = useMatch();
+
+	const { clearUnseenLikes, clearUnseenMatches } = useConnections();
 
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
@@ -98,6 +101,17 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 
 		fetchNewMember();
 	}, [current, latestMatch]);
+
+	// For badge
+	useEffect(() => {
+		if (current === 'target') {
+			clearUnseenLikes();
+		}
+
+		if (current === 'mutual') {
+			clearUnseenMatches();
+		}
+	}, [current, clearUnseenLikes, clearUnseenMatches]);
 
 	const handleTabChange = (key: string) => {
 		startTransition(() => {
