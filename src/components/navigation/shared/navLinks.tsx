@@ -8,7 +8,10 @@ export type NavLink = {
 	badge?: number;
 };
 
-export const getAuthNavLinks = (unreadConversationCount: number): NavLink[] => [
+export const getAuthNavLinks = (
+	unreadConversationCount: number,
+	connectionsBadgeCount: number,
+): NavLink[] => [
 	{
 		href: '/members',
 		label: 'Members',
@@ -18,6 +21,7 @@ export const getAuthNavLinks = (unreadConversationCount: number): NavLink[] => [
 		href: '/connections',
 		label: 'Connections',
 		icon: Heart,
+		badge: connectionsBadgeCount,
 	},
 	{
 		href: '/messages',

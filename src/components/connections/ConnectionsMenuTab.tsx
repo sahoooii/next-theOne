@@ -7,15 +7,17 @@ import { motion } from 'framer-motion';
 
 import { useLike } from '@/providers/LikeProvider';
 import { useMatch } from '@/providers/MatchProvider';
+import { useConnections } from '@/providers/ConnectionsProvider';
 
 import { Member } from '@prisma/client';
 
 import { getMemberByUserId } from '@/app/actions/memberActions';
 
-import { tabs } from './Tabs';
+import { getConnectionTabs } from './Tabs';
+
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
-import { useConnections } from '@/providers/ConnectionsProvider';
+import UnreadBadge from '@/components/navigation/shared/UnreadBadge';
 
 type Props = {
 	members: Member[];
@@ -35,7 +37,14 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 
 	const { latestMatch } = useMatch();
 
-	const { clearUnseenLikes, clearUnseenMatches } = useConnections();
+	const {
+		unseenLikeIds,
+		unseenMatchIds,
+		clearUnseenLikes,
+		clearUnseenMatches,
+	} = useConnections();
+
+	const tabs = getConnectionTabs(unseenLikeIds.length, unseenMatchIds.length);
 
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
@@ -149,7 +158,11 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 					}
 				`}
 							>
-								{tab.label}
+								<span className='flex items-center gap-2'>
+									{tab.label}
+
+									<UnreadBadge count={tab.badge ?? 0} />
+								</span>
 								{/* Active underline */}
 								{isActive && (
 									<motion.div

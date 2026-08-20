@@ -11,6 +11,7 @@ import { User } from 'lucide-react';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
 import { useConversation } from '@/providers/ConversationProvider';
 import UnreadBadge from '../shared/UnreadBadge';
+import { useConnections } from '@/providers/ConnectionsProvider';
 
 type Props = {
 	userInfo: {
@@ -29,7 +30,15 @@ const AuthBottomNav = ({ userInfo }: Props) => {
 		(conversation) => conversation.unreadCount > 0,
 	).length;
 
-	const navLinks = getAuthNavLinks(unreadConversationCount);
+	// Count unseen Connections
+	const { unseenLikeIds, unseenMatchIds } = useConnections();
+
+	const connectionsBadgeCount = unseenLikeIds.length + unseenMatchIds.length;
+
+	const navLinks = getAuthNavLinks(
+		unreadConversationCount,
+		connectionsBadgeCount,
+	);
 
 	return (
 		<div className='lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50'>
@@ -109,7 +118,7 @@ const AuthBottomNav = ({ userInfo }: Props) => {
         bg-primary/30
         shadow-[0_0_20px_rgba(168,85,247,0.5)]
         blur-[1px]
-				ring-2 ring-purple-400/60 
+				ring-2 ring-purple-400/60
       '
 							transition={{
 								type: 'spring',

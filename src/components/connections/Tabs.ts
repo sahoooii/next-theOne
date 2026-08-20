@@ -5,10 +5,14 @@ type Tab = {
 	label: string;
 	emptyTitle: string;
 	emptyDescription: string;
+	badge?: number;
 };
 
 
-export const tabs: Tab[] = [
+export const getConnectionTabs = (
+	unseenLikeCount: number,
+	unseenMatchCount: number,
+): Tab[] => [
 	{
 		id: 'source',
 		label: 'Liked',
@@ -20,11 +24,13 @@ export const tabs: Tab[] = [
 		label: 'Likes You',
 		emptyTitle: 'No one has found you yet',
 		emptyDescription: 'This space will fill as people discover you.',
+		badge: unseenLikeCount,
 	},
 	{
 		id: 'mutual',
 		label: 'Matches',
 		emptyTitle: 'No matches yet',
 		emptyDescription: 'When feelings are mutual, they’ll appear here.',
+		badge: unseenMatchCount,
 	},
 ];

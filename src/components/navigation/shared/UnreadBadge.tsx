@@ -3,7 +3,7 @@ type UnreadBadgeProps = {
 	className?: string;
 };
 
-// Add purple dot with unread count number, when user have unread message
+// Messages: Add purple dot with unread count number, when user have unread message
 const UnreadBadge = ({ count, className = '' }: UnreadBadgeProps) => {
 	if (count <= 0) return null;
 

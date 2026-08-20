@@ -7,12 +7,14 @@ import { motion } from 'framer-motion';
 import { Session } from 'next-auth';
 import { useSignOut } from '@/hooks/useSignOut';
 
+import { useConversation } from '@/providers/ConversationProvider';
+import { useConnections } from '@/providers/ConnectionsProvider';
+
 import { getAuthNavLinks } from '../shared/navLinks';
 import BrandLogo from '../shared/BrandLogo';
+import UnreadBadge from '../shared/UnreadBadge';
 import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
 import AuthMobileMenu from './mobile/AuthMobileMenu';
-import { useConversation } from '@/providers/ConversationProvider';
-import UnreadBadge from '../shared/UnreadBadge';
 
 const navMenuStyleLg =
 	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
@@ -38,7 +40,15 @@ const AuthNav = ({ session, userInfo }: Props) => {
 		(conversation) => conversation.unreadCount > 0,
 	).length;
 
-	const navLinks = getAuthNavLinks(unreadConversationCount);
+	// Count unseen Connections
+	const { unseenLikeIds, unseenMatchIds } = useConnections();
+
+	const connectionsBadgeCount = unseenLikeIds.length + unseenMatchIds.length;
+
+	const navLinks = getAuthNavLinks(
+		unreadConversationCount,
+		connectionsBadgeCount,
+	);
 
 	return (
 		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
