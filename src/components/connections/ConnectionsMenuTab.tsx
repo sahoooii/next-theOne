@@ -7,14 +7,17 @@ import { motion } from 'framer-motion';
 
 import { useLike } from '@/providers/LikeProvider';
 import { useMatch } from '@/providers/MatchProvider';
+import { useConnections } from '@/providers/ConnectionsProvider';
 
 import { Member } from '@prisma/client';
 
 import { getMemberByUserId } from '@/app/actions/memberActions';
 
-import { tabs } from './Tabs';
+import { getConnectionTabs } from './Tabs';
+
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
+import UnreadBadge from '@/components/navigation/shared/UnreadBadge';
 
 type Props = {
 	members: Member[];
@@ -33,6 +36,15 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 	const { latestLike } = useLike();
 
 	const { latestMatch } = useMatch();
+
+	const {
+		unseenLikeIds,
+		unseenMatchIds,
+		clearUnseenLikes,
+		clearUnseenMatches,
+	} = useConnections();
+
+	const tabs = getConnectionTabs(unseenLikeIds.length, unseenMatchIds.length);
 
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
@@ -99,6 +111,17 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 		fetchNewMember();
 	}, [current, latestMatch]);
 
+	// For badge
+	useEffect(() => {
+		if (current === 'target') {
+			clearUnseenLikes();
+		}
+
+		if (current === 'mutual') {
+			clearUnseenMatches();
+		}
+	}, [current, clearUnseenLikes, clearUnseenMatches]);
+
 	const handleTabChange = (key: string) => {
 		startTransition(() => {
 			const params = new URLSearchParams(searchParams);
@@ -135,7 +158,11 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 					}
 				`}
 							>
-								{tab.label}
+								<span className='flex items-center gap-2'>
+									{tab.label}
+
+									<UnreadBadge count={tab.badge ?? 0} />
+								</span>
 								{/* Active underline */}
 								{isActive && (
 									<motion.div

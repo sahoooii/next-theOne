@@ -42,16 +42,17 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 			// Check whether the new Like creates a mutual Like (Match)
 			const isMatch = await isMatched(userId, targetUserId);
 
-			if (isMatch) {
-				await notifyMatchNew(userId, targetUserId);
-			}
-
+			// RealTime: Like
 			const payload: LikeNewPayload = {
 				sourceUserId: userId,
 				targetUserId,
 			};
 
 			await notifyLikeNew(targetUserId, payload);
+
+			if (isMatch) {
+				await notifyMatchNew(userId, targetUserId);
+			}
 		}
 	} catch (error) {
 		console.log(error);
