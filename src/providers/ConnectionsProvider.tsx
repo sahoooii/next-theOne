@@ -46,7 +46,7 @@ export function ConnectionsProvider({ children }: Props) {
 			// unseenLikeIds に追加
 			return [...prevIds, sourceUserId];
 		});
-	},[latestLike, latestMatch]);
+	}, [latestLike]);
 
 	// Handle match:new
 	// Likes You → Matchesへの移動

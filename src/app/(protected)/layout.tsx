@@ -1,9 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { ConversationProvider } from '@/providers/ConversationProvider';
-import { LikeProvider } from '@/providers/LikeProvider';
-import { MatchProvider } from '@/providers/MatchProvider';
-import { ConnectionsProvider } from '@/providers/ConnectionsProvider';
+import { AuthenticatedProviders } from '@/providers/AuthenticatedProviders';
 
 import { getAuthUserId } from '../actions/authActions';
 import { getMemberByUserId } from '../actions/memberActions';
@@ -32,20 +29,14 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 	const conversations = await getConversationsList();
 
 	return (
-		<ConversationProvider
-			initialConversations={conversations}
+		<AuthenticatedProviders
 			currentUserId={userId}
+			initialConversations={conversations}
 		>
-			<LikeProvider currentUserId={userId}>
-				<MatchProvider currentUserId={userId}>
-					<ConnectionsProvider>
-						<TopNav />
-						<PageLayout>{children}</PageLayout>
-						<BottomNav />
-					</ConnectionsProvider>
-				</MatchProvider>
-			</LikeProvider>
-		</ConversationProvider>
+			<TopNav />
+			<PageLayout>{children}</PageLayout>
+			<BottomNav />
+		</AuthenticatedProviders>
 	);
 };
 
