@@ -6,8 +6,8 @@ import { getAuthUserId } from './authActions';
 
 import { LikeNewPayload } from '@/types/likes';
 
-import { notifyLikeNew } from '@/lib/pusher/notifyLikeNew';
-import { notifyMatchNew } from '@/lib/pusher/notifyMatchNew';
+import { notifyLikeNew } from '@/lib/pusher/notifications/notifyLikeNew';
+import { notifyMatchNew } from '@/lib/pusher/notifications/notifyMatchNew';
 import { isMatched } from '@/lib/matching/isMatched';
 
 // Future:

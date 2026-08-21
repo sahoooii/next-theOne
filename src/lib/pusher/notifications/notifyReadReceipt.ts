@@ -1,5 +1,5 @@
-import { pusherServer } from './server';
-import { createChatChannel } from './channels';
+import { pusherServer } from '../server';
+import { createChatChannel } from '../channels';
 import { mapReadReceiptToPayload } from '@/utils/conversations/mappers/messageMapper';
 
 export async function notifyReadReceipt(

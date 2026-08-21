@@ -1,6 +1,7 @@
-import { pusherServer } from './server';
+import { pusherServer } from '../server';
+import { createChatChannel } from '../channels';
+
 import { TypingEvent, TypingPayload } from '@/types/messages';
-import { createChatChannel } from './channels';
 
 export async function notifyTyping(
 	chatId: string,

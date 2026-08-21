@@ -1,6 +1,6 @@
-import { pusherServer } from './server';
+import { pusherServer } from '../server';
 
-import { createUserChannel } from './channels';
+import { createUserChannel } from '../channels';
 
 import { LikeNewPayload } from '@/types/likes';
 
