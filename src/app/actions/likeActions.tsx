@@ -4,24 +4,24 @@ import { prisma } from '@/lib/prisma';
 
 import { getAuthUserId } from './authActions';
 
-import { LikeNewPayload } from '@/types/likes';
+import { LikeDeletePayload, LikeNewPayload } from '@/types/likes';
 
 import { notifyLikeNew } from '@/lib/pusher/notifications/notifyLikeNew';
 import { notifyMatchNew } from '@/lib/pusher/notifications/notifyMatchNew';
+import { notifyLikeDelete } from '@/lib/pusher/notifications/notifyLikeDelete';
+import { notifyMatchDelete } from '@/lib/pusher/notifications/notifyMatchDelete';
+
 import { isMatched } from '@/lib/matching/isMatched';
 
-// Future:
-// Like作成
-//  ↓
-// mutual?
-//  ├─ No → like:new
-//  └─ Yes → match:new
 export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 	try {
 		const userId = await getAuthUserId();
 
 		// if already liked, delete the like
 		if (isLiked) {
+			// Check whether this Like is part of a Match BEFORE deleting it
+			const wasMatched = await isMatched(userId, targetUserId);
+
 			await prisma.like.delete({
 				where: {
 					// 複合キーは「まとめて1つのIDだけど、その中身は2つ必要」
@@ -31,6 +31,21 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 					},
 				},
 			});
+
+			// RealTime: Like delete
+			const payload: LikeDeletePayload = {
+				sourceUserId: userId,
+				targetUserId,
+			};
+
+			// 削除した本人と、削除された相手の両方に送る
+			await notifyLikeDelete(userId, payload);
+			await notifyLikeDelete(targetUserId, payload);
+
+			if (wasMatched) {
+				// RealTime: Match delete
+				await notifyMatchDelete(userId, targetUserId);
+			}
 		} else {
 			await prisma.like.create({
 				data: {
