@@ -15,7 +15,7 @@ import {
 } from '@/utils/conversations/mappers/messageMapper';
 import { pusherServer } from '@/lib/pusher/server';
 import { createChatChannel, createChatId } from '@/lib/pusher/channels';
-import { notifyConversationUpdate } from '@/lib/pusher/notifyConversationUpdate';
+import { notifyConversationUpdate } from '@/lib/pusher/notifications/notifyConversationUpdate';
 
 import { messageSelect } from '@/utils/conversations/messageQuery';
 import {
@@ -24,8 +24,9 @@ import {
 } from '@/utils/conversations/buildConversation';
 import { getConversationMessages } from '@/utils/conversations/getConversationMessages';
 import { markMessagesAsRead } from '@/utils/conversations/markMessageAsRead';
-import { notifyReadReceipt } from '@/lib/pusher/notifyReadReceipt';
-import { notifyTyping } from '@/lib/pusher/notifyTyping';
+import { notifyReadReceipt } from '@/lib/pusher/notifications/notifyReadReceipt';
+import { notifyTyping } from '@/lib/pusher/notifications/notifyTyping';
+
 import { isMatched } from '@/lib/matching/isMatched';
 
 // Chat room: Create a new message
