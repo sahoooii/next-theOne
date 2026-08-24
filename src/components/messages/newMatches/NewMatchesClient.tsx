@@ -19,7 +19,7 @@ type Props = {
 };
 
 const NewMatchesClient = ({ initialMatches, currentUserId }: Props) => {
-	const { latestMatch } = useMatch();
+	const { latestMatchEvent } = useMatch();
 
 	const [displayedNewMatches, setDisplayedNewMatches] =
 		useState(initialMatches);
@@ -30,27 +30,44 @@ const NewMatchesClient = ({ initialMatches, currentUserId }: Props) => {
 	}, [initialMatches]);
 
 	useEffect(() => {
-		if (!latestMatch) return;
+		if (!latestMatchEvent) return;
 
-		const partnerUserId = latestMatch.partnerUserId;
+		// -------------------------------------------------------
+		// match:new
+		// -------------------------------------------------------
+		if (latestMatchEvent.type === 'new') {
+			const { partnerUserId } = latestMatchEvent.payload;
 
-		async function fetchNewMatch() {
-			const newMatch = await getNewMatch(currentUserId, partnerUserId);
+			const fetchNewMatch = async () => {
+				const newMatch = await getNewMatch(currentUserId, partnerUserId);
 
-			if (!newMatch) return;
+				if (!newMatch) return;
 
-			setDisplayedNewMatches((currentMatches) => {
-				if (currentMatches.some((match) => match.userId === newMatch.userId)) {
-					return currentMatches;
-				}
+				setDisplayedNewMatches((currentMatches) => {
+					if (
+						currentMatches.some((match) => match.userId === newMatch.userId)
+					) {
+						return currentMatches;
+					}
 
-				// Add the new member to the beginning
-				return [newMatch, ...currentMatches];
-			});
+					// Add the new member to the beginning
+					return [newMatch, ...currentMatches];
+				});
+			};
+
+			fetchNewMatch();
 		}
+		// -------------------------------------------------------
+		// match:delete
+		// -------------------------------------------------------
+		if (latestMatchEvent.type === 'delete') {
+			const { partnerUserId } = latestMatchEvent.payload;
 
-		fetchNewMatch();
-	}, [currentUserId, latestMatch]);
+			setDisplayedNewMatches((currentMatches) =>
+				currentMatches.filter((match) => match.userId !== partnerUserId),
+			);
+		}
+	}, [currentUserId, latestMatchEvent]);
 
 	if (displayedNewMatches.length === 0) {
 		return null;
