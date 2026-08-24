@@ -70,7 +70,7 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 			const { sourceUserId } = latestLikeEvent.payload;
 
 			// Get member info using the latest like
-			async function fetchNewMember() {
+			const fetchNewMember = async () => {
 				// Realtimeで新しくLikeしてきたMember
 				const newMember = await getMemberByUserId(sourceUserId);
 
@@ -88,7 +88,7 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 					// Add the new member to the beginning
 					return [newMember, ...currentMembers];
 				});
-			}
+			};
 
 			fetchNewMember();
 
@@ -133,7 +133,7 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 			const { partnerUserId } = latestMatchEvent.payload;
 
 			// Get member info using the latest match
-			async function fetchNewMember() {
+			const fetchNewMember = async () => {
 				const newMember = await getMemberByUserId(partnerUserId);
 
 				if (!newMember) return;
@@ -148,7 +148,7 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 
 					return [newMember, ...currentMembers];
 				});
-			}
+			};
 
 			fetchNewMember();
 
