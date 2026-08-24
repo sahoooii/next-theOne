@@ -13,6 +13,7 @@ import { useMatch } from './MatchProvider';
 type ConnectionsContextType = {
 	unseenLikeIds: string[]; //現在の未確認LikeのID一覧
 	unseenMatchIds: string[]; //現在の未確認MatchのID一覧
+
 	clearUnseenLikes: () => void;
 	clearUnseenMatches: () => void;
 };
@@ -29,45 +30,71 @@ export function ConnectionsProvider({ children }: Props) {
 	const [unseenLikeIds, setUnseenLikeIds] = useState<string[]>([]);
 	const [unseenMatchIds, setUnseenMatchIds] = useState<string[]>([]);
 
-	const { latestLike } = useLike();
-	const { latestMatch } = useMatch();
+	const { latestLikeEvent } = useLike();
+	const { latestMatchEvent } = useMatch();
 
-	// Handle like:new
+	// Handle Like event
 	useEffect(() => {
-		if (!latestLike) return;
+		if (!latestLikeEvent) return;
 
-		const sourceUserId = latestLike.sourceUserId;
+		// like:new
+		if (latestLikeEvent.type === 'new') {
+			const { sourceUserId } = latestLikeEvent.payload;
 
-		setUnseenLikeIds((prevIds) => {
-			// 重複防止: すでにこのユーザーを未確認Likeとして登録しているなら、何もしない
-			if (prevIds.includes(sourceUserId)) {
-				return prevIds;
-			}
-			// unseenLikeIds に追加
-			return [...prevIds, sourceUserId];
-		});
-	}, [latestLike]);
+			setUnseenLikeIds((prevIds) => {
+				// 重複防止: すでにこのユーザーを未確認Likeとして登録しているなら、何もしない
+				if (prevIds.includes(sourceUserId)) {
+					return prevIds;
+				}
+				// unseenLikeIds に追加
+				return [...prevIds, sourceUserId];
+			});
 
-	// Handle match:new
-	// Likes You → Matchesへの移動
+			return;
+		}
+
+		// like:delete
+		if (latestLikeEvent.type === 'delete') {
+			const { sourceUserId } = latestLikeEvent.payload;
+
+			setUnseenLikeIds((prevIds) =>
+				prevIds.filter((id) => id !== sourceUserId),
+			);
+		}
+	}, [latestLikeEvent]);
+
+	// Handle Match event
 	useEffect(() => {
-		if (!latestMatch) return;
+		if (!latestMatchEvent) return;
 
-		const partnerUserId = latestMatch.partnerUserId;
+		// match:new
+		if (latestMatchEvent.type === 'new') {
+			const { partnerUserId } = latestMatchEvent.payload;
+			// Remove from Likes You / 現在の unseenLikeIds から partnerUserId を取り除いた新しい配列を作る
+			setUnseenLikeIds((prevIds) => prevIds.filter((id) => id !== partnerUserId));
 
-		// Remove from Likes You / 現在の unseenLikeIds から partnerUserId を取り除いた新しい配列を作る
-		setUnseenLikeIds((prevIds) => prevIds.filter((id) => id !== partnerUserId));
+			// Add to Matches
+			setUnseenMatchIds((prevIds) => {
+				// 重複防止
+				if (prevIds.includes(partnerUserId)) {
+					return prevIds;
+				}
+				// unseenMatchIds に追加
+				return [...prevIds, partnerUserId];
+			});
 
-		// Add to Matches
-		setUnseenMatchIds((prevIds) => {
-			if (prevIds.includes(partnerUserId)) {
-				return prevIds;
-			}
+			return;
+		}
 
-			// unseenMatchIds に追加
-			return [...prevIds, partnerUserId];
-		});
-	}, [latestMatch]);
+		// match:delete
+		if (latestMatchEvent.type === 'delete') {
+			const { partnerUserId } = latestMatchEvent.payload;
+
+			setUnseenMatchIds((prevIds) =>
+				prevIds.filter((id) => id !== partnerUserId),
+			);
+		}
+	}, [latestMatchEvent]);
 
 	// 未確認として記録しているIDを全部リセットする関数
 	const clearUnseenLikes = useCallback(() => {

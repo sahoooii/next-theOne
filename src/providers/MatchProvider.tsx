@@ -5,10 +5,14 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { getPusherClient } from '@/lib/pusher/client';
 import { createUserChannel } from '@/lib/pusher/channels';
 
-import { MatchNewPayload } from '@/types/matches';
+import {
+	MatchDeletePayload,
+	MatchEvent,
+	MatchNewPayload,
+} from '@/types/matches';
 
 type MatchContextType = {
-	latestMatch: MatchNewPayload | null;
+	latestMatchEvent: MatchEvent | null;
 };
 
 type Props = {
@@ -18,10 +22,12 @@ type Props = {
 
 const MatchContext = createContext<MatchContextType | undefined>(undefined);
 
-// MatchProvider: match:newというRealtimeイベントを各UIへ渡すだけ
+// MatchProvider: match関連のRealtimeイベントを各UIへ渡す
 export function MatchProvider({ children, currentUserId }: Props) {
-	// Providerが Realtimeイベントを受け取って、必要なコンポーネントに知らせる、 最後にRealtimeで届いた match:new を一時的に保存しておくstate
-	const [latestMatch, setLatestMatch] = useState<MatchNewPayload | null>(null);
+	// 最後に発生したMatch関連Realtimeイベント
+	const [latestMatchEvent, setLatestMatchEvent] = useState<MatchEvent | null>(
+		null,
+	);
 
 	useEffect(() => {
 		// Manage channel
@@ -30,22 +36,33 @@ export function MatchProvider({ children, currentUserId }: Props) {
 		// Manage event
 		const channel = pusher.subscribe(createUserChannel(currentUserId));
 
+		// match:new
 		const handleMatchNew = (payload: MatchNewPayload) => {
 			console.log('match:new', payload);
-			setLatestMatch(payload);
+
+			setLatestMatchEvent({ type: 'new', payload });
+		};
+
+		// match:delete
+		const handleMatchDelete = (payload: MatchDeletePayload) => {
+			console.log('match:delete', payload);
+
+			setLatestMatchEvent({ type: 'delete', payload });
 		};
 
 		channel.bind('match:new', handleMatchNew);
+		channel.bind('match:delete', handleMatchDelete);
 
 		return () => {
 			channel.unbind('match:new', handleMatchNew);
+			channel.unbind('match:delete', handleMatchDelete);
 
 			pusher.unsubscribe(createUserChannel(currentUserId));
 		};
 	}, [currentUserId]);
 
 	return (
-		<MatchContext.Provider value={{ latestMatch }}>
+		<MatchContext.Provider value={{ latestMatchEvent }}>
 			{children}
 		</MatchContext.Provider>
 	);

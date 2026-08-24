@@ -10,6 +10,6 @@ export async function notifyMatchDelete(userId: string, partnerUserId: string) {
 
 	// partnerUserId receives userId
 	await pusherServer.trigger(createUserChannel(partnerUserId), 'match:delete', {
-		partnerUserId,
+		partnerUserId: userId,
 	});
 }
