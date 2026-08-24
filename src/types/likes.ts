@@ -10,3 +10,14 @@ export type LikeDeletePayload = {
 	sourceUserId: string;
 	targetUserId: string;
 };
+
+// 最後に起きたイベントを管理するため
+export type LikeEvent =
+	| {
+			type: 'new';
+			payload: LikeNewPayload;
+	  }
+	| {
+			type: 'delete';
+			payload: LikeDeletePayload;
+	  };

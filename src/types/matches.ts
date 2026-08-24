@@ -15,3 +15,14 @@ export type MatchNewPayload = {
 export type MatchDeletePayload = {
 	partnerUserId: string;
 };
+
+// 最後に起きたイベントを管理するため
+export type MatchEvent =
+	| {
+			type: 'new';
+			payload: MatchNewPayload;
+	  }
+	| {
+			type: 'delete';
+			payload: MatchDeletePayload;
+	  };

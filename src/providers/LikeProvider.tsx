@@ -10,11 +10,11 @@ import {
 	toggleLikeMember,
 } from '@/app/actions/likeActions';
 
-import { LikeNewPayload } from '@/types/likes';
+import { LikeDeletePayload, LikeEvent, LikeNewPayload } from '@/types/likes';
 
 type LikeContextType = {
 	likeIds: string[];
-	latestLike: LikeNewPayload | null;
+	latestLikeEvent: LikeEvent | null;
 	toggleLike: (targetId: string) => Promise<void>;
 };
 
@@ -29,17 +29,21 @@ const LikeContext = createContext<LikeContextType | undefined>(undefined);
 export function LikeProvider({ children, currentUserId }: Props) {
 	const [likeIds, setLikeIds] = useState<string[]>([]);
 
-	// Providerが Realtimeイベントを受け取って、必要なコンポーネントに知らせる、 最後にRealtimeで届いた like:new を一時的に保存しておくstate
-	const [latestLike, setLatestLike] = useState<LikeNewPayload | null>(null);
+	// 最後に発生したLike関連Realtimeイベント
+	const [latestLikeEvent, setLatestLikeEvent] = useState<LikeEvent | null>(
+		null,
+	);
 
+	// 自分のlike一覧を初期取得
 	useEffect(() => {
 		async function loadLikeIds() {
 			const ids = await fetchCurrentUserLikeIds();
+
 			setLikeIds(ids);
 		}
-
 		loadLikeIds();
 	}, []);
+	// ここまで
 
 	// Pusherへイベントを登録・解除
 	useEffect(() => {
@@ -49,15 +53,25 @@ export function LikeProvider({ children, currentUserId }: Props) {
 		// Manage event
 		const channel = pusher.subscribe(createUserChannel(currentUserId));
 
+		// like:new
 		const handleLikeNew = (payload: LikeNewPayload) => {
 			console.log('like:new', payload);
-			setLatestLike(payload);
+
+			setLatestLikeEvent({ type: 'new', payload });
+		};
+
+		// like:delete
+		const handleLikeDelete = (payload: LikeDeletePayload) => {
+			console.log('like:delete', payload);
+			setLatestLikeEvent({ type: 'delete', payload });
 		};
 
 		channel.bind('like:new', handleLikeNew);
+		channel.bind('like:delete', handleLikeDelete);
 
 		return () => {
 			channel.unbind('like:new', handleLikeNew);
+			channel.unbind('like:delete', handleLikeDelete);
 
 			pusher.unsubscribe(createUserChannel(currentUserId));
 		};
@@ -79,7 +93,7 @@ export function LikeProvider({ children, currentUserId }: Props) {
 	};
 
 	return (
-		<LikeContext.Provider value={{ likeIds, latestLike, toggleLike }}>
+		<LikeContext.Provider value={{ likeIds, latestLikeEvent, toggleLike }}>
 			{children}
 		</LikeContext.Provider>
 	);

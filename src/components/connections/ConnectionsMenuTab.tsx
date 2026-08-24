@@ -21,9 +21,10 @@ import UnreadBadge from '@/components/navigation/shared/UnreadBadge';
 
 type Props = {
 	members: Member[];
+	currentUserId: string;
 };
 
-const ConnectionsMenuTab = ({ members }: Props) => {
+const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -33,9 +34,9 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 
 	const [isPending, startTransition] = useTransition();
 
-	const { latestLike } = useLike();
+	const { latestLikeEvent } = useLike();
 
-	const { latestMatch } = useMatch();
+	const { latestMatchEvent } = useMatch();
 
 	const {
 		unseenLikeIds,
@@ -49,69 +50,128 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
 
-	// 親からmembers が渡されたら、displayedMembers も同期される
+	// 親からmembersが渡されたら、displayedMembers も同期される
 	useEffect(() => {
 		setDisplayedMembers(members);
 	}, [members]);
 
-	// Menu: Likes You
+	// -------------------------------------------------------
+	// like events
+	// -------------------------------------------------------
 	useEffect(() => {
-		if (current !== 'target') return;
-		if (!latestLike) return;
+		if (!latestLikeEvent) return;
 
-		const sourceUserId = latestLike.sourceUserId;
+		// -------------------------------------------------------
+		// like:new
+		// -------------------------------------------------------
+		if (latestLikeEvent.type === 'new') {
+			if (current !== 'target') return;
 
-		// Get member info using the latest like
-		async function fetchNewMember() {
-			// Realtimeで新しくLikeしてきたMember
-			const newMember = await getMemberByUserId(sourceUserId);
+			const { sourceUserId } = latestLikeEvent.payload;
 
-			if (!newMember) return;
+			// Get member info using the latest like
+			async function fetchNewMember() {
+				// Realtimeで新しくLikeしてきたMember
+				const newMember = await getMemberByUserId(sourceUserId);
 
-			// currentMembers= 現在表示されているMember一覧
-			// 同じmemberがすでにいないかチェック/ Already displayed
-			setDisplayedMembers((currentMembers) => {
-				if (
-					currentMembers.some((member) => member.userId === newMember.userId)
-				) {
-					return currentMembers;
-				}
+				if (!newMember) return;
 
-				// Add the new member to the beginning
-				return [newMember, ...currentMembers];
-			});
-		}
-		fetchNewMember();
-	}, [current, latestLike]);
+				// currentMembers= 現在表示されているMember一覧
+				setDisplayedMembers((currentMembers) => {
+					//  同じmemberがすでにいないかチェック / Already displayed
+					if (
+						currentMembers.some((member) => member.userId === newMember.userId)
+					) {
+						return currentMembers;
+					}
 
-	// Menu: Matches
-	useEffect(() => {
-		if (current !== 'mutual') return;
-		if (!latestMatch) return;
+					// Add the new member to the beginning
+					return [newMember, ...currentMembers];
+				});
+			}
 
-		const partnerUserId = latestMatch.partnerUserId;
+			fetchNewMember();
 
-		// Get member info using the latest match
-		async function fetchNewMember() {
-			const newMember = await getMemberByUserId(partnerUserId);
-
-			if (!newMember) return;
-
-			setDisplayedMembers((currentMembers) => {
-				if (
-					currentMembers.some((member) => member.userId === newMember.userId)
-				) {
-					return currentMembers;
-				}
-
-				return [newMember, ...currentMembers];
-			});
+			return;
 		}
 
-		fetchNewMember();
-	}, [current, latestMatch]);
+		// -------------------------------------------------------
+		// like:delete
+		// -------------------------------------------------------
+		if (latestLikeEvent.type === 'delete') {
+			const { sourceUserId, targetUserId } = latestLikeEvent.payload;
 
-	// For badge
+			// 今Likedタブを見ていて、自分がLikeを削除した場合
+			if (current === 'source' && sourceUserId === currentUserId) {
+				setDisplayedMembers((currentMembers) =>
+					currentMembers.filter((member) => member.userId !== targetUserId),
+				);
+				return;
+			}
+
+			// 今Likes Youタブを見ていて、相手から自分へのLikeが削除された場合
+			if (current === 'target' && targetUserId === currentUserId) {
+				setDisplayedMembers((currentMembers) =>
+					currentMembers.filter((member) => member.userId !== sourceUserId),
+				);
+			}
+		}
+	}, [current, currentUserId, latestLikeEvent]);
+
+	// =========================================================
+	// Match events
+	// =========================================================
+	useEffect(() => {
+		if (!latestMatchEvent) return;
+
+		// -------------------------------------------------------
+		// match:new
+		// -------------------------------------------------------
+		if (latestMatchEvent.type === 'new') {
+			if (current !== 'mutual') return;
+
+			const { partnerUserId } = latestMatchEvent.payload;
+
+			// Get member info using the latest match
+			async function fetchNewMember() {
+				const newMember = await getMemberByUserId(partnerUserId);
+
+				if (!newMember) return;
+
+				setDisplayedMembers((currentMembers) => {
+					// Already displayed
+					if (
+						currentMembers.some((member) => member.userId === newMember.userId)
+					) {
+						return currentMembers;
+					}
+
+					return [newMember, ...currentMembers];
+				});
+			}
+
+			fetchNewMember();
+
+			return;
+		}
+
+		// -------------------------------------------------------
+		// match:delete
+		// -------------------------------------------------------
+		if (latestMatchEvent.type === 'delete') {
+			if (current !== 'mutual') return;
+
+			const { partnerUserId } = latestMatchEvent.payload;
+
+			setDisplayedMembers((currentMembers) =>
+				currentMembers.filter((member) => member.userId !== partnerUserId),
+			);
+		}
+	}, [current, latestMatchEvent]);
+
+	// -------------------------------------------------------
+	// Badge
+	// -------------------------------------------------------
 	useEffect(() => {
 		if (current === 'target') {
 			clearUnseenLikes();
@@ -122,10 +182,15 @@ const ConnectionsMenuTab = ({ members }: Props) => {
 		}
 	}, [current, clearUnseenLikes, clearUnseenMatches]);
 
+	// =========================================================
+	// Tab change
+	// =========================================================
 	const handleTabChange = (key: string) => {
 		startTransition(() => {
 			const params = new URLSearchParams(searchParams);
+
 			params.set('type', key);
+
 			router.replace(`${pathname}?${params.toString()}`);
 		});
 	};
