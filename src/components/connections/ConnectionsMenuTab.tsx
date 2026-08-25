@@ -65,14 +65,24 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 		// like:new
 		// -------------------------------------------------------
 		if (latestLikeEvent.type === 'new') {
-			if (current !== 'target') return;
+			const { sourceUserId, targetUserId } = latestLikeEvent.payload;
 
-			const { sourceUserId } = latestLikeEvent.payload;
+			let newMemberUserId: string | null = null;
+
+			if (current === 'source' && sourceUserId === currentUserId) {
+				newMemberUserId = targetUserId;
+			}
+
+			if (current === 'target' && targetUserId === currentUserId) {
+				newMemberUserId = sourceUserId;
+			}
+
+			if (!newMemberUserId) return;
 
 			// Get member info using the latest like
 			const fetchNewMember = async () => {
 				// Realtimeで新しくLikeしてきたMember
-				const newMember = await getMemberByUserId(sourceUserId);
+				const newMember = await getMemberByUserId(newMemberUserId);
 
 				if (!newMember) return;
 
@@ -91,7 +101,6 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 			};
 
 			fetchNewMember();
-
 			return;
 		}
 

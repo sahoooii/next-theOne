@@ -38,7 +38,7 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 				targetUserId,
 			};
 
-			// 削除した本人と、削除された相手の両方に送る
+			// Like:delete 削除した本人と、削除された相手の両方に送る
 			await notifyLikeDelete(userId, payload);
 			await notifyLikeDelete(targetUserId, payload);
 
@@ -63,6 +63,8 @@ export async function toggleLikeMember(targetUserId: string, isLiked: boolean) {
 				targetUserId,
 			};
 
+			// like:new likeした本人と、likeされた相手の両方に送る
+			await notifyLikeNew(userId, payload);
 			await notifyLikeNew(targetUserId, payload);
 
 			if (isMatch) {

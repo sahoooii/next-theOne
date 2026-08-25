@@ -25,7 +25,9 @@ export function AuthenticatedProviders({
 		>
 			<LikeProvider currentUserId={currentUserId}>
 				<MatchProvider currentUserId={currentUserId}>
-					<ConnectionsProvider>{children}</ConnectionsProvider>
+					<ConnectionsProvider currentUserId={currentUserId}>
+						{children}
+					</ConnectionsProvider>
 				</MatchProvider>
 			</LikeProvider>
 		</ConversationProvider>
