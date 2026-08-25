@@ -20,13 +20,14 @@ type ConnectionsContextType = {
 
 type Props = {
 	children: React.ReactNode;
+	currentUserId: string;
 };
 
 const ConnectionsContext = createContext<ConnectionsContextType | undefined>(
 	undefined,
 );
 
-export function ConnectionsProvider({ children }: Props) {
+export function ConnectionsProvider({ children, currentUserId }: Props) {
 	const [unseenLikeIds, setUnseenLikeIds] = useState<string[]>([]);
 	const [unseenMatchIds, setUnseenMatchIds] = useState<string[]>([]);
 
@@ -37,9 +38,12 @@ export function ConnectionsProvider({ children }: Props) {
 	useEffect(() => {
 		if (!latestLikeEvent) return;
 
-		// like:new
+		// like:new 自分に新しいLikeが来たか
 		if (latestLikeEvent.type === 'new') {
 			const { sourceUserId } = latestLikeEvent.payload;
+
+			// 自分がLikeした側なら、unseen Likeには追加しない
+			if (sourceUserId === currentUserId) return;
 
 			setUnseenLikeIds((prevIds) => {
 				// 重複防止: すでにこのユーザーを未確認Likeとして登録しているなら、何もしない
@@ -61,7 +65,7 @@ export function ConnectionsProvider({ children }: Props) {
 				prevIds.filter((id) => id !== sourceUserId),
 			);
 		}
-	}, [latestLikeEvent]);
+	}, [latestLikeEvent, currentUserId]);
 
 	// Handle Match event
 	useEffect(() => {
@@ -71,7 +75,9 @@ export function ConnectionsProvider({ children }: Props) {
 		if (latestMatchEvent.type === 'new') {
 			const { partnerUserId } = latestMatchEvent.payload;
 			// Remove from Likes You / 現在の unseenLikeIds から partnerUserId を取り除いた新しい配列を作る
-			setUnseenLikeIds((prevIds) => prevIds.filter((id) => id !== partnerUserId));
+			setUnseenLikeIds((prevIds) =>
+				prevIds.filter((id) => id !== partnerUserId),
+			);
 
 			// Add to Matches
 			setUnseenMatchIds((prevIds) => {
