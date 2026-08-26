@@ -124,6 +124,9 @@ async function fetchSourceLikes(userId: string) {
 		where: {
 			sourceUserId: userId, //自分
 		},
+		orderBy: {
+			createdAt: 'desc',
+		},
 		select: {
 			targetMember: true, //自分がlikeした誰か
 		},
@@ -168,6 +171,9 @@ export async function fetchMutualLikes(userId: string) {
 				{ targetUserId: userId }, // 誰か → 自分
 				{ sourceUserId: { in: likedIds } }, // その誰かが自分がいいねした人の中にいる,
 			],
+		},
+		orderBy: {
+			createdAt: 'desc',
 		},
 		select: {
 			sourceMember: true,
