@@ -15,6 +15,12 @@ import { getMemberByUserId } from '@/app/actions/memberActions';
 
 import { getConnectionTabs } from './Tabs';
 
+import {
+	getStoredNewMembers,
+	removeNewMember,
+	saveNewMember,
+} from '@/lib/connections/newMemberStorage';
+
 import MemberCard from '@/components/members/utils/MemberCard';
 import { LoadingDisplay } from '@/components/LoadingDisplay';
 import UnreadBadge from '@/components/navigation/shared/UnreadBadge';
@@ -49,6 +55,16 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 
 	// 今このタブで表示するMember一覧
 	const [displayedMembers, setDisplayedMembers] = useState(members);
+
+	// For new badge: 現在NEW表示しているMemberのuserId一覧
+	const [newMemberIds, setNewMemberIds] = useState<string[]>([]);
+
+	useEffect(() => {
+		// ページを開いたとき
+		const storedMembers = getStoredNewMembers();
+
+		setNewMemberIds(storedMembers.map((member) => member.userId));
+	}, []);
 
 	// 親からmembersが渡されたら、displayedMembers も同期される
 	useEffect(() => {
@@ -137,9 +153,26 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 		// match:new
 		// -------------------------------------------------------
 		if (latestMatchEvent.type === 'new') {
-			if (current !== 'mutual') return;
-
 			const { partnerUserId } = latestMatchEvent.payload;
+
+			// -------------------------------------------------------
+			// NEW badge
+			// -------------------------------------------------------
+			// match:newを受信したとき
+			saveNewMember(partnerUserId);
+
+			setNewMemberIds((currentIds) => {
+				if (currentIds.includes(partnerUserId)) {
+					return currentIds;
+				}
+
+				return [...currentIds, partnerUserId];
+			});
+
+			// -------------------------------------------------------
+			// Update displayed Members
+			// -------------------------------------------------------
+			if (current !== 'mutual') return;
 
 			// Get member info using the latest match
 			const fetchNewMember = async () => {
@@ -168,9 +201,22 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 		// match:delete
 		// -------------------------------------------------------
 		if (latestMatchEvent.type === 'delete') {
-			if (current !== 'mutual') return;
-
 			const { partnerUserId } = latestMatchEvent.payload;
+
+			// -------------------------------------------------------
+			// Remove NEW badge
+			// -------------------------------------------------------
+			// match:deleteを受信したとき
+			removeNewMember(partnerUserId);
+
+			setNewMemberIds((currentIds) =>
+				currentIds.filter((id) => id !== partnerUserId),
+			);
+
+			// -------------------------------------------------------
+			// Update displayed Members
+			// -------------------------------------------------------
+			if (current !== 'mutual') return;
 
 			setDisplayedMembers((currentMembers) =>
 				currentMembers.filter((member) => member.userId !== partnerUserId),
@@ -259,7 +305,13 @@ const ConnectionsMenuTab = ({ members, currentUserId }: Props) => {
 					{displayedMembers.length > 0 ? (
 						<div className='mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
 							{displayedMembers.map((member) => (
-								<MemberCard key={member.id} member={member} />
+								<MemberCard
+									key={member.id}
+									member={member}
+									isNew={
+										current === 'mutual' && newMemberIds.includes(member.userId)
+									}
+								/>
 							))}
 						</div>
 					) : (

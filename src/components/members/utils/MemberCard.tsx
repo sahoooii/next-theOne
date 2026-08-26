@@ -14,9 +14,10 @@ import { transformImageUrl } from '@/lib/transFormImageUrl';
 
 type Props = {
 	member: Member;
+	isNew?: boolean;
 };
 
-const MemberCard = ({ member }: Props) => {
+const MemberCard = ({ member, isNew = false }: Props) => {
 	const router = useRouter();
 
 	const age = calculateAge(member.dateOfBirth);
@@ -40,6 +41,9 @@ const MemberCard = ({ member }: Props) => {
 						sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
 						className='object-cover transition-transform duration-500 group-hover:scale-105'
 					/>
+
+					{/* New badge */}
+					{isNew && <span className='absolute top-3 left-3 text-red-500'>NEW</span>}
 				</div>
 
 				{/* Info Section*/}
