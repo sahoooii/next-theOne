@@ -11,6 +11,7 @@ import LikeButton from './LikeButton';
 
 import { calculateAge } from '@/lib/utils';
 import { transformImageUrl } from '@/lib/transFormImageUrl';
+import NewBadge from './NewBadge';
 
 type Props = {
 	member: Member;
@@ -43,7 +44,7 @@ const MemberCard = ({ member, isNew = false }: Props) => {
 					/>
 
 					{/* New badge */}
-					{isNew && <span className='absolute top-3 left-3 text-red-500'>NEW</span>}
+					{isNew && <NewBadge />}
 				</div>
 
 				{/* Info Section*/}
