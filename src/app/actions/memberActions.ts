@@ -5,24 +5,19 @@ import { prisma } from '@/lib/prisma';
 import { ChatPartner } from '@/types/prisma';
 import { MembersCursor } from '@/types/members';
 
-import { getAuthUserId } from './authActions';
 import { SearchGender } from '@prisma/client';
 
+import { getAuthUserId } from './authActions';
 
+//cursor: 前回どこまで読んだかを示す目印
 type GetMembersParams = {
 	cursor?: MembersCursor;
 	limit?: number;
 };
 
-// Candidate is discoverable when:
-// 1. Candidate is not myself
-// 2. My searchGender matches candidate.gender
-//    OR my searchGender is ANY
-// 3. Candidate's searchGender matches my gender
-//    OR candidate's searchGender is ANY
 export async function getMembers({
 	cursor,
-	limit = 3,
+	limit = 12,
 }: GetMembersParams = {}) {
 	const userId = await getAuthUserId();
 
@@ -40,6 +35,13 @@ export async function getMembers({
 		if (!currentMember) {
 			throw new Error('Current member not found');
 		}
+
+		// Candidate is discoverable when:
+		// 1. Candidate is not myself
+		// 2. My searchGender matches candidate.gender
+		//    OR my searchGender is ANY
+		// 3. Candidate's searchGender matches my gender
+		//    OR candidate's searchGender is ANY
 
 		// 自分が相手に求めている条件
 		const genderFilter =
@@ -59,6 +61,7 @@ export async function getMembers({
 			],
 		};
 
+		// createdがcursorより古い OR createdが同じで、idがcursorより小さい
 		const cursorFilter = cursor
 			? {
 					OR: [
@@ -93,7 +96,7 @@ export async function getMembers({
 					id: 'desc',
 				},
 			],
-			take: limit + 1,
+			take: limit + 1, //limit: 表示 +1: 次があるか確認
 		});
 
 		// 次のページにまたがるのかジャッジ
@@ -102,7 +105,7 @@ export async function getMembers({
 		// 実際に返すMemberを12件に戻す
 		const resultMembers = hasNextPage ? members.slice(0, limit) : members;
 
-		// Memberの最後をcursorにする
+		// Memberの最後をcursorにする(次回の目印を作る)
 		const nextCursor = hasNextPage
 			? {
 					created: resultMembers[resultMembers.length - 1].created,

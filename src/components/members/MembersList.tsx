@@ -7,8 +7,9 @@ import { getMembers } from '@/app/actions/memberActions';
 import { Member } from '@prisma/client';
 import { MembersCursor } from '@/types/members';
 
-import MemberCard from './utils/MemberCard';
 import { Button } from '../ui/button';
+
+import MemberCard from './utils/MemberCard';
 
 import { Loader2 } from 'lucide-react';
 
