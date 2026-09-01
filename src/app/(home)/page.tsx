@@ -1,18 +1,16 @@
-import { auth } from '@/auth';
+import HomeHero from '@/components/home/HomeHero';
+import TodaysPicks from '@/components/home/TodaysPicks';
 
-export default async function Home() {
-	const session = await auth();
-
+const HomePage = async () => {
 	return (
-		<div className='space-y-4'>
-			<h3 className='text-2xl'>Dashboard coming soon...</h3>
-			{session ? (
-				<div>
-					You can see Today&apos;s Matches, New Likes, Unread Messages, etc...
-				</div>
-			) : (
-				<div>Not logged in</div>
-			)}
+		<div>
+			<HomeHero />
+			<TodaysPicks />
+			{/* New matches */}
+			{/* HowItWorks */}
+			{/* HomeCTA */}
 		</div>
 	);
-}
+};
+
+export default HomePage;
