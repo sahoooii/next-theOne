@@ -1,10 +1,11 @@
 import HomeHero from '@/components/home/HomeHero';
+import TodaysPicks from '@/components/home/TodaysPicks';
 
 const HomePage = async () => {
 	return (
 		<div>
 			<HomeHero />
-			{/* Today's picks */}
+			<TodaysPicks />
 			{/* New matches */}
 			{/* HowItWorks */}
 			{/* HomeCTA */}

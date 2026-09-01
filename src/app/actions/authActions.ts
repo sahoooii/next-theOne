@@ -87,6 +87,7 @@ export async function getUserById(id: string) {
 	return prisma.user.findUnique({ where: { id } });
 }
 
+// 絶対にログインしていなければならない処理
 export async function getAuthUserId() {
 	const session = await auth();
 	const userId = session?.user?.id;

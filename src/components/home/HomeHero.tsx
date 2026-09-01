@@ -12,7 +12,7 @@ const HomeHero = () => {
 		<section className='relative min-h-[560px] overflow-hidden rounded-3xl bg-purple-950'>
 			{/* Background glow */}
 			<div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.18),transparent_60%)]' />
-			{/* Animated background rings */}
+			{/* Animated background 3 rings */}
 			<div className='absolute inset-0 flex items-center justify-center'>
 				{[0, 1, 2].map((index) => (
 					<motion.div
@@ -39,7 +39,7 @@ const HomeHero = () => {
 					transition={{ duration: 0.8, ease: 'easeOut' }}
 				>
 					<motion.div
-						className='absolute h-24 w-24 rounded-full border border-purple-300/20'
+						className='absolute h-24 w-24 rounded-full border border-purple-300/35'
 						animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.5, 0.25] }}
 						transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
 					/>
