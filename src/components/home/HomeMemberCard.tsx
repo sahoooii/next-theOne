@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Member } from '@prisma/client';
 
 import { Heart } from 'lucide-react';
+import { FaLongArrowAltRight } from 'react-icons/fa';
 
 import { Card } from '@/components/ui/card';
 import { calculateAge } from '@/lib/utils';
@@ -60,9 +61,6 @@ const HomeMemberCard = ({ member }: Props) => {
 					{/* Text readability overlay */}
 					<div className='absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/90 via-black/65 to-transparent' />
 
-					{/* Image overlay */}
-					<div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(216,180,254,0.18),transparent_55%)] opacity-0 transition-opacity duration-700 group-hover:opacity-100' />
-
 					{/* Subtle glow */}
 					<div className='absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_bottom,rgba(168,85,247,0.22),transparent_55%)]' />
 
@@ -72,7 +70,7 @@ const HomeMemberCard = ({ member }: Props) => {
 						aria-label={`Like ${member.name}`}
 						onClick={(e) => {
 							e.stopPropagation();
-							router.push('/signup');
+							router.push('/register');
 						}}
 						className='absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/30 hover:bg-black/40 hover:text-white'
 						whileTap={{ scale: 0.9 }}
@@ -103,7 +101,7 @@ const HomeMemberCard = ({ member }: Props) => {
 						<div className='mt-3 flex items-center gap-2 text-xs tracking-[0.15em] text-white/70 transition-colors group-hover:text-white'>
 							<span>VIEW PROFILE</span>
 							<span className='transition-transform duration-300 group-hover:translate-x-1'>
-								→
+								<FaLongArrowAltRight />
 							</span>
 						</div>
 					</div>

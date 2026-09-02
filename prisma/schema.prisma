@@ -28,13 +28,14 @@ model Account {
 
 // User = Authentication Login(System)
 // Note: name String? ?を消す
+// Memberにname, imageが存在するのでのちにname, imageを消す方針
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
   passwordHash  String
-  image         String? //note: delete later
+  image         String? //note: delete later Memberに集約したため
   accounts      Account[]
   member        Member?
 }
@@ -61,7 +62,7 @@ model Member {
   searchGender      SearchGender @default(ANY)
   dateOfBirth       DateTime
   created           DateTime     @default(now())
-  updated           DateTime     @default(now())
+  updated           DateTime     @updatedAt
   description       String
   city              String
   country           String

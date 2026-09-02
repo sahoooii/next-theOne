@@ -84,6 +84,7 @@ export async function addImage(url: string, publicId: string) {
 		return prisma.member.update({
 			where: { userId },
 			data: {
+				updated: new Date(),
 				...(isFirstPhoto && { image: url }),
 				photos: {
 					create: [
@@ -116,6 +117,7 @@ export async function setMainImage(photo: Photo) {
 			where: { userId },
 			data: {
 				image: photo.url,
+				updated: new Date(),
 			},
 		});
 	} catch (error) {
@@ -140,6 +142,7 @@ export async function deleteImage(photo: Photo) {
 						id: photo.id,
 					},
 				},
+				updated: new Date(),
 			},
 		});
 	} catch (error) {
