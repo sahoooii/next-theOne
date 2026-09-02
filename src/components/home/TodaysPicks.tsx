@@ -1,21 +1,10 @@
-import { Member } from '@prisma/client';
-
-import { getMemberByUserId } from '@/app/actions/memberActions';
+import { getGuestTodaysPicks } from '@/app/actions/memberActions';
 
 import HomeMemberCard from './HomeMemberCard';
 import DecorativeLine from './DecorativeLine';
 
 const TodaysPicks = async () => {
-	// Temporary data
-	const members = await Promise.all([
-		getMemberByUserId('cmq961gko000xz7i2j17vdwe9'),
-		getMemberByUserId('cmq961fow0006z7i2xo20obgp'),
-		getMemberByUserId('cmq961fow0007z7i2n2n3lawz'),
-	]);
-
-	const validMembers = members.filter(
-		(member): member is Member => member !== null,
-	);
+	const members = await getGuestTodaysPicks();
 
 	return (
 		<section className='mx-auto mt-24 max-w-5xl px-4'>
@@ -32,7 +21,7 @@ const TodaysPicks = async () => {
 			</div>
 
 			<div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-				{validMembers.map((member) => (
+				{members.map((member) => (
 					<HomeMemberCard key={member.userId} member={member} />
 				))}
 			</div>
