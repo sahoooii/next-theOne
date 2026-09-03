@@ -30,10 +30,10 @@ const HowItWorksContents = () => {
 						>
 							{/* Outer ring */}
 							<motion.div
-								className='absolute inset-0 rounded-full border border-purple-200'
+								className='absolute inset-0 rounded-full border border-purple-300'
 								animate={{
-									scale: [1, 1.04, 1],
-									opacity: [0.6, 0.9, 0.6],
+									scale: [1, 1.08, 1],
+									opacity: [0.4, 0.9, 0.4],
 								}}
 								transition={{
 									duration: 4,
