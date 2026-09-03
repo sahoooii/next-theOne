@@ -5,7 +5,8 @@ import { AuthenticatedProviders } from '@/providers/AuthenticatedProviders';
 import { getMemberByUserId } from '../actions/memberActions';
 import { getConversationsList } from '../actions/messageActions';
 
-import { PageLayout } from '@/components/layout/PageLayout';
+import HomePageLayout from '@/components/layout/HomePageLayout';
+
 import TopNav from '@/components/navigation/topNav/TopNav';
 import BottomNav from '@/components/navigation/bottomNav/BottomNav';
 
@@ -24,7 +25,7 @@ const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 					initialConversations={conversations}
 				>
 					<TopNav />
-					<PageLayout>{children}</PageLayout>
+					<HomePageLayout>{children}</HomePageLayout>
 					<BottomNav />
 				</AuthenticatedProviders>
 			);
@@ -33,7 +34,7 @@ const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 	return (
 		<>
 			<TopNav />
-			<PageLayout>{children}</PageLayout>
+			<HomePageLayout>{children}</HomePageLayout>
 		</>
 	);
 };

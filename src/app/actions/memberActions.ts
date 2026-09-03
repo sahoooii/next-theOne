@@ -170,6 +170,25 @@ export async function getGuestTodaysPicks() {
 	}
 }
 
+export async function getGuestNewMembers() {
+	return prisma.member.findMany({
+		where: {
+			image: {
+				not: null,
+			},
+		},
+		orderBy: [
+			{
+				created: 'desc',
+			},
+			{
+				id: 'desc',
+			},
+		],
+		take: 6,
+	});
+}
+
 // For chat room: Chat partner info
 export async function getChatPartner(
 	userId: string,
