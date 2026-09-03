@@ -1,4 +1,5 @@
 import HomeHero from '@/components/home/HomeHero';
+import NewMembers from '@/components/home/NewMembers';
 import TodaysPicks from '@/components/home/TodaysPicks';
 
 const HomePage = async () => {
@@ -6,7 +7,7 @@ const HomePage = async () => {
 		<div>
 			<HomeHero />
 			<TodaysPicks />
-			{/* New matches */}
+			<NewMembers />
 			{/* HowItWorks */}
 			{/* HomeCTA */}
 		</div>

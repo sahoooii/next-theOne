@@ -31,10 +31,11 @@ const HomeMemberCard = ({ member }: Props) => {
 			initial={{ opacity: 0, y: 20 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true, amount: 0.2 }}
+			whileHover={{ y: -6 }}
 			transition={{ duration: 0.6 }}
 		>
 			<Card
-				className='group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-0 backdrop-blur-sm transition-all duration-500 hover:border-purple-300/30 hover:shadow-xl hover:shadow-purple-950/30'
+				className='group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-0 backdrop-blur-sm transition-all duration-500 hover:border-purple-300/30 hover:shadow-xl hover:shadow-purple-950/30 cursor-pointer'
 				onClick={handleViewProfile}
 			>
 				{/* ─→光が写真を横切る */}
@@ -46,7 +47,7 @@ const HomeMemberCard = ({ member }: Props) => {
     group-hover:left-[130%]'
 				/>
 				{/* Image */}
-				<div className='relative aspect-[3/4] w-full overflow-hidden'>
+				<div className='relative aspect-[2/3] w-full overflow-hidden sm:aspect-[3/4]'>
 					<Image
 						src={transformImageUrl(member.image, 'card') || '/images/user.png'}
 						alt={member.name}
@@ -54,16 +55,12 @@ const HomeMemberCard = ({ member }: Props) => {
 						sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
 						className='object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]'
 					/>
-
 					{/* Hover glow */}
 					<div className='absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(216,180,254,0.18),transparent_55%)] opacity-0 transition-opacity duration-700 group-hover:opacity-100' />
-
 					{/* Text readability overlay */}
 					<div className='absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/90 via-black/65 to-transparent' />
-
 					{/* Subtle glow */}
 					<div className='absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_bottom,rgba(168,85,247,0.22),transparent_55%)]' />
-
 					{/* Like / signup hint */}
 					<motion.button
 						type='button'
@@ -79,27 +76,26 @@ const HomeMemberCard = ({ member }: Props) => {
 					</motion.button>
 
 					{/* Member info */}
-					<div className='absolute inset-x-0 bottom-0 p-5'>
-						<p className='font-display text-2xl font-normal tracking-wide text-white'>
+					<div className='absolute inset-x-0 bottom-0 p-4 sm:p-5'>
+						<p className='font-display text-xl font-normal tracking-wide text-white sm:text-2xl'>
 							{member.name}, {age}
 						</p>
 
-						<p className='mt-1 text-xs tracking-wide text-white/65'>
+						<p className='mt-1 text-[10px] tracking-wide text-white/65 sm:text-xs'>
 							{member.city}, {member.country}
 						</p>
 
 						{member.description && (
-							<p className='mt-2 line-clamp-2 text-xs leading-relaxed text-white/60'>
+							<p className='mt-1.5 line-clamp-2 text-[10px] leading-relaxed text-white/60 sm:mt-2 sm:text-xs'>
 								{member.description}
 							</p>
 						)}
 
-						{/* Divider */}
-						<div className='mt-4 h-px w-8 bg-white/30 transition-all duration-500 group-hover:w-14 group-hover:bg-purple-300/60' />
+						<div className='mt-3 h-px w-6 bg-white/30 transition-all duration-500 group-hover:w-10 group-hover:bg-purple-300/60 sm:mt-4 sm:w-8 sm:group-hover:w-14' />
 
-						{/* View profile */}
-						<div className='mt-3 flex items-center gap-2 text-xs tracking-[0.15em] text-white/70 transition-colors group-hover:text-white'>
+						<div className='mt-2 flex items-center gap-1.5 text-[10px] tracking-[0.12em] text-white/70 transition-colors group-hover:text-white sm:mt-3 sm:gap-2 sm:text-xs sm:tracking-[0.15em]'>
 							<span>VIEW PROFILE</span>
+
 							<span className='transition-transform duration-300 group-hover:translate-x-1'>
 								<FaLongArrowAltRight />
 							</span>
