@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Member } from '@prisma/client';
 
-import HomeMemberCard from './HomeMemberCard';
+import HomeMemberCard from '../utils/HomeMemberCard';
 
 type Props = {
 	members: Member[];

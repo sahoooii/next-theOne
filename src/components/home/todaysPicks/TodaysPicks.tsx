@@ -1,7 +1,7 @@
 import { getGuestTodaysPicks } from '@/app/actions/memberActions';
 
-import HomeMemberCard from './HomeMemberCard';
-import DecorativeLine from './DecorativeLine';
+import HomeMemberCard from '../utils/HomeMemberCard';
+import DecorativeLine from '../utils/DecorativeLine';
 
 const TodaysPicks = async () => {
 	const members = await getGuestTodaysPicks();

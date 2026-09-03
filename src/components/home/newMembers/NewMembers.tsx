@@ -1,6 +1,7 @@
 import { getGuestNewMembers } from '@/app/actions/memberActions';
 
 import NewMembersCarousel from './NewMembersCarousel';
+import DecorativeLine from '../utils/DecorativeLine';
 
 const NewMembers = async () => {
 	const members = await getGuestNewMembers();
@@ -22,7 +23,7 @@ const NewMembers = async () => {
 						Recently joined.
 					</h2>
 
-					<div className='mx-auto mt-5 h-px w-16 bg-purple-300' />
+					<DecorativeLine />
 				</div>
 
 				<NewMembersCarousel members={members} />
