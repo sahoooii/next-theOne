@@ -4,8 +4,9 @@ import Link from 'next/link';
 
 import { motion } from 'framer-motion';
 
-import { Button } from '@/components/ui/button';
 import { GiBigDiamondRing } from 'react-icons/gi';
+
+import { Button } from '@/components/ui/button';
 
 const HomeHero = () => {
 	return (
@@ -66,6 +67,7 @@ const HomeHero = () => {
 					>
 						Find someone worth <br /> getting to know.
 					</motion.h1>
+
 					{/* Tagline */}
 					<motion.p
 						className='mt-6 max-w-md text-sm leading-relaxed text-white/55 sm:text-base'
