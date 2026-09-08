@@ -1,3 +1,5 @@
+import ContactForm from '@/components/home/utils/ContactForm';
+
 const PrivacyPage = () => {
 	return (
 		<main className='bg-white'>
@@ -12,6 +14,7 @@ const PrivacyPage = () => {
 						Privacy Policy
 					</h1>
 
+					{/* Edit when updated */}
 					<p className='mt-6 text-sm tracking-wide text-purple-950/50'>
 						Last updated: September 8, 2026
 					</p>
@@ -211,23 +214,7 @@ const PrivacyPage = () => {
 					</section>
 
 					{/* Contact */}
-					<section>
-						<h2 className='font-display text-2xl font-normal text-purple-950'>
-							11. Contact
-						</h2>
-
-						<p className='mt-4'>
-							If you have any questions about this Privacy Policy or how your
-							information is handled, you can contact us at:
-						</p>
-
-						<div className='mt-6 rounded-2xl border border-purple-950/10 bg-purple-50/40 p-6'>
-							<p className='font-medium text-purple-950'>The One</p>
-							<p className='mt-1'>Seaside Ave, Honolulu, HI 96815 USA</p>
-							<p>(808)-808-808</p>
-							<p className='mt-1'>the-one@example</p>
-						</div>
-					</section>
+					<ContactForm sectionNumber={11} />
 				</div>
 			</div>
 		</main>
