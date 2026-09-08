@@ -28,7 +28,7 @@ const Footer = () => {
 						<div className='flex flex-col gap-2 tracking-wide text-purple-950/40'>
 							<span className='mt-5 text-sm font-bold'>Contact Us</span>
 							<div className='text-xs'>
-								<p>364 Seaside Ave, Honolulu, HI 96815 USA</p>
+								<p>Seaside Ave, Honolulu, HI 96815 USA</p>
 								<p>TEL: (808)-808-808</p>
 								<p>Mail: the-one@example</p>
 							</div>
