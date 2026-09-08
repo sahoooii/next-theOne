@@ -6,13 +6,13 @@ import HomeCTA from '@/components/home/cta/HomeCTA';
 
 const HomePage = async () => {
 	return (
-		<div>
+		<>
 			<HomeHero />
 			<TodaysPicks />
 			<NewMembers />
 			<HowItWorks />
 			<HomeCTA />
-		</div>
+		</>
 	);
 };
 

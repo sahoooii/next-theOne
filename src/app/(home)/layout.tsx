@@ -9,6 +9,7 @@ import HomePageLayout from '@/components/layout/HomePageLayout';
 
 import TopNav from '@/components/navigation/topNav/TopNav';
 import BottomNav from '@/components/navigation/bottomNav/BottomNav';
+import Footer from '@/components/home/footer/Footer';
 
 const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 	const session = await auth();
@@ -26,6 +27,7 @@ const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 				>
 					<TopNav />
 					<HomePageLayout>{children}</HomePageLayout>
+					<Footer />
 					<BottomNav />
 				</AuthenticatedProviders>
 			);
@@ -35,6 +37,7 @@ const MarketingLayout = async ({ children }: { children: React.ReactNode }) => {
 		<>
 			<TopNav />
 			<HomePageLayout>{children}</HomePageLayout>
+			<Footer />
 		</>
 	);
 };
