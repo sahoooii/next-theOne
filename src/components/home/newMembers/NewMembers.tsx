@@ -1,15 +1,14 @@
-import { getGuestNewMembers } from '@/app/actions/memberActions';
+import { Member } from '@prisma/client';
 
 import NewMembersCarousel from './NewMembersCarousel';
 import DecorativeLine from '../utils/DecorativeLine';
+import EmptyState from '../utils/EmptyState';
 
-const NewMembers = async () => {
-	const members = await getGuestNewMembers();
+type NewMembersProps = {
+	newMembers: Member[];
+};
 
-	if (members.length === 0) {
-		return null;
-	}
-
+const NewMembers = async ({ newMembers }: NewMembersProps) => {
 	return (
 		<section className='mt-28 border-y border-purple-200/60 bg-gradient-to-b from-purple-100/80 to-purple-200/60 py-20'>
 			<div className='mx-auto max-w-6xl px-4'>
@@ -26,7 +25,14 @@ const NewMembers = async () => {
 					<DecorativeLine />
 				</div>
 
-				<NewMembersCarousel members={members} />
+				{newMembers.length === 0 ? (
+					<EmptyState
+						title='No new members right now.'
+						description='New Members coming soon. There may be someone new worth getting to know.'
+					/>
+				) : (
+					<NewMembersCarousel members={newMembers} />
+				)}
 			</div>
 		</section>
 	);

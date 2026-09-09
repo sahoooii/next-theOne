@@ -1,19 +1,16 @@
-import HomeHero from '@/components/home/hero/HomeHero';
-import TodaysPicks from '@/components/home/todaysPicks/TodaysPicks';
-import NewMembers from '@/components/home/newMembers/NewMembers';
-import HowItWorks from '@/components/home/howItWorks/HowItWorks';
-import HomeCTA from '@/components/home/cta/HomeCTA';
+import { auth } from '@/auth';
+
+import AuthHome from './AuthHome';
+import GuestHome from './GuestHome';
 
 const HomePage = async () => {
-	return (
-		<>
-			<HomeHero />
-			<TodaysPicks />
-			<NewMembers />
-			<HowItWorks />
-			<HomeCTA />
-		</>
-	);
+	const session = await auth();
+
+	if (session?.user?.id) {
+		return <AuthHome />;
+	}
+
+	return <GuestHome />;
 };
 
 export default HomePage;
