@@ -8,7 +8,12 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DecorativeLine from '../utils/DecorativeLine';
 
-const HomeCTA = () => {
+type HomeCTAProps = {
+	ctaLabel: string;
+	ctaHref: string;
+};
+
+const HomeCTA = ({ ctaLabel, ctaHref }: HomeCTAProps) => {
 	return (
 		<section className='relative overflow-hidden bg-purple-950 py-28 md:py-36'>
 			{/* Left glow */}
@@ -136,8 +141,8 @@ const HomeCTA = () => {
 							asChild
 							className='rounded-full bg-white px-8 py-6 font-sans text-sm font-medium text-purple-950 transition-colors hover:bg-purple-50'
 						>
-							<Link href='/register'>
-								Get Started
+							<Link href={ctaHref} className='flex items-center'>
+								{ctaLabel}
 								<motion.span
 									className='ml-2 inline-flex'
 									whileHover={{ x: 4 }}

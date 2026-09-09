@@ -1,11 +1,14 @@
-import { getGuestTodaysPicks } from '@/app/actions/memberActions';
+import { Member } from '@prisma/client';
 
 import HomeMemberCard from '../utils/HomeMemberCard';
 import DecorativeLine from '../utils/DecorativeLine';
+import EmptyState from '../utils/EmptyState';
 
-const TodaysPicks = async () => {
-	const members = await getGuestTodaysPicks();
+type TodaysPicksProps = {
+	members: Member[];
+};
 
+const TodaysPicks = async ({ members }: TodaysPicksProps) => {
 	return (
 		<section className='mx-auto mt-24 max-w-5xl px-4'>
 			<div className='mb-10 text-center'>
@@ -20,11 +23,18 @@ const TodaysPicks = async () => {
 				<DecorativeLine />
 			</div>
 
-			<div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-				{members.map((member) => (
-					<HomeMemberCard key={member.userId} member={member} />
-				))}
-			</div>
+			{members.length === 0 ? (
+				<EmptyState
+					title='No picks for you right now.'
+					description='Check back soon. There may be someone new worth getting to know.'
+				/>
+			) : (
+				<div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+					{members.map((member) => (
+						<HomeMemberCard key={member.userId} member={member} />
+					))}
+				</div>
+			)}
 		</section>
 	);
 };

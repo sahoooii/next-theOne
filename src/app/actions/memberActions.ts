@@ -145,50 +145,6 @@ export async function getMemberPhotoByUserId(userId: string) {
 	return member.photos;
 }
 
-// Home: Guest
-export async function getGuestTodaysPicks() {
-	try {
-		return await prisma.member.findMany({
-			where: {
-				image: {
-					not: null,
-				},
-			},
-			orderBy: [
-				{
-					updated: 'desc',
-				},
-				{
-					id: 'desc',
-				},
-			],
-			take: 3,
-		});
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-}
-
-export async function getGuestNewMembers() {
-	return prisma.member.findMany({
-		where: {
-			image: {
-				not: null,
-			},
-		},
-		orderBy: [
-			{
-				created: 'desc',
-			},
-			{
-				id: 'desc',
-			},
-		],
-		take: 6,
-	});
-}
-
 // For chat room: Chat partner info
 export async function getChatPartner(
 	userId: string,

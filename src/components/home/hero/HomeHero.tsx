@@ -5,10 +5,16 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 import { GiBigDiamondRing } from 'react-icons/gi';
+import { ArrowRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
-const HomeHero = () => {
+type HomeHeroProps = {
+	ctaLabel: string;
+	ctaHref: string;
+};
+
+const HomeHero = ({ ctaLabel, ctaHref }: HomeHeroProps) => {
 	return (
 		<section className='px-6 pt-6'>
 			<div className='relative min-h-[560px] overflow-hidden rounded-3xl bg-purple-950'>
@@ -88,7 +94,20 @@ const HomeHero = () => {
 							size='lg'
 							className='rounded-full bg-white px-8 text-purple-950 shadow-lg shadow-purple-950/30 transition-transform hover:scale-[1.03] hover:bg-white'
 						>
-							<Link href='/register'>Get Started</Link>
+							<Link href={ctaHref} className='flex items-center'>
+								{ctaLabel}
+								<motion.span
+									className='ml-2 inline-flex'
+									whileHover={{ x: 4 }}
+									transition={{
+										type: 'spring',
+										stiffness: 400,
+										damping: 20,
+									}}
+								>
+									<ArrowRight className='h-4 w-4' />
+								</motion.span>
+							</Link>
 						</Button>
 					</motion.div>
 				</div>
