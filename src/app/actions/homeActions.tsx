@@ -9,11 +9,21 @@ import { SearchGender } from '@prisma/client';
 type GetCompatibleMembersParams = {
 	orderBy: 'updated' | 'created';
 	take?: number;
+	excludeUserIds?: string[];
+};
+
+type GetNewMembersParams = {
+	excludeUserIds?: string[];
+};
+
+type GetGuestNewMembersParams = {
+	excludeUserIds?: string[];
 };
 
 export async function getCompatibleMembers({
 	orderBy,
 	take,
+	excludeUserIds = [],
 }: GetCompatibleMembersParams) {
 	const userId = await getAuthUserId();
 
@@ -49,39 +59,16 @@ export async function getCompatibleMembers({
 		],
 	};
 
-	// const testMember = await prisma.member.findUnique({
-	// 	where: {
-	// 		userId: 'cmq961gko000xz7i2j17vdwe9',
-	// 	},
-	// 	include: {
-	// 		sourceLikes: true,
-	// 	},
-	// });
-
-	// console.log('TEST MEMBER:', testMember);
-
-	// const test = await prisma.member.findMany({
-	// 	where: {
-	// 		sourceLikes: {
-	// 			none: {
-	// 				sourceUserId: 'cmq961gap000uz7i2fqvorikv',
-	// 			},
-	// 		},
-	// 	},
-	// 	select: {
-	// 		userId: true,
-	// 		name: true,
-	// 	},
-	// });
-
-	// console.log('test:', test);
-
 	const members = await prisma.member.findMany({
 		where: {
 			userId: {
 				not: userId,
+				notIn: excludeUserIds,
 			},
-			sourceLikes: {
+			image: {
+				not: null,
+			},
+			targetLikes: {
 				none: {
 					sourceUserId: userId,
 				},
@@ -104,10 +91,13 @@ export async function getTodaysPicks() {
 	});
 }
 
-export async function getNewMembers() {
+export async function getNewMembers({
+	excludeUserIds = [],
+}: GetNewMembersParams = {}) {
 	return getCompatibleMembers({
 		orderBy: 'created',
 		take: 6,
+		excludeUserIds,
 	});
 }
 
@@ -136,11 +126,16 @@ export async function getGuestTodaysPicks() {
 	}
 }
 
-export async function getGuestNewMembers() {
+export async function getGuestNewMembers({
+	excludeUserIds = [],
+}: GetGuestNewMembersParams = {}) {
 	return prisma.member.findMany({
 		where: {
 			image: {
 				not: null,
+			},
+			userId: {
+				notIn: excludeUserIds,
 			},
 		},
 		orderBy: [
