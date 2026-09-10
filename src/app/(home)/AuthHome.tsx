@@ -8,7 +8,10 @@ import HomeCTA from '@/components/home/cta/HomeCTA';
 
 const AuthHome = async () => {
 	const members = await getTodaysPicks();
-	const newMembers = await getNewMembers();
+
+	const newMembers = await getNewMembers({
+		excludeUserIds: members.map((member) => member.userId),
+	});
 
 	return (
 		<>
@@ -17,7 +20,6 @@ const AuthHome = async () => {
 			<NewMembers newMembers={newMembers} />
 			<HowItWorks />
 			<HomeCTA ctaLabel='Find Your One' ctaHref='/members' />
-			<div>Auth</div>
 		</>
 	);
 };

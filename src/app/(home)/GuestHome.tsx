@@ -11,7 +11,10 @@ import HomeCTA from '@/components/home/cta/HomeCTA';
 
 const GuestHome = async () => {
 	const members = await getGuestTodaysPicks();
-	const newMembers = await getGuestNewMembers();
+
+	const newMembers = await getGuestNewMembers({
+		excludeUserIds: members.map((member) => member.userId),
+	});
 
 	return (
 		<>

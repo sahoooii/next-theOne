@@ -10,8 +10,12 @@ type Props = {
 };
 
 const NewMembersCarousel = ({ members }: Props) => {
+	const shouldAnimate = members.length >= 3;
+
 	// Duplicate the members so the carousel can loop continuously.
-	const carouselMembers = [...members, ...members, ...members];
+	const carouselMembers = shouldAnimate
+		? [...members, ...members, ...members]
+		: members;
 
 	return (
 		<>
@@ -19,14 +23,22 @@ const NewMembersCarousel = ({ members }: Props) => {
 			<div className='hidden overflow-hidden sm:block'>
 				<motion.div
 					className='flex w-max gap-5 md:gap-6'
-					animate={{
-						x: ['0%', '-33.3333%'],
-					}}
-					transition={{
-						duration: 30,
-						repeat: Infinity,
-						ease: 'linear',
-					}}
+					animate={
+						shouldAnimate
+							? {
+									x: ['0%', '-33.3333%'],
+								}
+							: undefined
+					}
+					transition={
+						shouldAnimate
+							? {
+									duration: 30,
+									repeat: Infinity,
+									ease: 'linear',
+								}
+							: undefined
+					}
 				>
 					{carouselMembers.map((member, index) => (
 						<div
