@@ -2,6 +2,7 @@
 
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { loginSchema, LoginSchema } from '@/lib/schema/loginSchema';
@@ -26,7 +27,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
-import Link from 'next/link';
 import { signInUser } from '@/app/actions/authActions';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -143,7 +143,7 @@ const LoginForm = () => {
 			</CardContent>
 
 			<CardFooter className='flex flex-col gap-4'>
-				<div className='relative w-full'>
+				{/* <div className='relative w-full'>
 					<div className='absolute inset-0 flex items-center'>
 						<span className='w-full border-t' />
 					</div>
@@ -154,7 +154,7 @@ const LoginForm = () => {
 
 				<Button variant='outline' className='w-full h-11'>
 					Continue with Google
-				</Button>
+				</Button> */}
 
 				<p className='text-sm text-muted-foreground text-center'>
 					Don’t have an account?{' '}
