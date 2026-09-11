@@ -26,9 +26,10 @@ async function seedMembers() {
 						country: member.country,
 						image: member.image,
 						photos: {
-							create: {
-								url: member.image,
-							},
+							create: member.photos.map((photo) => ({
+								url: photo.url,
+								publicId: photo.publicId,
+							})),
 						},
 					},
 				},

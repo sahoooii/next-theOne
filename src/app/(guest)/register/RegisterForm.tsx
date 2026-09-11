@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +26,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GiBigDiamondRing } from 'react-icons/gi';
-import Link from 'next/link';
 import { registerUser } from '@/app/actions/authActions';
 import { Loader2 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
@@ -173,7 +173,7 @@ const RegisterForm = () => {
 			</CardContent>
 
 			<CardFooter className='flex flex-col gap-4'>
-				<div className='relative w-full'>
+				{/* <div className='relative w-full'>
 					<div className='absolute inset-0 flex items-center'>
 						<span className='w-full border-t' />
 					</div>
@@ -184,7 +184,7 @@ const RegisterForm = () => {
 
 				<Button variant='outline' className='w-full h-11'>
 					Register with Google
-				</Button>
+				</Button> */}
 				<p className='text-sm text-muted-foreground text-center'>
 					Already have an account?{' '}
 					<Link href='/login' className='text-primary hover:underline'>
