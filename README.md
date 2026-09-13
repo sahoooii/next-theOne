@@ -26,13 +26,13 @@
 
 ## Demo
 
-<img width="1048" height="1990" alt="Image" src="https://github.com/user-attachments/assets/8d498fbf-967b-40be-b3a7-47764731605f" />
+<img width="262" height="498" alt="Image" src="https://github.com/user-attachments/assets/ed2eb1a9-9e42-439d-8fae-b919b13012ba" />
 
 ## What is this project?
 
 **(JP)**
 
-**The One** は、"気軽なスワイプ"ではなく、相手を深く知ることから始まる出会いをコンセプトにした、フルスタックのリアルタイム・デーティングアプリです。
+**The One** は、"気軽なスワイプ"ではなく、相手を深く知ることから始まる出会いをコンセプトにした、フルスタックのリアルタイム・Datingアプリです。
 
 **Next.js 14 / TypeScript** をベースに、**Prisma + PostgreSQL (Neon)** によるデータ管理。
 **NextAuth.js** による認証、**Cloudinary** による画像管理。
@@ -41,7 +41,7 @@
 ユーザーはプロフィールや写真をもとに相手を探し、気になる相手に Like を送信。お互いに Like が成立すると Match となり、マッチした相手とのみアプリ内でメッセージのやり取りができます。
 マッチング条件やLikeの状態管理、Cursor Pagination、リアルタイムのMatch通知・メッセージングまで、フロントエンド・バックエンド双方を実装しています。
 
-UI面では、Datingグアプリにありがちな派手さを避け、shadcn/ui・Tailwind CSS・Framer Motion を用いて、落ち着いたダークトーンと控えめなアニメーションによる、**静かで上品なユーザー体験**を目指しました。
+UI面では、Datingアプリにありがちな派手さを避け、shadcn/ui・Tailwind CSS・Framer Motion を用いて、落ち着いたダークトーンと控えめなアニメーションによる、**静かで上品なユーザー体験**を目指しました。
 
 「The One」という名前には、数多くの候補を消費するのではなく、本当に知りたいと思える<br />
 **"たった一人"とのつながりを見つける**
@@ -265,8 +265,8 @@ Like、Match、Messagingなどのリアルタイム機能では共通のデー�
 - Server ActionsでLike、Match、MessageなどのMutationを処理
 - Client ComponentsではPusher subscriptionやユーザー操作など、リアルタイム性・インタラクティブ性が必要な処理を担当
 - Server / Clientそれぞれの責務を分離し、Next.js App Routerの構成に合わせて実装
-<br />
-<br />
+  <br />
+  <br />
 
 **(EN)**
 
@@ -276,11 +276,11 @@ The One uses a **consistent architecture for managing multiple real-time feature
 
 #### Frontend
 
-* Separates `ConversationProvider`, `LikeProvider`, `MatchProvider`, and `ConnectionsProvider` by responsibility
-* `ConversationProvider`, `LikeProvider`, and `MatchProvider` handle Pusher subscriptions and incoming events
-* `ConnectionsProvider` consumes Like and Match events and manages the state of unseen Likes and Matches
-* Composes the Providers through `AuthenticatedProviders` to provide real-time functionality throughout authenticated user flows
-* Keeps Pusher subscriptions out of individual UI components by separating real-time event handling and UI state management into the Provider layer
+- Separates `ConversationProvider`, `LikeProvider`, `MatchProvider`, and `ConnectionsProvider` by responsibility
+- `ConversationProvider`, `LikeProvider`, and `MatchProvider` handle Pusher subscriptions and incoming events
+- `ConnectionsProvider` consumes Like and Match events and manages the state of unseen Likes and Matches
+- Composes the Providers through `AuthenticatedProviders` to provide real-time functionality throughout authenticated user flows
+- Keeps Pusher subscriptions out of individual UI components by separating real-time event handling and UI state management into the Provider layer
 
 ```text
 Backend
@@ -307,10 +307,10 @@ unseenLikeIds  unseenMatchIds
 
 #### Backend
 
-* Follows a consistent flow from Server Actions / Server Logic through database mutations and real-time notifications
-* Calls dedicated Realtime utilities after database mutations to trigger Pusher events
-* Constructs real-time payloads with only the data required by the client, using mappers when data transformation is needed
-* Maintains consistent channel, event, and payload structures across Like, Match, and Messaging features
+- Follows a consistent flow from Server Actions / Server Logic through database mutations and real-time notifications
+- Calls dedicated Realtime utilities after database mutations to trigger Pusher events
+- Constructs real-time payloads with only the data required by the client, using mappers when data transformation is needed
+- Maintains consistent channel, event, and payload structures across Like, Match, and Messaging features
 
 ```text
                     USER ACTION
@@ -348,40 +348,40 @@ Like, Match, and Messaging features share the same overall data flow while keepi
 
 ### 💞 Mutual Matching Logic
 
-* Models Likes as a directional relationship: `sourceUser → targetUser`
-* Checks for the corresponding Like from the other user to determine whether a mutual Like exists
-* Generates compatible member candidates based on both `gender` and `searchGender`
-* Determines Match state from mutual Like data without maintaining a separate Match table
-* Excludes the current user, already-Liked users, and members who do not meet the matching criteria
+- Models Likes as a directional relationship: `sourceUser → targetUser`
+- Checks for the corresponding Like from the other user to determine whether a mutual Like exists
+- Generates compatible member candidates based on both `gender` and `searchGender`
+- Determines Match state from mutual Like data without maintaining a separate Match table
+- Excludes the current user, already-Liked users, and members who do not meet the matching criteria
 
 ### 📄 Cursor-based Pagination
 
-* Uses **Cursor Pagination** instead of Offset Pagination
-* Combines `createdAt` and `id` to maintain a stable ordering when fetching subsequent results
-* Loads members incrementally through a Load More interface
-* Combines pagination with member exclusion logic to prevent duplicate results across successive loads
+- Uses **Cursor Pagination** instead of Offset Pagination
+- Combines `createdAt` and `id` to maintain a stable ordering when fetching subsequent results
+- Loads members incrementally through a Load More interface
+- Combines pagination with member exclusion logic to prevent duplicate results across successive loads
 
 ### 🔐 Authentication & Route Protection
 
-* Handles authentication and session management with **NextAuth.js**
-* Verifies authentication state on the server to control access to protected routes
-* Redirects users to `/complete-profile` when their profile has not been completed
-* Provides different Home experiences for guests and authenticated users
-* Combines Middleware with server-side authentication checks to protect authenticated functionality
+- Handles authentication and session management with **NextAuth.js**
+- Verifies authentication state on the server to control access to protected routes
+- Redirects users to `/complete-profile` when their profile has not been completed
+- Provides different Home experiences for guests and authenticated users
+- Combines Middleware with server-side authentication checks to protect authenticated functionality
 
 ### 🖼️ Cloudinary Image Lifecycle
 
-* Uses **Cloudinary** for profile image uploads
-* Handles image replacement and deletion when profiles are updated
-* Removes associated Cloudinary images when a member account is deleted
-* Keeps profile data in the database synchronized with externally stored images
+- Uses **Cloudinary** for profile image uploads
+- Handles image replacement and deletion when profiles are updated
+- Removes associated Cloudinary images when a member account is deleted
+- Keeps profile data in the database synchronized with externally stored images
 
 ### 🧩 Server / Client Responsibility
 
-* Uses Server Components for authentication, data fetching, and server-side data access
-* Uses Server Actions for mutations such as Likes, Matches, and Messages
-* Uses Client Components for Pusher subscriptions, user interactions, and other real-time or interactive behavior
-* Separates server and client responsibilities according to the architecture of the Next.js App Router
+- Uses Server Components for authentication, data fetching, and server-side data access
+- Uses Server Actions for mutations such as Likes, Matches, and Messages
+- Uses Client Components for Pusher subscriptions, user interactions, and other real-time or interactive behavior
+- Separates server and client responsibilities according to the architecture of the Next.js App Router
 <br />
 <br />
 
@@ -389,19 +389,19 @@ Like, Match, and Messaging features share the same overall data flow while keepi
 
 ### Prerequisites
 
-* Node.js 18+
-* npm
-* PostgreSQL database
-* A Cloudinary account
-* A Pusher account
+- Node.js 18+
+- npm
+- PostgreSQL database
+- A Cloudinary account
+- A Pusher account
 
 ### 1. 📌 Required Accounts
 
 The One uses the following external services:
 
-* **Neon** — PostgreSQL database
-* **Cloudinary** — Profile image storage
-* **Pusher** — Real-time communication
+- **Neon** — PostgreSQL database
+- **Cloudinary** — Profile image storage
+- **Pusher** — Real-time communication
 
 You will need an account for each service to run the application locally.
 
@@ -412,7 +412,6 @@ Create a `.env` file in the project root and configure the required environment 
 Make sure to rename the provided sample files as follows:
 
 - `.env.example` → `.env`
-
 
 ```env
 DATABASE_URL=
@@ -479,20 +478,20 @@ When deploying, configure the same environment variables in the deployment platf
 
 The following demo accounts are available for testing. Each account uses the password `password` and represents a different `gender` / `searchGender` combination.
 
-| Name    | Email              | Password   | Gender | Search Gender |
-| ------- | ------------------ | ---------- | ------ | ------------- |
-| Chris   | `chris@test.com`   | `password` | Male   | Female        |
-| Eric    | `eric@test.com`    | `password` | Male   | Male          |
-| Albert  | `albert@test.com`  | `password` | Male   | Any           |
-| Lizz    | `lizz@test.com`    | `password` | Female | Male          |
-| Amanda  | `amanda@test.com`  | `password` | Female | Female        |
-| Misato  | `misato@test.com`  | `password` | Female | Any           |
+| Name   | Email             | Password   | Gender | Search Gender |
+| ------ | ----------------- | ---------- | ------ | ------------- |
+| Chris  | `chris@test.com`  | `password` | Male   | Female        |
+| Eric   | `eric@test.com`   | `password` | Male   | Male          |
+| Albert | `albert@test.com` | `password` | Male   | Any           |
+| Lizz   | `lizz@test.com`   | `password` | Female | Male          |
+| Amanda | `amanda@test.com` | `password` | Female | Female        |
+| Misato | `misato@test.com` | `password` | Female | Any           |
 
 These accounts allow you to explore different matching scenarios, including opposite-gender and same-gender preferences.
 
 > All demo accounts are seeded for development and demonstration purposes only.
-<br />
-<br />
+> <br />
+> <br />
 
 ## 🚀 Current Release
 
@@ -511,8 +510,8 @@ The Oneは現在、初期リリース版として提供されています。
 - 通知機能の拡張
 - UI/UXのさらなる改善
 - マッチングおよびメンバー発見機能の拡張
-<br />
-<br />
+  <br />
+  <br />
 
 **(EN)**
 
@@ -529,8 +528,8 @@ The project is still under active development, with additional features and impr
 - Additional notification features
 - Further UI/UX improvements
 - Additional matching and discovery features
-<br />
-<br />
+  <br />
+  <br />
 
 ## 📘 Development Notes
 
@@ -546,11 +545,11 @@ Datingアプリでは、ユーザー同士の関係やコミュニケーショ�
 <br />
 例えば、
 
-* Likeを受け取った
-* お互いにLikeしてMatchが成立した
-* 新しいメッセージを受け取った
-* 相手がメッセージを入力している
-* LikeやMatchなどの状態が変化した
+- Likeを受け取った
+- お互いにLikeしてMatchが成立した
+- 新しいメッセージを受け取った
+- 相手がメッセージを入力している
+- LikeやMatchなどの状態が変化した
 
 といった情報も、ユーザーがその瞬間に把握できることが重要だと考えました。
 
@@ -588,11 +587,11 @@ In Aloha Estate, I intentionally kept the application architecture simpler and d
 
 Real-time communication is not limited to messaging. Users need immediate feedback when:
 
-* Someone sends them a Like
-* A mutual Like creates a Match
-* A new message is received
-* The other person is typing
-* Other relevant connection states change
+- Someone sends them a Like
+- A mutual Like creates a Match
+- A new message is received
+- The other person is typing
+- Other relevant connection states change
 
 These events can happen while the user is viewing a different part of the application, so updating the UI only after a page refresh would make the experience feel disconnected from what is happening in real time.
 
