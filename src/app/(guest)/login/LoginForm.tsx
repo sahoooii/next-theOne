@@ -107,12 +107,12 @@ const LoginForm = () => {
 								<FormItem>
 									<div className='flex items-center justify-between'>
 										<FormLabel>Password</FormLabel>
-										<a
+										{/* <a
 											href='#'
 											className='text-sm text-muted-foreground hover:text-primary transition'
 										>
 											Forgot password?
-										</a>
+										</a> */}
 									</div>
 
 									<FormControl>
