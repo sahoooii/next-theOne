@@ -27,7 +27,9 @@
 
 ## Demo
 
-<img width="262" height="498" alt="Image" src="https://github.com/user-attachments/assets/ed2eb1a9-9e42-439d-8fae-b919b13012ba" />
+<img width="316" height="600" alt="Image" src="https://github.com/user-attachments/assets/4334e30d-9547-470d-a5ae-ddede7c9f200" />
+
+---
 
 ## What is this project?
 
