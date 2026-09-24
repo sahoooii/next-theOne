@@ -284,7 +284,7 @@ export const membersData = [
 				publicId: 'gabriel_xzp4li',
 			},
 			{
-				url: 'https://res.cloudinary.com/saho-dev/image/upload/v1789108854/gabriel2_jbxol5.jpg',
+				url: 'https://res.cloudinary.com/saho-dev/image/upload/v1789108840/gabriel2_t99ivs.jpg',
 				publicId: 'gabriel2_t99ivs',
 			},
 		],
