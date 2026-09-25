@@ -1,8 +1,9 @@
 'use client';
 
 import { useTransition } from 'react';
-import { useForm } from 'react-hook-form';
 import Link from 'next/link';
+
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { loginSchema, LoginSchema } from '@/lib/schema/loginSchema';
@@ -31,6 +32,7 @@ import { signInUser } from '@/app/actions/authActions';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
+import GoogleIconButton from '@/components/navigation/shared/GoogleIconButton';
 
 const LoginForm = () => {
 	const router = useRouter();
@@ -143,7 +145,7 @@ const LoginForm = () => {
 			</CardContent>
 
 			<CardFooter className='flex flex-col gap-4'>
-				{/* <div className='relative w-full'>
+				<div className='relative w-full'>
 					<div className='absolute inset-0 flex items-center'>
 						<span className='w-full border-t' />
 					</div>
@@ -152,9 +154,7 @@ const LoginForm = () => {
 					</div>
 				</div>
 
-				<Button variant='outline' className='w-full h-11'>
-					Continue with Google
-				</Button> */}
+				<GoogleIconButton text='Continue with Google' />
 
 				<p className='text-sm text-muted-foreground text-center'>
 					Don’t have an account?{' '}

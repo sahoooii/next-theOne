@@ -1,11 +1,15 @@
+import { compare } from 'bcryptjs';
+
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+
 import type { NextAuthConfig } from 'next-auth';
 import { loginSchema } from './lib/schema/loginSchema';
 import { getUserByEmail } from './app/actions/authActions';
-import { compare } from 'bcryptjs';
 
 export default {
 	providers: [
+		Google,
 		Credentials({
 			name: 'credentials',
 			async authorize(creds) {
@@ -16,8 +20,13 @@ export default {
 
 					const user = await getUserByEmail(email);
 
-					if (!user || !(await compare(password, user.passwordHash)))
+					if (
+						!user ||
+						!user.passwordHash ||
+						!(await compare(password, user.passwordHash))
+					) {
 						return null;
+					}
 
 					return user;
 				}
