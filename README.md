@@ -414,7 +414,7 @@ Create a `.env` file in the project root and configure the required environment 
 
 Make sure to rename the provided sample files as follows:
 
-- `.env.example` → `.env`
+- `env.example` → `.env`
 
 ```env
 DATABASE_URL=

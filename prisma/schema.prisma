@@ -34,7 +34,7 @@ model User {
   name          String?
   email         String    @unique
   emailVerified DateTime?
-  passwordHash  String
+  passwordHash  String?
   image         String? //note: delete later Memberに集約したため
   accounts      Account[]
   member        Member?

@@ -10,6 +10,14 @@ export const {
 	signOut,
 } = NextAuth({
 	callbacks: {
+		// Googleのメール検証状態を確認
+		async signIn({ account, profile }) {
+			if (account?.provider === 'google') {
+				return profile?.email_verified === true;
+			}
+			return true;
+		},
+		// 既存のセッション設計を維持
 		async session({ token, session }) {
 			if (token.sub && session.user) {
 				session.user.id = token.sub;

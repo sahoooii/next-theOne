@@ -1,7 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useTransition } from 'react';
+import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterSchema } from '@/lib/schema/registerForm';
@@ -30,8 +32,8 @@ import { registerUser } from '@/app/actions/authActions';
 import { Loader2 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { handleFormServerErrors } from '@/lib/utils';
+import GoogleIconButton from '@/components/navigation/shared/GoogleIconButton';
 
 const RegisterForm = () => {
 	const router = useRouter();
@@ -173,7 +175,7 @@ const RegisterForm = () => {
 			</CardContent>
 
 			<CardFooter className='flex flex-col gap-4'>
-				{/* <div className='relative w-full'>
+				<div className='relative w-full'>
 					<div className='absolute inset-0 flex items-center'>
 						<span className='w-full border-t' />
 					</div>
@@ -182,9 +184,8 @@ const RegisterForm = () => {
 					</div>
 				</div>
 
-				<Button variant='outline' className='w-full h-11'>
-					Register with Google
-				</Button> */}
+				<GoogleIconButton text='Register with Google' />
+
 				<p className='text-sm text-muted-foreground text-center'>
 					Already have an account?{' '}
 					<Link href='/login' className='text-primary hover:underline'>
