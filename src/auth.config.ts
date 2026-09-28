@@ -9,7 +9,9 @@ import { getUserByEmail } from './app/actions/authActions';
 
 export default {
 	providers: [
-		Google,
+		Google({
+			allowDangerousEmailAccountLinking: true,
+		}),
 		Credentials({
 			name: 'credentials',
 			async authorize(creds) {
