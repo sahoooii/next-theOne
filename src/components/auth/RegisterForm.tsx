@@ -6,7 +6,10 @@ import { signIn } from 'next-auth/react';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, RegisterSchema } from '@/lib/schema/registerForm';
+import {
+	registerSchema,
+	RegisterSchema,
+} from '@/lib/schema/registerFormSchema';
 
 import {
 	Card,
