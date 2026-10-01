@@ -1,3 +1,8 @@
 export const publicRoutes = ['/', '/privacy', '/terms'];
 
-export const authRoutes = ['/login', '/register'];
+export const authRoutes = [
+	'/login',
+	'/register',
+	'/forgot-password',
+	'/reset-password',
+];
