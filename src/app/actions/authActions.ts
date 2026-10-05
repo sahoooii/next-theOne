@@ -1,13 +1,26 @@
 'use server';
 
+import { AuthError } from 'next-auth';
+
+import bcrypt from 'bcryptjs';
+
 import { auth, signIn } from '@/auth';
+import {
+	generatePasswordResetToken,
+	resetPassword,
+} from '@/lib/auth/passwordReset';
+
+import { User } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
 import { LoginSchema } from '@/lib/schema/loginSchema';
-import { registerSchema, RegisterSchema } from '@/lib/schema/registerForm';
+import {
+	registerSchema,
+	RegisterSchema,
+} from '@/lib/schema/registerFormSchema';
+
 import { ActionResult } from '@/types';
-import { User } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import { AuthError } from 'next-auth';
+import { sendPasswordResetEmail } from '@/lib/email/sendPasswordResetEmail';
 
 export async function signInUser(
 	data: LoginSchema,
@@ -95,4 +108,39 @@ export async function getAuthUserId() {
 	if (!userId) throw new Error('Unauthorized');
 
 	return userId;
+}
+
+// For password forgot
+// Create token
+export async function requestPasswordReset(
+	email: string,
+): Promise<ActionResult<string>> {
+	try {
+		const user = await getUserByEmail(email);
+
+		if (user?.passwordHash) {
+			const rawToken = await generatePasswordResetToken(user.id);
+
+			const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${rawToken}`;
+			console.log('resetUrl:', resetUrl);
+
+			await sendPasswordResetEmail(user.email, resetUrl);
+		}
+
+		return {
+			status: 'success',
+			data: 'If an account exists, a password reset email has been sent.',
+		};
+	} catch (error) {
+		console.log(error);
+
+		return {
+			status: 'error',
+			error: 'Something went wrong',
+		};
+	}
+}
+
+export async function resetPasswordAction(token: string, password: string) {
+	return resetPassword(token, password);
 }

@@ -26,18 +26,32 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 // User = Authentication Login(System)
 // Note: name String? ?を消す
 // Memberにname, imageが存在するのでのちにname, imageを消す方針
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  passwordHash  String?
-  image         String? //note: delete later Memberに集約したため
-  accounts      Account[]
-  member        Member?
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String               @unique
+  emailVerified       DateTime?
+  passwordHash        String?
+  image               String? //note: delete later Memberに集約したため
+  accounts            Account[]
+  member              Member?
+  passwordResetTokens PasswordResetToken[]
 }
 
 enum Gender {
