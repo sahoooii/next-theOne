@@ -20,6 +20,7 @@ import {
 } from '@/lib/schema/registerFormSchema';
 
 import { ActionResult } from '@/types';
+import { sendPasswordResetEmail } from '@/lib/email/sendPasswordResetEmail';
 
 export async function signInUser(
 	data: LoginSchema,
@@ -121,8 +122,9 @@ export async function requestPasswordReset(
 			const rawToken = await generatePasswordResetToken(user.id);
 
 			const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${rawToken}`;
-			// console.log('PASSWORD RESET TOKEN:', rawToken);
 			console.log('resetUrl:', resetUrl);
+
+			await sendPasswordResetEmail(user.email, resetUrl);
 		}
 
 		return {
