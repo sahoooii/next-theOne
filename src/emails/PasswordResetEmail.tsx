@@ -1,10 +1,12 @@
 import {
 	Body,
 	Button,
+	Column,
 	Container,
 	Head,
 	Heading,
 	Img,
+	Row,
 	Html,
 	Section,
 	Tailwind,
@@ -26,18 +28,23 @@ export default function PasswordResetEmail({
 				<Body className='bg-[#0f0f12] py-12'>
 					<Container className='mx-auto max-w-[480px] rounded-xl bg-[#18181c] px-8 py-10 text-white'>
 						<Section className='text-center'>
-							{/* Brand */}
-							<Section className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#8b5cf6]/10'>
-								<Img
-									src={`${process.env.NEXT_PUBLIC_APP_URL}/images/the-one-ring.png`}
-									alt='The One'
-									width='28'
-									height='28'
-								/>
+							{/* Brand Logo*/}
+							<Section className='mx-auto h-12 w-12 rounded-full bg-[#8b5cf6]/10'>
+								<Row>
+									<Column align='center' className='h-12'>
+										<Img
+											src={`${process.env.NEXT_PUBLIC_APP_URL}/images/the-one-ring.png`}
+											alt='The One'
+											width='28'
+											height='28'
+										/>
+									</Column>
+								</Row>
 							</Section>
 							<Text className='m-4 text-xl font-semibold text-white'>
 								The One
 							</Text>
+
 							<Heading className='mt-8 mb-0 text-2xl font-semibold text-white'>
 								Reset your password
 							</Heading>
