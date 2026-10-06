@@ -3,6 +3,7 @@ import { createHash, randomBytes } from 'crypto';
 
 import { prisma } from '@/lib/prisma';
 import { ActionResult } from '@/types';
+import { sendPasswordChangedEmail } from '../email/sendPasswordChangedEmail';
 
 // Tokenの生成
 export async function generatePasswordResetToken(userId: string) {
@@ -69,9 +70,22 @@ export async function resetPassword(
 		};
 	}
 
+	const user = await prisma.user.findUnique({
+		where: { id: resetToken.userId },
+		select: { email: true },
+	});
+
+	if (!user) {
+		return {
+			status: 'error',
+			error: 'User not found',
+		};
+	}
+
 	const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-	// User.passwordHash->新しいhashに更新, PasswordResetToken.usedAt->現在時刻に更新
+	// User.passwordHash->新しいhashに更新
+	// PasswordResetToken.usedAt->現在時刻に更新
 	await prisma.$transaction([
 		prisma.user.update({
 			where: { id: resetToken.userId },
@@ -86,6 +100,13 @@ export async function resetPassword(
 			},
 		}),
 	]);
+
+	// Send password changed confirmation email
+	try {
+		await sendPasswordChangedEmail(user.email);
+	} catch (error) {
+		console.error('Failed to send password changed email:', error);
+	}
 
 	return {
 		status: 'success',
