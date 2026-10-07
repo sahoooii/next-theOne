@@ -1,25 +1,28 @@
-# next-theOne <br />Build a Full-Stack Real-Time Dating App with Next.js 14+ & TypeScript
+# next-theOne
+
+Build a Full-Stack Real-Time Dating App with Next.js 14+ & TypeScript
 
 ## 🛠 Tech Stack
 
 ![Next.js](https://img.shields.io/badge/Next.js%4014-000?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=000)
-<br />
+
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000?style=for-the-badge&logo=shadcnui&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
-<br />
+
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Neon](https://img.shields.io/badge/Neon-00E599?style=for-the-badge&logo=neon&logoColor=000)
-![NextAuth.js](https://img.shields.io/badge/NextAuth.js-000?style=for-the-badge&logo=next.js&logoColor=white)
-<br />
+![Auth.js](https://img.shields.io/badge/Auth.js-000?style=for-the-badge&logo=next.js&logoColor=white)
+
 ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 ![Pusher](https://img.shields.io/badge/Pusher-300D4F?style=for-the-badge&logo=pusher&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![Resend](https://img.shields.io/badge/Resend-000?style=for-the-badge&logo=resend&logoColor=white)
 
-<p>etc...</p>
+etc...
 
 ## Link
 
@@ -27,7 +30,7 @@
 
 ## Demo
 
-<img width="316" height="600" alt="Image" src="https://github.com/user-attachments/assets/4334e30d-9547-470d-a5ae-ddede7c9f200" />
+![Image](https://github.com/user-attachments/assets/4334e30d-9547-470d-a5ae-ddede7c9f200)
 
 ---
 
@@ -38,7 +41,7 @@
 **The One** は、"気軽なスワイプ"ではなく、相手を深く知ることから始まる出会いをコンセプトにした、フルスタックのリアルタイム・Datingアプリです。
 
 **Next.js 14 / TypeScript** をベースに、**Prisma + PostgreSQL (Neon)** によるデータ管理。
-**NextAuth.js** による認証、**Cloudinary** による画像管理。
+**Auth.js** による認証、**Cloudinary** による画像管理。
 **Pusher** によるリアルタイム通信を組み合わせて構築しました。
 
 ユーザーはプロフィールや写真をもとに相手を探し、気になる相手に Like を送信。お互いに Like が成立すると Match となり、マッチした相手とのみアプリ内でメッセージのやり取りができます。
@@ -46,26 +49,39 @@
 
 UI面では、Datingアプリにありがちな派手さを避け、shadcn/ui・Tailwind CSS・Framer Motion を用いて、落ち着いたダークトーンと控えめなアニメーションによる、**静かで上品なユーザー体験**を目指しました。
 
-「The One」という名前には、数多くの候補を消費するのではなく、本当に知りたいと思える<br />
+「The One」という名前には、数多くの候補を消費するのではなく、本当に知りたいと思える
+
 **"たった一人"とのつながりを見つける**
 というプロダクトの方向性を込めています。
-<br />
-<br />
 
 **(EN)**
 
 **The One** is a full-stack, real-time dating app built around a simple idea: connection should start with genuinely getting to know someone — not casual swiping.
 
-Built with **Next.js 14 / TypeScript**, it combines **Prisma + PostgreSQL (Neon)** for data management, **NextAuth.js** for authentication, **Cloudinary** for image handling, and **Pusher** for real-time communication.
+Built with **Next.js 14 / TypeScript**, it combines **Prisma + PostgreSQL (Neon)** for data management, **Auth.js** for authentication, **Cloudinary** for image handling, and **Pusher** for real-time communication.
 
 Users browse profiles and photos, and can send a Like to anyone who catches their interest. When two users Like each other, it becomes a Match — and only matched users can message each other in-app. The app covers the full stack of this flow, from matching logic and Like state management to cursor-based pagination and real-time Match notifications and messaging.
 
 On the UI side, rather than the bold, high-energy look common to dating apps, The One uses **shadcn/ui**, **Tailwind CSS**, and **Framer Motion** to create a calm, dark-toned interface with subtle animation — aiming for a **quiet, refined user experience**.
 
-The name "The One" reflects the product's core philosophy: instead of burning through endless candidates, it's about finding<br />
+The name "The One" reflects the product's core philosophy: instead of burning through endless candidates, it's about finding
+
 **that one person you genuinely want to know.**
-<br />
-<br />
+
+## 🚀 Recent Updates
+
+### v2 — Authentication Expansion (October 2026)
+
+The One v2 focuses on expanding the authentication system beyond the initial email/password flow.
+
+- Google OAuth
+- Automatic Account Linking
+- Secure Password Reset
+- Password reset emails with Resend
+- Token expiration and single-use protection
+- User enumeration prevention
+- Transactional password updates
+- Server / Client responsibility separation
 
 ## Features
 
@@ -73,7 +89,12 @@ The name "The One" reflects the product's core philosophy: instead of burning th
 
 ### 🔐 認証・プロフィール管理
 
-- **NextAuth.js** によるメールアドレス/パスワード認証、**bcryptjs** でパスワードをハッシュ化
+- **Auth.js** によるメールアドレス/パスワード認証
+- 🆕 **Google OAuth** によるソーシャルログイン
+- 🆕 Google OAuth と既存アカウントを統合する **Automatic Account Linking**
+- 🆕 **Secure Password Reset**（有効期限・Single-use Token）
+- 🆕 **Resend** によるパスワードリセット・変更確認メール
+- **bcryptjs** によるパスワードのハッシュ化
 - 性別・希望する相手の性別・居住地・自己紹介・プロフィール写真を含む、プロフィール登録機能一式
 - **Cloudinary** と連携したプロフィール画像のアップロード・削除フロー
 - プロフィールの完成状態に応じたアクセス制御
@@ -107,14 +128,16 @@ The name "The One" reflects the product's core philosophy: instead of burning th
 - **Framer Motion** によるページ・コンポーネント単位のアニメーション
 - Members / Home / Messaging各画面をモバイル・デスクトップ両対応で最適化
 - Datingアプリという文脈に合わせた、落ち着いたダークトーンのビジュアルデザイン
-  <br />
-  <br />
 
 **(EN)**
 
 ### 🔐 Authentication & Profile Management
 
-- Email / password authentication with **NextAuth.js**, with passwords securely hashed using **bcryptjs**
+- Email / password authentication with **Auth.js**, with passwords securely hashed using **bcryptjs**
+- 🆕 **Google OAuth** for social login
+- 🆕 **Automatic Account Linking** to connect Google OAuth with existing accounts
+- 🆕 **Secure Password Reset** with token expiration and single-use protection
+- 🆕 Password reset and password change confirmation emails via **Resend**
 - Complete profile registration including gender, preferred gender, location, bio, and profile photos
 - Profile image upload and deletion flow integrated with **Cloudinary**
 - Access control based on profile completion status
@@ -148,8 +171,6 @@ The name "The One" reflects the product's core philosophy: instead of burning th
 - Page and component-level animations powered by **Framer Motion**
 - Responsive optimization across Members, Home, and Messaging screens
 - Refined dark-tone visual design tailored to the dating app experience
-  <br />
-  <br />
 
 ## 🧠 Key Technical Implementations
 
@@ -249,11 +270,91 @@ Like、Match、Messagingなどのリアルタイム機能では共通のデー�
 
 ### 🔐 Authentication & Route Protection
 
-- **NextAuth.js**による認証とSession管理
-- Server側で認証状態を確認し、保護されたRouteへのアクセスを制御
+- **Auth.js**によるCredentials / Google OAuthの認証とJWT Session管理
+- MiddlewareでRoute単位のアクセスを制御
+- Server Component / Server Actionでも認証状態を確認し、認証が必要な処理を保護
 - Profileの完成状態に応じて`/complete-profile`へ誘導
-- Guest / Authenticated UserでHomeの表示内容を切り替え
-- MiddlewareとServer側の認証チェックを組み合わせ、認証が必要な機能を保護
+- Guest / Authenticated Userで表示内容を切り替え
+
+### 🔑 OAuth & Account Linking
+
+複数の認証方式を同一のUserとして安全に扱えるよう、**Credentials認証とGoogle OAuthを統合**
+
+```text
+                    ┌─ Credentials
+                    │
+Authentication ─────┤
+                    │
+                    └─ Google OAuth
+                           │
+                           ▼
+                    Verified Email
+                           │
+                           ▼
+                    Existing User?
+                       ┌───┴───┐
+                      Yes      No
+                       │        │
+                       ▼        ▼
+                 Link Account  Create User
+                       │        │
+                       └───┬────┘
+                           ▼
+                          User
+```
+
+- **Credentials / Google OAuth** の複数の認証方式を、単一のUserとして管理
+- Auth.jsの`Account` を利用し、複数の認証Providerを同一Userに紐付け
+- Google OAuthでは `email_verified === true` を確認し、検証済みのemailのみ認証を許可
+- Googleのverified emailが既存Userと一致する場合、新しいUserを作成せず既存UserへGoogle Accountを自動Link
+- Google OAuthのみで作成されたUserはPassword認証とは分離して扱い、Password Resetによる意図しないPassword設定を防止
+
+### 🔒 Secure Password Reset
+
+パスワードリセット用のTokenを安全に管理し、推測・再利用・ユーザー情報の漏洩を防ぐ設計を実装
+
+```text
+Forgot Password
+      │
+      ▼
+Secure Token Generation
+      │
+      ├── rawToken ──► Reset URL ──► Resend
+      │
+      └── SHA-256 ──► tokenHash ──► Database
+                              │
+                              ▼
+                     Token Verification
+                              │
+                              ▼
+                         New Password
+                              │
+                              ▼
+                    bcrypt Password Hash
+                              │
+                              ▼
+                    Prisma Transaction
+                     ├── Update passwordHash
+                     └── Mark token used
+```
+
+- `randomBytes(32)` で暗号学的に安全なReset Tokenを生成し、Raw TokenはDatabaseに保存せずSHA-256でHash化して保存
+- Tokenには有効期限を設定し、使用済みTokenには`usedAt`を記録して再利用を防止
+- Reset Tokenに有効期限を設定し、使用済みTokenは再利用できないように管理
+- 登録されていないemailに対しても同一のレスポンスを返し、ユーザーアカウントの存在を推測されないように制御
+- Google OAuthのみで作成されたUserにはPassword Reset Tokenを発行せず、OAuth認証とPassword認証を意図せず混在させない
+- Password更新とTokenの使用済み処理をPrisma Transactionで実行し、両方の処理が成功した場合のみ変更を確定
+- Client Componentから直接Databaseへアクセスせず、
+  Server Action → Server-side Logic → Prisma
+  という責務分離で認証・Database処理をServer側に限定
+
+### 🧩 Server / Client Responsibility
+
+- Server Componentsで認証・データ取得・DBアクセスなどのサーバー処理を担当
+- Server ActionsでLike、Match、MessageなどのMutationを処理
+- 認証・Database処理が必要な機能では、Server ActionからServer-side Logicを経由してPrismaへアクセスする構成を採用
+- Client ComponentsではPusher subscriptionやユーザー操作など、リアルタイム性・インタラクティブ性が必要な処理を担当
+- Server / Clientそれぞれの責務を分離し、Next.js App Routerの構成に合わせて実装
 
 ### 🖼️ Cloudinary Image Lifecycle
 
@@ -261,15 +362,6 @@ Like、Match、Messagingなどのリアルタイム機能では共通のデー�
 - Profile更新時の画像差し替え・削除処理
 - Member削除時にCloudinary上の関連画像も削除
 - DB上のプロフィールデータと外部ストレージの画像を連携して管理
-
-### 🧩 Server / Client Responsibility
-
-- Server Componentsで認証・データ取得・DBアクセスなどのサーバー処理を担当
-- Server ActionsでLike、Match、MessageなどのMutationを処理
-- Client ComponentsではPusher subscriptionやユーザー操作など、リアルタイム性・インタラクティブ性が必要な処理を担当
-- Server / Clientそれぞれの責務を分離し、Next.js App Routerの構成に合わせて実装
-  <br />
-  <br />
 
 **(EN)**
 
@@ -366,11 +458,89 @@ Like, Match, and Messaging features share the same overall data flow while keepi
 
 ### 🔐 Authentication & Route Protection
 
-- Handles authentication and session management with **NextAuth.js**
-- Verifies authentication state on the server to control access to protected routes
+- Handles authentication and JWT-based session management with **NextAuth.js**, supporting Credentials and Google OAuth
+- Uses Middleware to control access at the route level
+- Verifies authentication state in Server Components and Server Actions to protect authenticated functionality
 - Redirects users to `/complete-profile` when their profile has not been completed
-- Provides different Home experiences for guests and authenticated users
-- Combines Middleware with server-side authentication checks to protect authenticated functionality
+- Provides different experiences for guests and authenticated users, combining Middleware with server-side authentication checks to protect access
+
+### 🔑 OAuth & Account Linking
+
+Supports multiple authentication methods while maintaining a single User identity across **Credentials and Google OAuth**.
+
+```text
+                    ┌─ Credentials
+                    │
+Authentication ─────┤
+                    │
+                    └─ Google OAuth
+                           │
+                           ▼
+                    Verified Email
+                           │
+                           ▼
+                    Existing User?
+                       ┌───┴───┐
+                      Yes      No
+                       │        │
+                       ▼        ▼
+                 Link Account  Create User
+                       │        │
+                       └───┬────┘
+                           ▼
+                          User
+```
+
+- Supports both **Credentials and Google OAuth** while maintaining a single application User
+- Uses Auth.js `Account` records to associate multiple authentication providers with the same User
+- Requires `email_verified === true` for Google OAuth authentication, allowing only verified email addresses
+- Automatically links a Google Account to an existing User when the verified Google email matches, avoiding duplicate User records
+- Keeps Google-only accounts separate from password-based authentication, preventing them from setting a password through the Password Reset flow
+
+### 🔒 Secure Password Reset
+
+Implements a secure password reset flow designed to protect reset tokens from guessing, reuse, and user account enumeration.
+
+```text
+Forgot Password
+      │
+      ▼
+Secure Token Generation
+      │
+      ├── rawToken ──► Reset URL ──► Resend
+      │
+      └── SHA-256 ──► tokenHash ──► Database
+                              │
+                              ▼
+                     Token Verification
+                              │
+                              ▼
+                         New Password
+                              │
+                              ▼
+                    bcrypt Password Hash
+                              │
+                              ▼
+                    Prisma Transaction
+                     ├── Update passwordHash
+                     └── Mark token used
+```
+
+- Generates cryptographically secure reset tokens using `randomBytes(32)` and stores only their SHA-256 hashes in the database
+- Sets an expiration time for each token and records `usedAt` to prevent token reuse
+- Enforce one-hour expiration and single-use reset tokens
+- Returns the same response for registered and unregistered email addresses to prevent user account enumeration
+- Does not issue password reset tokens to Google-only accounts, keeping OAuth and password-based authentication intentionally separate
+- Updates the password and marks the reset token as used within a Prisma Transaction, ensuring both operations succeed or fail together
+- Keeps database and authentication logic on the server through a Server Action → Server-side Logic → Prisma flow, rather than allowing Client Components to access the database directly
+
+### 🧩 Server / Client Responsibility
+
+- Uses Server Components for authentication, data fetching, and server-side data access
+- Uses Server Actions for mutations such as Likes, Matches, and Messages
+- For features that require authentication and database access, uses a Server Action → Server-side Logic → Prisma flow to keep server-side processing separated from Client Components.
+- Uses Client Components for Pusher subscriptions, user interactions, and other real-time or interactive behavior
+- Separates server and client responsibilities according to the architecture of the Next.js App Router
 
 ### 🖼️ Cloudinary Image Lifecycle
 
@@ -378,14 +548,8 @@ Like, Match, and Messaging features share the same overall data flow while keepi
 - Handles image replacement and deletion when profiles are updated
 - Removes associated Cloudinary images when a member account is deleted
 - Keeps profile data in the database synchronized with externally stored images
-
-### 🧩 Server / Client Responsibility
-
-- Uses Server Components for authentication, data fetching, and server-side data access
-- Uses Server Actions for mutations such as Likes, Matches, and Messages
-- Uses Client Components for Pusher subscriptions, user interactions, and other real-time or interactive behavior
-- Separates server and client responsibilities according to the architecture of the Next.js App Router
 <br />
+
 <br />
 
 ## 🚀 Getting Started
@@ -397,6 +561,8 @@ Like, Match, and Messaging features share the same overall data flow while keepi
 - PostgreSQL database
 - A Cloudinary account
 - A Pusher account
+- A Google Cloud account
+- A Resend account
 
 ### 1. 📌 Required Accounts
 
@@ -405,6 +571,8 @@ The One uses the following external services:
 - **Neon** — PostgreSQL database
 - **Cloudinary** — Profile image storage
 - **Pusher** — Real-time communication
+- **Google Cloud** — Google OAuth authentication
+- **Resend** — Password reset and confirmation emails
 
 You will need an account for each service to run the application locally.
 
@@ -417,17 +585,32 @@ Make sure to rename the provided sample files as follows:
 - `env.example` → `.env`
 
 ```env
+#DB
 DATABASE_URL=
 AUTH_SECRET=
 
+# Cloudinary
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
 NEXT_PUBLIC_CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 
+#Pusher
 NEXT_PUBLIC_PUSHER_APP_KEY=
 PUSHER_APP_ID=
 PUSHER_SECRET=
+
+# Google
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+
+# App URL
+NEXT_PUBLIC_APP_URL=
+
+# Resend
+RESEND_API_KEY=
 ```
+
+`NEXT_PUBLIC_APP_URL` should point to the application's base URL. Use `http://localhost:3000` for local development and the deployed application URL for production.
 
 > Make sure to use your own credentials for each service. Do not commit `.env` or any other file containing secrets to the repository.
 
@@ -493,14 +676,12 @@ The following demo accounts are available for testing. Each account uses the pas
 These accounts allow you to explore different matching scenarios, including opposite-gender and same-gender preferences.
 
 > All demo accounts are seeded for development and demonstration purposes only.
-> <br />
-> <br />
 
 ## 🚀 Current Release
 
 **(JP)**
 
-The Oneは現在、初期リリース版として提供されています。
+The Oneは現在も継続的に開発しています。
 
 現在のリリース版には、プロフィール作成、メンバー情報の閲覧、Like、マッチング、リアルタイムメッセージングまで、コアとなるユーザーフローが含まれています。
 
@@ -508,17 +689,16 @@ The Oneは現在、初期リリース版として提供されています。
 
 ### 予定されている改善点
 
+- ✅ Google OAuth認証 — Oct, 2026
+- ✅ パスワードリセット — Oct, 2026
 - 高度なメンバー検索とフィルタリング機能
-- Google OAuth認証
 - 通知機能の拡張
 - UI/UXのさらなる改善
 - マッチングおよびメンバー発見機能の拡張
-  <br />
-  <br />
 
 **(EN)**
 
-The One is currently available as an initial release.
+The One is currently under active development.
 
 The current release includes the core user flow from profile creation and member discovery to Likes, Matches, and real-time messaging.
 
@@ -526,13 +706,12 @@ The project is still under active development, with additional features and impr
 
 ### Planned Improvements
 
+- ✅ OAuth Authentication — Oct, 2026
+- ✅ Password Reset — Oct, 2026
 - Advanced member search and filtering
-- Google OAuth authentication
 - Additional notification features
 - Further UI/UX improvements
 - Additional matching and discovery features
-  <br />
-  <br />
 
 ## 📘 Development Notes
 
@@ -545,7 +724,7 @@ The Oneでは、以前のポートフォリオプロジェクトであるAloha E
 Datingアプリでは、ユーザー同士の関係やコミュニケーションに関する変化がリアルタイムに反映されることが、ユーザー体験を大きく左右すると考えたためです。
 
 リアルタイム通信は、単なるメッセージングだけに必要なものではありません。
-<br />
+
 例えば、
 
 - Likeを受け取った
@@ -576,7 +755,32 @@ The Oneでは、リアルタイム機能そのものを実装することだけ�
 
 今回のリリースはこのアーキテクチャの初期段階であり、今後追加する検索・フィルタリングや通知機能なども、既存のリアルタイム通信の設計をベースに拡張していく予定です。
 <br />
-<br />
+
+### 🆕 認証方式の拡張とUser Identityの設計 — Oct, 2026
+
+The Oneでは、ユーザーがより柔軟にログイン方法を選択できるよう、Credentials認証に加えてGoogle OAuthを導入しました。
+
+認証方式を追加するだけであればGoogle OAuthを実装すること自体は難しくありませんが、**同じemail addressを持つユーザーが異なる認証方式からログインした場合に、別々のUserが作成されないこと**も重要だと考えました。
+
+そのため、Auth.jsの`Account`を利用して認証Providerとアプリケーション上の`User`を分離し、Googleのverified emailが既存Userと一致した場合は、新しいUserを作成せず既存UserへGoogle AccountをLinkする設計にしました。
+
+また、Google OAuthでは`email_verified === true`を確認し、検証済みのemailのみを認証に利用するようにしています。
+
+### 🆕 Password Resetのセキュリティ設計 — Oct, 2026
+
+OAuth導入と合わせて、Credentials認証に必要となるPassword Resetも実装しました。
+
+Password Resetでは、ユーザーが受け取ったURLをそのままDatabaseに保存するのではなく、`randomBytes(32)`で生成したTokenをSHA-256でHash化して保存する方式を採用しました。
+
+さらに、Tokenに有効期限を設定し、使用済みTokenには`usedAt`を記録しています。新しいReset Requestが発行された場合には以前のTokenを無効化することで、複数のReset URLが同時に有効にならないようにしました。
+
+また、登録されていないemailに対しても同じレスポンスを返すことで、Password Reset機能を通じたUser Enumerationを防ぐようにしています。
+
+Google OAuthのみで作成されたUserについてはPassword Resetの対象から除外しました。OAuth認証とPassword認証を意図せず混在させず、**それぞれの認証方式に応じた責務を明確にすること**を優先しています。
+
+メール送信にはResendを利用し、Reset URLの発行からメール送信、Token検証、Password更新までをServer-sideで処理する構成としました。
+
+今回の認証機能では、単にログイン方法を増やすことではなく、**認証方式が増えてもUser identityやSecurityの整合性を維持できること**を意識して設計・実装しています。
 
 **(EN)**
 
@@ -617,3 +821,23 @@ Rather than adding separate implementations for every UI component, I focused on
 The goal was not simply to add as many real-time features as possible, but to make the communication flow understandable and maintainable as the application grows.
 
 The current release represents the first stage of this architecture. Future features such as more advanced member search, filtering, and additional notification behavior can build on the existing foundation without changing the core communication model.
+<br />
+
+### 🆕 Authentication & User Identity — Oct, 2026
+
+The One was extended to support both Credentials and Google OAuth authentication.
+
+Rather than treating each authentication method as a separate user, I used Auth.js `Account` records to maintain a single User identity across providers. When a verified Google email matches an existing User, the Google Account is automatically linked instead of creating a duplicate User.
+
+Google OAuth also requires `email_verified === true` to ensure that only verified email addresses are used for authentication.
+
+### 🆕 Secure Password Reset — Oct, 2026
+
+A secure Password Reset flow was implemented alongside the authentication changes.
+
+Reset tokens are generated using cryptographically secure random values and stored only as SHA-256 hashes, with expiration and single-use protection. Previous tokens are revoked when a new reset request is issued.
+
+The flow also returns the same response for registered and unregistered emails to prevent user enumeration, while Google-only accounts are kept separate from password-based authentication.
+
+Resend is used for password reset and confirmation emails, with authentication and database operations kept on the server side.
+The goal was not simply to add another login method, but to maintain a consistent User identity and security model as the authentication system expanded.
