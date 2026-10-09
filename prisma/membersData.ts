@@ -43,7 +43,7 @@ export const membersData = [
 		description:
 			'Big fan of good tea, long walks, and meaningful conversations. I work in finance, but outside of that, I’m usually at a gallery or trying a new restaurant. I appreciate honesty and a bit of dry humor. Bonus points if you can recommend a great book.\r\n',
 		city: 'London',
-		country: 'England',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134310/amanda_xdozr2.jpg',
 		photos: [
@@ -73,7 +73,7 @@ export const membersData = [
 		description:
 			'Just graduated from  Stanford University. I was majoring psychology, always curious about how people think. I spend most of my free time at the beach or with friends, probably laughing too loud. Easygoing and a little bit goofy. Just looking to meet genuine people and see where it goes.\r\n',
 		city: 'San Diego',
-		country: 'USA',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134537/hannah_ysviuf.jpg',
 		photos: [
@@ -128,8 +128,8 @@ export const membersData = [
 		lastActive: '2026-08-21',
 		description:
 			'Architect by profession, passionate about design, culture, and travel. I love discovering new places, especially local food spots. Family and close friendships mean a lot to me. Looking for someone who’s genuine, open-minded, and enjoys life’s little moments.',
-		city: 'Ciudad de México',
-		country: 'Mexico',
+		city: 'Houston, Texas',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134337/maria_bejaw2.jpg',
 		photos: [
@@ -155,7 +155,7 @@ export const membersData = [
 		description:
 			'Born and raised in Hawaii, I’m all about ocean life and staying active. I work remotely in tech, so I try to balance it out with surfing or hiking. Pretty easygoing, but I value people who are genuine and grounded. Looking for something real, not rushed.\r\n',
 		city: 'Hawaii',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134397/josh_ljz2yp.jpg',
 		photos: [
@@ -185,7 +185,7 @@ export const membersData = [
 		description:
 			'I’ve built my career in consulting, but these days I’m more focused on enjoying the city at my own pace. Big fan of jazz, good wine, and conversations that go a little deeper. I appreciate independence and emotional maturity. Not into games—just real connection.\r\n',
 		city: 'New York',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134310/albert_jhir2f.jpg',
 		photos: [
@@ -215,7 +215,7 @@ export const membersData = [
 		description:
 			'Work in logistics, but outside of that, I’m usually at the gym or catching a game. I’m straightforward, loyal, and have a pretty dry sense of humor. Not the flashiest guy, but I show up when it counts. Looking for someone who values consistency.\r\n',
 		city: 'Chicago',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134311/chris_qzbu3y.jpg',
 		photos: [
@@ -249,7 +249,7 @@ export const membersData = [
 		description:
 			'I work in product design and enjoy building things that people actually use. Big on good tea, cycling around the city, and the occasional weekend getaway. I’m calm, thoughtful, and a bit sarcastic once you get to know me. Looking for something meaningful.\r\n',
 		city: 'London',
-		country: 'England',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134316/eric_vgufn4.jpg',
 		photos: [
@@ -330,8 +330,8 @@ export const membersData = [
 		lastActive: '2026-08-11',
 		description:
 			'Studying engineering and figuring things out one step at a time. I like learning new things, whether it’s tech, languages, or just random topics. Friends say I’m easy to talk to and a bit of a thinker. Open to meeting someone genuine and seeing where it goes.\r\n',
-		city: 'Istanbul',
-		country: 'Turkey',
+		city: 'Los Angeles',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134935/ian_acp1bt.jpg',
 		photos: [
@@ -358,7 +358,7 @@ export const membersData = [
 		description:
 			"Always smiling and looking for the bright side of things! I'm a yoga instructor who loves early mornings, strong coffee, and sunset walks on the beach. I'm passionate about travel, trying new restaurants (especially Mexican food), and I'm currently learning to play the ukulele. Looking for someone genuine and fun-loving to share adventures with. If you can make me laugh, we're off to a great start!\r\n",
 		city: 'San Diego',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789029690/the-one/userImages/sarah2_nsvvdj.jpg',
 		photos: [
@@ -413,8 +413,8 @@ export const membersData = [
 		lastActive: '2026-09-01',
 		description:
 			"Librarian by day, vintage hunter by night. I'm a small-town girl with a love for old books, analog cameras, and sustainable fashion. You can usually find me sipping a latte at a cozy cafe, scouring thrift stores for unique treasures, or planning my next road trip through the countryside. Looking for someone with a sense of wonder and an appreciation for the details.\r\n",
-		city: 'Stockholm',
-		country: 'Sweden',
+		city: 'Sydney',
+		country: 'Australia',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789032170/the-one/userImages/Eleanor_hnibfc.jpg',
 		photos: [
@@ -439,8 +439,8 @@ export const membersData = [
 		lastActive: '2026-08-11',
 		description:
 			"An architect with a passion for creative spaces and good design. When I'm not sketching new projects, you can usually find me discovering a new indie coffee shop (as pictured here!), experimenting in the kitchen, or unwinding with a sci-fi novel. I'm a bit of a homebody at heart but always down for a spontaneous road trip or a weekend market run. Looking for someone with a kind heart and a great sense of humor.\r\n",
-		city: 'Dubai',
-		country: 'AE',
+		city: 'Melbourne',
+		country: 'Australia',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789032464/the-one/userImages/Layla2_n1a6eu.jpg',
 		photos: [
@@ -466,7 +466,7 @@ export const membersData = [
 		description:
 			"Adventure seeker with a serious case of wanderlust. Currently exploring the breathtaking landscapes of Iceland! I'm an outdoor enthusiast who loves hiking, photography, and finding hidden gems off the beaten path. I'm always down for an impromptu road trip and believe in collecting experiences, not things. If you enjoy crisp mountain air and the roar of a waterfall, we'll get along just fine.\r\n",
 		city: 'Denver, Colorado',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789032653/the-one/userImages/Chloe_dpbl0k.jpg',
 		photos: [
@@ -492,7 +492,7 @@ export const membersData = [
 		description:
 			'LA native 🌴 | Skate, music, 420 🍃 Unapologetically lesbian, looking to expand my circle beyond the usual faces.Spent my weekends catching beach sunsets. Down to chill if you are!\r\n',
 		city: 'LosAngeles',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789033070/the-one/userImages/annnah_pmiaou.jpg',
 		photos: [
@@ -542,9 +542,9 @@ export const membersData = [
 		created: '2020-11-21',
 		lastActive: '2026-09-05',
 		description:
-			'I moved to Paris for work a few years ago and somehow never left. I love cooking for friends, weekend trips, and discovering little places that aren’t in every travel guide. Looking for someone kind, curious, and comfortable being themselves.\r\n',
-		city: 'Lyon',
-		country: 'France',
+			'I moved to London for work a few years ago and somehow never left. I love cooking for friends, weekend trips, and discovering little places that aren’t in every travel guide. Looking for someone kind, curious, and comfortable being themselves.\r\n',
+		city: 'London',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789084303/the-one/userImages/sophie_dtoay5.jpg',
 		photos: [
@@ -596,7 +596,7 @@ export const membersData = [
 		description:
 			'Product manager by day, amateur photographer on weekends. I’ve lived in a few different cities and still get excited about exploring somewhere new. I appreciate people who are thoughtful, have a sense of humor, and don’t take themselves too seriously.\r\n',
 		city: 'Seattle',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789084706/the-one/userImages/hannah.m_wjyhly.jpg',
 		photos: [
@@ -622,7 +622,7 @@ export const membersData = [
 		description:
 			'Just starting college and still getting used to having so many choices about what comes next. I spend a lot of time at the beach, take way too many photos of sunsets, and have recently become obsessed with learning how to surf properly.\r\n',
 		city: 'Honolulu',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789104770/ava_ig6zvb.jpg',
 		photos: [
@@ -647,8 +647,8 @@ export const membersData = [
 		lastActive: '2026-08-01',
 		description:
 			'I run a small interior design studio and have learned that I enjoy creating beautiful spaces almost as much as I enjoy living in them. I’m independent, curious, and a big fan of long dinners with good wine and even better conversation.\r\n',
-		city: 'Milan',
-		country: 'Italy',
+		city: 'Edinburgh',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789104770/clare_l7ujec.jpg',
 		photos: [
@@ -673,8 +673,8 @@ export const membersData = [
 		lastActive: '2026-08-01',
 		description:
 			'I’ve reached the age where I genuinely appreciate a peaceful Sunday morning. I work in publishing, love contemporary art, and travel whenever I can. I’m independent and happy with my life, but I’d like someone to share some of it with\r\n',
-		city: 'Barcelona',
-		country: 'Spain',
+		city: 'San Diego',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789104770/isabella_sexdyf.jpg',
 		photos: [
@@ -725,8 +725,8 @@ export const membersData = [
 		lastActive: '2026-08-31',
 		description:
 			'I work in healthcare and value my time outside of work quite a lot. I like running, cooking simple meals, and exploring new cities without having every hour planned. Looking for something genuine rather than trying to collect matches.\r\n',
-		city: 'Copenhagen',
-		country: 'Denmark',
+		city: 'Toronto',
+		country: 'Canada',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789135924/grace2_aa3ban.jpg',
 		photos: [
@@ -750,9 +750,9 @@ export const membersData = [
 		created: '2026-06-18',
 		lastActive: '2026-09-01',
 		description:
-			'I work in marketing and spend an embarrassing amount of time looking for new restaurants. I’m fairly quiet in large groups but very talkative once I’m comfortable with someone. I love photography, late-night walks, and finding places with a view.\r\n',
-		city: 'Seoul',
-		country: 'South Korea',
+			"I'm Korean girl and I work in marketing and spend an embarrassing amount of time looking for new restaurants. I’m fairly quiet in large groups but very talkative once I’m comfortable with someone. I love photography, late-night walks, and finding places with a view.\r\n",
+		city: 'Osaka',
+		country: 'Japan',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789135932/nora_cqx95f.jpg',
 		photos: [
@@ -778,7 +778,7 @@ export const membersData = [
 		description:
 			'I’m happiest when I have a good coffee, a long walk, and nowhere I need to be. I’m studying graphic design and spend most weekends either sketching, exploring little cafés, or planning my next trip. A little quiet at first, but I open up quickly with the right person.\r\n',
 		city: 'Portland',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789136605/elena_r5zauz.jpg',
 		photos: [
@@ -803,8 +803,8 @@ export const membersData = [
 		lastActive: '2026-09-05',
 		description:
 			'I run a small interior design studio and genuinely enjoy creating beautiful spaces. Outside of work, you’ll usually find me cooking for friends, walking by the sea, or discovering somewhere new to eat. I value honesty, good humor, and people who are comfortable being themselves.\r\n',
-		city: 'Valencia',
-		country: 'Spain',
+		city: 'Texas',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789136857/camila_mn7alh.jpg',
 		photos: [
@@ -830,7 +830,7 @@ export const membersData = [
 		description:
 			'I work in publishing and have a soft spot for good books, live music, and dinners that turn into long conversations. I love traveling, but I’m just as happy staying home with a glass of wine and a movie. Looking for someone kind, curious, and easy to be around.\r\n',
 		city: 'Manchester',
-		country: 'UK',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789136881/sophia_ljfuun.jpg',
 		photos: [
@@ -857,7 +857,7 @@ export const membersData = [
 		description:
 			"Aspiring graphic designer with a soft spot for indie coffee shops and classic cinema. Always looking for a new trail to explore or a cool concert to catch. If you can appreciate a good pun and don't mind a little friendly competition in Mario Kart, we'll get along just fine.\r\n",
 		city: 'Denver, Colorado',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789026717/the-one/userImages/charlie_xwdtgy.jpg',
 		photos: [
@@ -883,7 +883,7 @@ export const membersData = [
 		description:
 			"An architect by trade, I have a passion for blending structure with creativity, both in my work and in life. When I'm not designing, you can often find me with a coffee in one hand and a camera in the other, capturing the textures of the city or the beauty of nature. I enjoy meaningful conversations, travel (ask me about my last trip to the Amalfi Coast!), and cooking for friends—I’m told my risotto is quite good. Looking for someone with a kind heart, an intelligent mind, and a zest for life. A sense of humor is a must!\r\n",
 		city: 'San Francisco',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789027001/the-one/userImages/alejandro_phftfx.jpg',
 		photos: [
@@ -939,7 +939,7 @@ export const membersData = [
 		description:
 			'Mexico 🇲🇽 ➔ Here Web designer who loves good fashion and better coffee. Spending my weekends wandering around town with my camera.\r\n',
 		city: 'San Francisco',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789027851/the-one/userImages/julian_og0zeu.jpg',
 		photos: [
@@ -991,7 +991,7 @@ export const membersData = [
 		description:
 			'Just a city boy with a love for live music, strong coffee, and finding hidden local spots. You can usually find me with a camera in hand, exploring the urban landscape, or catching a gig. Looking for someone genuine to share a slice of life and maybe some great street food.\r\n',
 		city: 'New Orleans',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789028404/the-one/userImages/taylor_pirubc.jpg',
 		photos: [
@@ -1068,8 +1068,8 @@ export const membersData = [
 		lastActive: '2025-09-20',
 		description:
 			'I spend most of my weekdays writing code and most of my weekends trying to stay away from my laptop. I’m into climbing, live music, and finding good places to eat. Usually quiet at first, but I’m always up for a good conversation once we get going.\r\n',
-		city: 'Austin',
-		country: 'USA',
+		city: 'Austin, Texas',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789115138/ethan_lstbru.jpg',
 		photos: [
@@ -1095,7 +1095,7 @@ export const membersData = [
 		description:
 			'I’ve been teaching history for more than a decade, so I probably ask too many questions. Outside the classroom, I enjoy hiking, cooking, and traveling whenever the school calendar allows it. I’m at a point in life where I value honesty, humor, and having someone to share ordinary days with.\r\n',
 		city: 'Edinburgh',
-		country: 'UK',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789115138/james_fh4zmf.jpg',
 		photos: [
@@ -1146,8 +1146,8 @@ export const membersData = [
 		lastActive: '2026-08-05',
 		description:
 			'I work as an architect and probably notice buildings more than I should. Outside of work, I enjoy cycling, cooking, and taking long weekend trips without much of a plan. I’m looking for someone who is curious about the world and enjoys the little things.\r\n',
-		city: 'Bordeaux',
-		country: 'France',
+		city: 'San Francisco',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789115139/lucas_uqo5ls.jpg',
 		photos: [
@@ -1173,7 +1173,7 @@ export const membersData = [
 		description:
 			'Photography started as a hobby and somehow became my job. I’m happiest wandering around a city with a camera and no particular destination. I love coffee, old movies, and people who can make me laugh without trying too hard.\r\n',
 		city: 'Seattle',
-		country: 'USA',
+		country: 'United States of America',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789115139/noah_lrcig8.jpg',
 		photos: [
@@ -1224,8 +1224,8 @@ export const membersData = [
 		lastActive: '2026-09-08',
 		description:
 			'I’m an architect who spends far too much time looking at buildings, even when I’m supposed to be on holiday. I enjoy cooking, cycling around the city, and taking weekend trips whenever I can. I’m looking for someone who enjoys good conversation and doesn’t take themselves too seriously.\r\n',
-		city: 'Paris',
-		country: 'France',
+		city: 'London',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789137654/thomas_zblbsh.jpg',
 		photos: [

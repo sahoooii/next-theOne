@@ -9,7 +9,8 @@
 		"postinstall": "prisma generate",
 		"start": "next start",
 		"lint": "next lint",
-		"email": "email dev --dir src/emails"
+		"email": "email dev --dir src/emails",
+		"db:seed": "tsx prisma/seed.ts"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.11.1",
