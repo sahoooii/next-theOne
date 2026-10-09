@@ -56,7 +56,10 @@ import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
-import { genderOptions, searchGenderOptions } from '@/lib/constants/memberGenderOptions';
+import {
+	genderOptions,
+	searchGenderOptions,
+} from '@/lib/constants/memberGenderOptions';
 import { GenderSelect } from './GenderSelect';
 import DeleteAccount from '../edit/DeleteAccount';
 
@@ -277,7 +280,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									setValue={form.setValue}
 								/>
 							)}
-							
+
 							{/* Read only - Gender  edit*/}
 							{mode === 'edit' && member && (
 								<ReadOnlyField
@@ -340,7 +343,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 													>
 														{field.value
 															? countryOptions.find(
-																	(country) => country.value === field.value,
+																	(country) => country.label === field.value,
 																)?.label
 															: 'Select your country'}
 													</Button>
@@ -359,24 +362,19 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																<CommandItem
 																	key={country.value}
 																	value={country.label}
-																	// onSelect={() => {
-																	// 	field.onChange(country.value);
-																	// 	setOpen(false);
-																	// }}
 																	onSelect={() => {
-																		form.setValue('country', country.value, {
+																		form.setValue('country', country.label, {
 																			shouldDirty: true,
 																			shouldTouch: true,
 																			shouldValidate: true,
 																		});
-
 																		setOpen(false);
 																	}}
 																>
 																	<Check
 																		className={cn(
 																			'mr-2 h-4 w-4',
-																			field.value === country.value
+																			field.value === country.label
 																				? 'opacity-100'
 																				: 'opacity-0',
 																		)}
