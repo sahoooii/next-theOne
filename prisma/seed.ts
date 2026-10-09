@@ -38,8 +38,27 @@ async function seedMembers() {
 	);
 }
 
+// Update country names for existing seeded members.
+// async function updateSeededCountries() {
+// 	await Promise.all(
+// 		membersData.map((member) =>
+// 			prisma.member.updateMany({
+// 				where: {
+// 					user: {
+// 						email: member.email,
+// 					},
+// 				},
+// 				data: {
+// 					country: member.country,
+// 				},
+// 			}),
+// 		),
+// 	);
+// }
+
 async function main() {
 	await seedMembers();
+	// await updateSeededCountries();
 }
 
 main()
