@@ -413,8 +413,8 @@ export const membersData = [
 		lastActive: '2026-09-01',
 		description:
 			"Librarian by day, vintage hunter by night. I'm a small-town girl with a love for old books, analog cameras, and sustainable fashion. You can usually find me sipping a latte at a cozy cafe, scouring thrift stores for unique treasures, or planning my next road trip through the countryside. Looking for someone with a sense of wonder and an appreciation for the details.\r\n",
-		city: 'Sydney',
-		country: 'Australia',
+		city: 'London',
+		country: 'United Kingdom',
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789032170/the-one/userImages/Eleanor_hnibfc.jpg',
 		photos: [
