@@ -15,7 +15,7 @@ import BrandLogo from '../shared/BrandLogo';
 import UnreadBadge from '../shared/UnreadBadge';
 import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
 import AuthMobileMenu from './mobile/AuthMobileMenu';
-import { SlidersHorizontal } from 'lucide-react';
+// import { SlidersHorizontal } from 'lucide-react';
 
 type Props = {
 	session: Session | null;
@@ -28,7 +28,7 @@ type Props = {
 const AuthNav = ({ session, userInfo }: Props) => {
 	const pathname = usePathname();
 	// Preferences button only display at Members page
-	const isMembersPage = pathname === '/members';
+	// const isMembersPage = pathname === '/members';
 
 	const { isSigningOut, handleSignOut } = useSignOut();
 
@@ -103,7 +103,7 @@ const AuthNav = ({ session, userInfo }: Props) => {
 											damping: 30,
 										}}
 									/>
-								)}{' '}
+								)}
 							</Link>
 						);
 					})}
