@@ -1,10 +1,10 @@
-import { IconType } from 'react-icons';
+import type { LucideIcon } from 'lucide-react';
 import { Users, MessageCircle, Heart } from 'lucide-react';
 
 export type NavLink = {
 	href: string;
 	label: string;
-	icon?: IconType;
+	icon?: LucideIcon;
 	badge?: number;
 };
 

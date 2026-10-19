@@ -15,9 +15,7 @@ import BrandLogo from '../shared/BrandLogo';
 import UnreadBadge from '../shared/UnreadBadge';
 import DropdownMenuDeskTop from './desktop/DropdownMenuDeskTop';
 import AuthMobileMenu from './mobile/AuthMobileMenu';
-
-const navMenuStyleLg =
-	'text-xl uppercase font-semibold text-white/90 hover:text-white transition';
+import { SlidersHorizontal } from 'lucide-react';
 
 type Props = {
 	session: Session | null;
@@ -27,13 +25,14 @@ type Props = {
 	} | null;
 };
 
-/* Center Nav（Only desktop） */
 const AuthNav = ({ session, userInfo }: Props) => {
 	const pathname = usePathname();
+	// Preferences button only display at Members page
+	const isMembersPage = pathname === '/members';
 
 	const { isSigningOut, handleSignOut } = useSignOut();
 
-	// Count unread message
+	// Count unread messages
 	const { conversations } = useConversation();
 
 	const unreadConversationCount = conversations.filter(
@@ -51,50 +50,79 @@ const AuthNav = ({ session, userInfo }: Props) => {
 	);
 
 	return (
-		<nav className='sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-r from-purple-950/80 via-purple-900/70 to-purple-950/80 border-b border-white/10 shadow-lg shadow-black/20'>
-			<div className='mx-auto flex max-w-6xl items-center justify-between px-6 h-20'>
-				{/* Left：Brand Logo */}
+		<nav className='sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-purple-950/85 via-purple-950/80 to-purple-950/85 shadow-lg shadow-black/20 backdrop-blur-xl'>
+			<div className='relative mx-auto flex h-[88px] max-w-6xl items-center justify-between px-6'>
+				{/* Left: Brand Logo */}
 				<BrandLogo />
 
-				<div className='hidden lg:flex items-center gap-8 relative'>
+				{/* Center Nav: Desktop only */}
+				<div className='absolute left-1/2 hidden -translate-x-1/2 items-center gap-5 lg:flex'>
 					{navLinks.map((link) => {
-						// For ex:/messages/123
+						// For example: /messages/123
 						const isActive = pathname.startsWith(link.href);
+						const Icon = link.icon;
+
 						return (
 							<Link
 								key={link.href}
 								href={link.href}
-								className='relative px-3 py-2 text-white group'
+								aria-current={isActive ? 'page' : undefined}
+								className={`group relative flex min-w-[84px] flex-col items-center gap-1 rounded-md px-3 py-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300/70 ${
+									isActive
+										? 'text-purple-300'
+										: 'text-white/55 hover:text-white/90'
+								}`}
 							>
-								<span className={`${navMenuStyleLg} relative z-10`}>
+								{/* Icon and notification badge */}
+								<span className='relative inline-flex items-center justify-center'>
+									{Icon && (
+										<Icon size={21} strokeWidth={1.8} aria-hidden='true' />
+									)}
+
+									<UnreadBadge
+										count={link.badge ?? 0}
+										className='absolute -right-3 -top-2'
+									/>
+								</span>
+								{/* Label */}
+								<span className='relative z-10 text-[11px] font-medium uppercase tracking-[0.12em]'>
 									{link.label}
 								</span>
-
-								<UnreadBadge
-									count={link.badge ?? 0}
-									className='absolute -top-1 -right-2'
-								/>
-
-								{/* hover underline */}
+								{/* Hover underline */}
 								{!isActive && (
-									<span className='absolute left-0 -bottom-1 h-[2px] w-full bg-purple-300 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center' />
+									<span className='absolute bottom-0 left-3 right-3 h-[2px] origin-center scale-x-0 bg-purple-300/70 transition-transform duration-300 group-hover:scale-x-100' />
 								)}
-
-								{/* active underline */}
+								{/* Active underline */}
 								{isActive && (
 									<motion.span
 										layoutId='active-nav'
-										className='absolute left-0 -bottom-1 h-[2px] w-full bg-purple-300'
-										transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+										className='absolute bottom-0 left-3 right-3 h-[2px] bg-purple-300 shadow-[0_0_8px_rgba(168,85,247,0.6)]'
+										transition={{
+											type: 'spring',
+											stiffness: 300,
+											damping: 30,
+										}}
 									/>
-								)}
+								)}{' '}
 							</Link>
 						);
 					})}
 				</div>
 
-				{/* Right side（Only desktop） */}
-				<div className='hidden lg:flex items-center gap-6'>
+				{/* Right side: Desktop only */}
+				<div className='ml-auto hidden items-center gap-5 lg:flex'>
+					{/* Preferences button */}
+					{/* {isMembersPage && (
+						<button
+							type='button'
+							aria-label='Preferences'
+							title='Preferences'
+							className='relative flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/5 hover:text-purple-300'
+						>
+							<SlidersHorizontal size={21} strokeWidth={1.8} />
+						</button>
+					)}
+ */}
 					{session && (
 						<DropdownMenuDeskTop
 							session={session}
@@ -105,6 +133,7 @@ const AuthNav = ({ session, userInfo }: Props) => {
 					)}
 				</div>
 
+				{/* Mobile menu: Keep existing design */}
 				<AuthMobileMenu
 					session={session}
 					userInfo={userInfo}
