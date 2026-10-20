@@ -74,6 +74,18 @@ enum RelationshipGoal {
   FRIENDSHIP
 }
 
+enum WantKids {
+  YES
+  NO
+  NOT_SURE
+}
+
+enum MaritalStatus {
+  NEVER_MARRIED
+  DIVORCED
+  WIDOWED
+}
+
 // Member = Profile in App(User of Domain)
 model Member {
   id           String       @id @default(cuid())
@@ -92,6 +104,9 @@ model Member {
   languages         String[]           @default([])
   relationshipGoals RelationshipGoal[] @default([])
   interests         String[]           @default([])
+  hasKids           Boolean?
+  wantsKids         WantKids?
+  maritalStatus     MaritalStatus?
 
   image             String?
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
