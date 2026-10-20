@@ -67,26 +67,39 @@ enum SearchGender {
   ANY
 }
 
+enum RelationshipGoal {
+  LONG_TERM_RELATIONSHIP
+  MARRIAGE
+  CASUAL_DATING
+  FRIENDSHIP
+}
+
 // Member = Profile in App(User of Domain)
 model Member {
-  id                String       @id @default(cuid())
-  userId            String       @unique
-  name              String
-  gender            Gender
-  searchGender      SearchGender @default(ANY)
-  dateOfBirth       DateTime
-  created           DateTime     @default(now())
-  updated           DateTime     @updatedAt
-  description       String
-  city              String
-  country           String
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  name         String
+  gender       Gender
+  searchGender SearchGender @default(ANY)
+  dateOfBirth  DateTime
+  created      DateTime     @default(now())
+  updated      DateTime     @updatedAt
+  description  String
+  city         String
+  country      String
+
+  height            Decimal?           @db.Decimal(4, 1)
+  languages         String[]           @default([])
+  relationshipGoals RelationshipGoal[] @default([])
+  interests         String[]           @default([])
+
   image             String?
-  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   photos            Photo[]
-  sourceLikes       Like[]       @relation("source")
-  targetLikes       Like[]       @relation("target")
-  senderMessages    Message[]    @relation("sender")
-  recipientMessages Message[]    @relation("recipient")
+  sourceLikes       Like[]    @relation("source")
+  targetLikes       Like[]    @relation("target")
+  senderMessages    Message[] @relation("sender")
+  recipientMessages Message[] @relation("recipient")
 }
 
 model Photo {
