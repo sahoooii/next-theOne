@@ -1,4 +1,10 @@
-import { Gender, SearchGender } from '@prisma/client';
+import {
+	Gender,
+	SearchGender,
+	RelationshipGoal,
+	WantKids,
+	MaritalStatus,
+} from '@prisma/client';
 
 export const membersData = [
 	{
@@ -14,6 +20,16 @@ export const membersData = [
 			'Beach lover and early morning runner—nothing beats a sunrise by the ocean. I work in marketing and love anything creative, from photography to styling. Pretty laid-back but always up for a spontaneous road trip. Looking for someone who doesn’t take life too seriously.\r\n',
 		city: 'Perth',
 		country: 'Australia',
+		height: 168,
+		languages: ['en'],
+		relationshipGoals: [
+			RelationshipGoal.LONG_TERM_RELATIONSHIP,
+			RelationshipGoal.MARRIAGE,
+		],
+		interests: ['Travel', 'Photography', 'Fitness', 'Nature', 'Fashion'],
+		hasKids: false,
+		wantsKids: WantKids.YES,
+		maritalStatus: MaritalStatus.NEVER_MARRIED,
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789134388/lizz_iwi3ep.jpg',
 		photos: [
@@ -1252,6 +1268,13 @@ export const membersData = [
 			'I work in finance, although my favorite part of the week is usually when I’m nowhere near a spreadsheet. I enjoy hiking, cooking, traveling, and finding quiet places away from the city. These days I’m less interested in endless small talk and more interested in getting to know someone genuinely.\r\n',
 		city: 'Vancouver',
 		country: 'Canada',
+		height: 183,
+		languages: ['en', 'fr'],
+		relationshipGoals: [RelationshipGoal.LONG_TERM_RELATIONSHIP],
+		interests: ['Hiking', 'Cooking', 'Travel', 'Nature', 'Food & Dining'],
+		hasKids: null,
+		wantsKids: WantKids.NOT_SURE,
+		maritalStatus: MaritalStatus.NEVER_MARRIED,
 		image:
 			'https://res.cloudinary.com/saho-dev/image/upload/v1789137641/michael_xhxbna.jpg',
 		photos: [
@@ -1266,3 +1289,62 @@ export const membersData = [
 		],
 	},
 ];
+
+
+
+const profileFieldDefaults = [
+	{
+		height: 162,
+		languages: ['en'],
+		relationshipGoals: [RelationshipGoal.FRIENDSHIP],
+		interests: ['Coffee', 'Reading', 'Music'],
+		hasKids: null,
+		wantsKids: null,
+		maritalStatus: null,
+	},
+	{
+		height: 175.5,
+		languages: ['en', 'ja'],
+		relationshipGoals: [RelationshipGoal.LONG_TERM_RELATIONSHIP],
+		interests: ['Travel', 'Photography', 'Hiking'],
+		hasKids: false,
+		wantsKids: WantKids.YES,
+		maritalStatus: MaritalStatus.NEVER_MARRIED,
+	},
+	{
+		height: null,
+		languages: ['en', 'fr'],
+		relationshipGoals: [RelationshipGoal.MARRIAGE],
+		interests: ['Cooking', 'Food & Dining', 'Nature'],
+		hasKids: true,
+		wantsKids: WantKids.NO,
+		maritalStatus: MaritalStatus.DIVORCED,
+	},
+	{
+		height: 168.5,
+		languages: ['en', 'es'],
+		relationshipGoals: [
+			RelationshipGoal.LONG_TERM_RELATIONSHIP,
+			RelationshipGoal.MARRIAGE,
+		],
+		interests: ['Fitness', 'Yoga', 'Travel'],
+		hasKids: false,
+		wantsKids: WantKids.NOT_SURE,
+		maritalStatus: MaritalStatus.NEVER_MARRIED,
+	},
+	{
+		height: 185,
+		languages: ['en', 'de'],
+		relationshipGoals: [RelationshipGoal.CASUAL_DATING],
+		interests: ['Gaming', 'Movies & TV', 'Concerts'],
+		hasKids: null,
+		wantsKids: WantKids.NOT_SURE,
+		maritalStatus: MaritalStatus.WIDOWED,
+	},
+];
+
+
+export const membersWithProfileFields = membersData.map((member, index) => ({
+	...profileFieldDefaults[index % profileFieldDefaults.length],
+	...member,
+}));
