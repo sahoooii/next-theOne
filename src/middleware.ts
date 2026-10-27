@@ -4,7 +4,7 @@ import { authRoutes, publicRoutes } from '@/route';
 
 export default auth((req) => {
 	const { nextUrl } = req;
-	const isLoggedIn = !!req.auth;
+	const isLoggedIn = !!req.auth?.user;
 
 	const isPublic = publicRoutes.includes(nextUrl.pathname);
 	const isAuthRoute = authRoutes.includes(nextUrl.pathname);
