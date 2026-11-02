@@ -56,11 +56,15 @@ import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
 import { countryOptions } from '@/lib/countries';
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
+
 import {
 	genderOptions,
 	searchGenderOptions,
 } from '@/lib/constants/memberGenderOptions';
+import { languageOptions } from '@/lib/constants/memberProfileOptions';
+import { relationshipGoalOptions } from '@/lib/constants/memberProfileOptions';
 import { GenderSelect } from './GenderSelect';
+
 import DeleteAccount from '../edit/DeleteAccount';
 
 type Props = {
@@ -72,7 +76,9 @@ type MemberFormValues = MemberCreateSchema | MemberEditSchema;
 
 const MemberProfileForm = ({ member, mode }: Props) => {
 	// To handle open and close select country list
-	const [open, setOpen] = useState(false);
+	const [countriesOpen, setCountriesOpen] = useState(false);
+	// To handle open and close select languages list
+	const [languagesOpen, setLanguagesOpen] = useState(false);
 
 	const router = useRouter();
 
@@ -94,6 +100,10 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					city: member?.city ?? '',
 					country: member?.country ?? '',
 					searchGender: member?.searchGender,
+					// From V2
+					height: member?.height != null ? Number(member.height) : undefined,
+					languages: member?.languages ?? [],
+					relationshipGoals: member?.relationshipGoals ?? [],
 				};
 
 	const form = useForm<MemberFormValues>({
@@ -300,6 +310,212 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 								setValue={form.setValue}
 							/>
 
+							{/* Editable - Height (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='height'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className='text-xs text-gray-400'>
+												Height (cm)
+											</FormLabel>
+											<FormControl>
+												<Input
+													type='number'
+													min={100}
+													max={250}
+													step={0.1}
+													placeholder='e.g. 165'
+													className='bg-white/50 border-black/10'
+													value={field.value ?? ''}
+													onChange={(e) =>
+														field.onChange(
+															e.target.value === ''
+																? undefined
+																: e.target.valueAsNumber,
+														)
+													}
+												/>
+											</FormControl>
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Languages (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='languages'
+									render={({ field }) => {
+										const selectedLanguages = field.value ?? [];
+
+										return (
+											<FormItem>
+												<FormLabel className='text-xs text-gray-400'>
+													Languages
+												</FormLabel>
+
+												<Popover
+													open={languagesOpen}
+													onOpenChange={setLanguagesOpen}
+												>
+													<PopoverTrigger asChild>
+														<FormControl>
+															<Button
+																type='button'
+																variant='outline'
+																className={cn(
+																	'w-full justify-between bg-white/50 border-black/10',
+																	selectedLanguages.length === 0 &&
+																		'text-gray-400',
+																)}
+															>
+																{selectedLanguages.length > 0
+																	? selectedLanguages
+																			.map(
+																				(value) =>
+																					languageOptions.find(
+																						(language) =>
+																							language.value === value,
+																					)?.label,
+																			)
+																			.filter(Boolean)
+																			.join(', ')
+																	: 'Select languages'}
+																<span className='ml-2 text-xs text-gray-400'>
+																	{selectedLanguages.length}
+																</span>
+															</Button>
+														</FormControl>
+													</PopoverTrigger>
+
+													<PopoverContent
+														className='p-0 bg-white border-black/10'
+														align='start'
+													>
+														<Command>
+															<CommandInput placeholder='Search languages...' />
+
+															<CommandList>
+																<CommandEmpty>No language found.</CommandEmpty>
+
+																<CommandGroup>
+																	{languageOptions.map((language) => {
+																		const isSelected =
+																			selectedLanguages.includes(
+																				language.value,
+																			);
+
+																		return (
+																			<CommandItem
+																				key={language.value}
+																				value={language.label}
+																				onSelect={() => {
+																					const nextValue = isSelected
+																						? selectedLanguages.filter(
+																								(value) =>
+																									value !== language.value,
+																							)
+																						: [
+																								...selectedLanguages,
+																								language.value,
+																							];
+
+																					field.onChange(nextValue);
+																				}}
+																			>
+																				<Check
+																					className={cn(
+																						'mr-2 h-4 w-4',
+																						isSelected
+																							? 'opacity-100'
+																							: 'opacity-0',
+																					)}
+																				/>
+																				{language.label}
+																			</CommandItem>
+																		);
+																	})}
+																</CommandGroup>
+															</CommandList>
+														</Command>
+													</PopoverContent>
+												</Popover>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
+							{/* Editable - Relationship Goals (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='relationshipGoals'
+									render={({ field }) => {
+										const selectedGoals = field.value ?? [];
+
+										return (
+											<FormItem className='md:col-span-2'>
+												<FormLabel className='text-xs text-gray-400'>
+													Relationship Goals
+													<span className='ml-2'>Select up to 2</span>
+												</FormLabel>
+
+												<FormControl>
+													<div className='flex flex-wrap gap-2'>
+														{relationshipGoalOptions.map((goal) => {
+															const isSelected = selectedGoals.includes(
+																goal.value,
+															);
+
+															return (
+																<Button
+																	key={goal.value}
+																	type='button'
+																	variant='outline'
+																	onClick={() => {
+																		const nextValue = isSelected
+																			? selectedGoals.filter(
+																					(value) => value !== goal.value,
+																				)
+																			: selectedGoals.length < 2
+																				? [...selectedGoals, goal.value]
+																				: selectedGoals;
+
+																		field.onChange(nextValue);
+																	}}
+																	className={cn(
+																		'rounded-full bg-white/50 border-black/10',
+																		isSelected &&
+																			'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																	)}
+																	disabled={
+																		!isSelected && selectedGoals.length >= 2
+																	}
+																>
+																	{isSelected && (
+																		<Check className='mr-2 h-4 w-4' />
+																	)}
+																	{goal.label}
+																</Button>
+															);
+														})}
+													</div>
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
 							{/* Editable - City */}
 							<FormField
 								control={form.control}
@@ -331,7 +547,10 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 											Country
 										</FormLabel>
 
-										<Popover open={open} onOpenChange={setOpen}>
+										<Popover
+											open={countriesOpen}
+											onOpenChange={setCountriesOpen}
+										>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
@@ -368,7 +587,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																			shouldTouch: true,
 																			shouldValidate: true,
 																		});
-																		setOpen(false);
+																		setCountriesOpen(false);
 																	}}
 																>
 																	<Check
