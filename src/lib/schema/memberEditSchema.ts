@@ -18,6 +18,10 @@ export const memberEditSchema = z.object({
 		.array(z.enum(RelationshipGoal))
 		.max(2, { message: 'You can select up to 2 relationship goals.' })
 		.optional(),
+	interests: z
+		.array(z.string())
+		.max(5, { message: 'You can select up to 5 interests.' })
+		.optional(),
 });
 
 export type MemberEditSchema = z.infer<typeof memberEditSchema>;

@@ -63,8 +63,9 @@ import {
 } from '@/lib/constants/memberGenderOptions';
 import { languageOptions } from '@/lib/constants/memberProfileOptions';
 import { relationshipGoalOptions } from '@/lib/constants/memberProfileOptions';
-import { GenderSelect } from './GenderSelect';
+import { interestCategories } from '@/lib/constants/memberProfileOptions';
 
+import { GenderSelect } from './GenderSelect';
 import DeleteAccount from '../edit/DeleteAccount';
 
 type Props = {
@@ -104,6 +105,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					height: member?.height != null ? Number(member.height) : undefined,
 					languages: member?.languages ?? [],
 					relationshipGoals: member?.relationshipGoals ?? [],
+					interests: member?.interests ?? [],
 				};
 
 	const form = useForm<MemberFormValues>({
@@ -502,10 +504,95 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																	{isSelected && (
 																		<Check className='mr-2 h-4 w-4' />
 																	)}
+																	<span className='mr-1.5'>{goal.emoji}</span>
 																	{goal.label}
 																</Button>
 															);
 														})}
+													</div>
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
+							{/* Editable - Interests (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='interests'
+									render={({ field }) => {
+										const selectedInterests = field.value ?? [];
+
+										return (
+											<FormItem className='md:col-span-2'>
+												<div className='flex items-center justify-between'>
+													<FormLabel className='text-xs text-gray-400'>
+														Interests
+													</FormLabel>
+													<span className='text-xs text-gray-400'>
+														{selectedInterests.length}/5 selected
+													</span>
+												</div>
+
+												<FormControl>
+													<div className='space-y-5'>
+														{interestCategories.map((category) => (
+															<div key={category.value} className='space-y-2'>
+																{/* Category heading */}
+																<h3 className='text-sm font-medium text-gray-300'>
+																	{category.emoji} {category.label}
+																</h3>
+
+																{/* Interest options */}
+																<div className='flex flex-wrap gap-2'>
+																	{category.options.map((interest) => {
+																		const isSelected =
+																			selectedInterests.includes(
+																				interest.value,
+																			);
+
+																		return (
+																			<Button
+																				key={interest.value}
+																				type='button'
+																				variant='outline'
+																				disabled={
+																					!isSelected &&
+																					selectedInterests.length >= 5
+																				}
+																				onClick={() => {
+																					const nextValue = isSelected
+																						? selectedInterests.filter(
+																								(value) =>
+																									value !== interest.value,
+																							)
+																						: [
+																								...selectedInterests,
+																								interest.value,
+																							];
+
+																					field.onChange(nextValue);
+																				}}
+																				className={cn(
+																					'rounded-full bg-white/50 border-black/10',
+																					isSelected &&
+																						'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																				)}
+																			>
+																				<span className='mr-1.5'>
+																					{interest.emoji}
+																				</span>
+																				{interest.label}
+																			</Button>
+																		);
+																	})}
+																</div>
+															</div>
+														))}
 													</div>
 												</FormControl>
 
