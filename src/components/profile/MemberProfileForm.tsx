@@ -53,17 +53,22 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
-import { countryOptions } from '@/lib/countries';
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
 
+import { countryOptions } from '@/lib/countries';
 import {
 	genderOptions,
 	searchGenderOptions,
 } from '@/lib/constants/memberGenderOptions';
-import { languageOptions } from '@/lib/constants/memberProfileOptions';
-import { relationshipGoalOptions } from '@/lib/constants/memberProfileOptions';
-import { interestCategories } from '@/lib/constants/memberProfileOptions';
+import {
+	languageOptions,
+	wantKidsOptions,
+	hasKidsOptions,
+	relationshipGoalOptions,
+	maritalStatusOptions,
+	interestCategories,
+} from '@/lib/constants/memberProfileOptions';
 
 import { GenderSelect } from './GenderSelect';
 import DeleteAccount from '../edit/DeleteAccount';
@@ -106,6 +111,9 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					languages: member?.languages ?? [],
 					relationshipGoals: member?.relationshipGoals ?? [],
 					interests: member?.interests ?? [],
+					hasKids: member?.hasKids ?? undefined,
+					wantsKids: member?.wantsKids ?? undefined,
+					maritalStatus: member?.maritalStatus ?? undefined,
 				};
 
 	const form = useForm<MemberFormValues>({
@@ -516,6 +524,140 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 											</FormItem>
 										);
 									}}
+								/>
+							)}
+
+							{/* Editable - Marital Status (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='maritalStatus'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Marital Status
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{maritalStatusOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={option.value}
+																type='button'
+																variant='outline'
+																onClick={() =>
+																	field.onChange(
+																		isSelected ? null : option.value,
+																	)
+																}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Wants Kids (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='wantsKids'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Wants Kids
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{wantKidsOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={option.value}
+																type='button'
+																variant='outline'
+																onClick={() =>
+																	field.onChange(
+																		isSelected ? null : option.value,
+																	)
+																}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Has Kids (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='hasKids'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Do you have children?
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{hasKidsOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={String(option.value)}
+																type='button'
+																variant='outline'
+																onClick={() => field.onChange(option.value)}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
 								/>
 							)}
 

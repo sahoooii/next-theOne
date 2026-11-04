@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { memberBaseSchema } from './memberBaseSchema';
-import { RelationshipGoal } from '@prisma/client';
+import { RelationshipGoal, WantKids, MaritalStatus } from '@prisma/client';
 
 export const memberEditSchema = z.object({
 	...memberBaseSchema,
@@ -22,6 +22,9 @@ export const memberEditSchema = z.object({
 		.array(z.string())
 		.max(5, { message: 'You can select up to 5 interests.' })
 		.optional(),
+	hasKids: z.boolean().nullable().optional(),
+	wantsKids: z.enum(WantKids).nullable().optional(),
+	maritalStatus: z.enum(MaritalStatus).nullable().optional(),
 });
 
 export type MemberEditSchema = z.infer<typeof memberEditSchema>;
