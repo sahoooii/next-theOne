@@ -283,8 +283,8 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							{/* Read only - DOB */}
 							{mode === 'edit' && member && (
 								<ReadOnlyField
-									label='Date Of Birth'
-									id='dateOfBirth'
+									label='Age'
+									id='age'
 									value={calculateAge(member.dateOfBirth)}
 								/>
 							)}
@@ -342,7 +342,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 													onChange={(e) =>
 														field.onChange(
 															e.target.value === ''
-																? undefined
+																? null
 																: e.target.valueAsNumber,
 														)
 													}
