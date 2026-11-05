@@ -36,7 +36,20 @@ export async function updateMemberProfile(
 			return { status: 'error', error: fieldErrors };
 		}
 
-		const { name, description, city, country, searchGender } = validated.data;
+		const {
+			name,
+			description,
+			city,
+			country,
+			searchGender,
+			height,
+			languages,
+			relationshipGoals,
+			interests,
+			hasKids,
+			wantsKids,
+			maritalStatus,
+		} = validated.data;
 
 		if (nameUpdated) {
 			await prisma.user.update({
@@ -53,6 +66,15 @@ export async function updateMemberProfile(
 				city,
 				country,
 				searchGender,
+
+				// Profile Fields V2
+				height,
+				languages,
+				relationshipGoals,
+				interests,
+				hasKids,
+				wantsKids,
+				maritalStatus,
 			},
 		});
 		return { status: 'success', data: member };

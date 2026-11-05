@@ -53,13 +53,23 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 
 import { calculateAge, cn, handleFormServerErrors } from '@/lib/utils';
-import { countryOptions } from '@/lib/countries';
 import ReadOnlyField from '@/components/edit/ReadOnlyField';
 import MemberDetailPageHeader from '@/components/members/memberDetail/MemberDetailPageHeader';
+
+import { countryOptions } from '@/lib/countries';
 import {
 	genderOptions,
 	searchGenderOptions,
 } from '@/lib/constants/memberGenderOptions';
+import {
+	languageOptions,
+	wantKidsOptions,
+	hasKidsOptions,
+	relationshipGoalOptions,
+	maritalStatusOptions,
+	interestCategories,
+} from '@/lib/constants/memberProfileOptions';
+
 import { GenderSelect } from './GenderSelect';
 import DeleteAccount from '../edit/DeleteAccount';
 
@@ -72,7 +82,82 @@ type MemberFormValues = MemberCreateSchema | MemberEditSchema;
 
 const MemberProfileForm = ({ member, mode }: Props) => {
 	// To handle open and close select country list
-	const [open, setOpen] = useState(false);
+	const [countriesOpen, setCountriesOpen] = useState(false);
+	// To handle open and close select languages list
+	const [languagesOpen, setLanguagesOpen] = useState(false);
+	// To handle height unit
+	const [heightUnit, setHeightUnit] = useState<'cm' | 'ft'>('cm');
+	const [feetInput, setFeetInput] = useState('');
+	const [inchesInput, setInchesInput] = useState('');
+
+	// Convert cm to feet and inches
+	const cmToFeetInches = (cm: number) => {
+		// 1inch= 2.54cm
+		const totalInches = cm / 2.54;
+		// 1 foot = 12 inches
+		const feet = Math.floor(totalInches / 12);
+		// 残りのinchesを計算する
+		const inches = Math.round((totalInches % 12) * 10) / 10;
+
+		if (inches >= 12) {
+			return {
+				feet: feet + 1,
+				inches: 0,
+			};
+		}
+
+		return { feet, inches };
+	};
+
+	// Convert feet and inches to cm
+	const feetInchesToCm = (feet: number, inches: number) => {
+		const totalInches = feet * 12 + inches;
+		return Math.round(totalInches * 2.54 * 10) / 10;
+	};
+
+	const validateHeightInput = () => {
+		if (heightUnit === 'cm') {
+			return true;
+		}
+
+		// Both fields are empty: height is not specified
+		if (feetInput === '' && inchesInput === '') {
+			return true;
+		}
+
+		// Only one field is filled
+		if (feetInput === '' || inchesInput === '') {
+			form.setError('height', {
+				type: 'manual',
+				message: 'Please enter both feet and inches.',
+			});
+
+			return false;
+		}
+
+		const feet = Number(feetInput);
+		const inches = Number(inchesInput);
+
+		const heightInCm = feetInchesToCm(feet, inches);
+
+		if (
+			!Number.isFinite(feet) ||
+			!Number.isFinite(inches) ||
+			inches < 0 ||
+			inches >= 12 ||
+			heightInCm < 100 ||
+			heightInCm > 250
+		) {
+			form.setError('height', {
+				type: 'manual',
+				message: 'Please enter a valid height.',
+			});
+
+			return false;
+		}
+
+		return true;
+	};
 
 	const router = useRouter();
 
@@ -94,6 +179,14 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 					city: member?.city ?? '',
 					country: member?.country ?? '',
 					searchGender: member?.searchGender,
+					// From V2
+					height: member?.height != null ? Number(member.height) : undefined,
+					languages: member?.languages ?? [],
+					relationshipGoals: member?.relationshipGoals ?? [],
+					interests: member?.interests ?? [],
+					hasKids: member?.hasKids ?? undefined,
+					wantsKids: member?.wantsKids ?? undefined,
+					maritalStatus: member?.maritalStatus ?? undefined,
 				};
 
 	const form = useForm<MemberFormValues>({
@@ -153,6 +246,11 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 	const onSubmit = async (data: MemberFormValues) => {
 		if (mode === 'create') {
 			return handleCreateSubmit(data as MemberCreateSchema);
+		}
+
+		// Validate ft/in input before saving
+		if (!validateHeightInput()) {
+			return;
 		}
 
 		return handleEditSubmit(data as MemberEditSchema);
@@ -263,8 +361,8 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 							{/* Read only - DOB */}
 							{mode === 'edit' && member && (
 								<ReadOnlyField
-									label='Date Of Birth'
-									id='dateOfBirth'
+									label='Age'
+									id='age'
 									value={calculateAge(member.dateOfBirth)}
 								/>
 							)}
@@ -300,6 +398,587 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 								setValue={form.setValue}
 							/>
 
+							{/* Editable - Height (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='height'
+									render={({ field }) => {
+										return (
+											<FormItem>
+												<div className='flex items-center justify-between'>
+													<FormLabel className='text-xs text-gray-400'>
+														Height
+													</FormLabel>
+
+													<div className='flex gap-1'>
+														<Button
+															type='button'
+															size='sm'
+															variant={
+																heightUnit === 'cm' ? 'default' : 'outline'
+															}
+															onClick={() => {
+																if (heightUnit === 'ft') {
+																	// Both fields are empty
+																	if (feetInput === '' && inchesInput === '') {
+																		field.onChange(null);
+																	}
+																	// Only one field is filled
+																	else if (
+																		feetInput === '' ||
+																		inchesInput === ''
+																	) {
+																		form.setError('height', {
+																			type: 'manual',
+																			message:
+																				'Please enter both feet and inches.',
+																		});
+																		return;
+																	}
+																	// Both fields are filled
+																	else {
+																		const feet = Number(feetInput);
+																		const inches = Number(inchesInput);
+
+																		const heightInCm = feetInchesToCm(
+																			feet,
+																			inches,
+																		);
+
+																		if (
+																			!Number.isFinite(feet) ||
+																			!Number.isFinite(inches) ||
+																			inches < 0 ||
+																			inches >= 12 ||
+																			heightInCm < 100 ||
+																			heightInCm > 250
+																		) {
+																			form.setError('height', {
+																				type: 'manual',
+																				message: 'Please enter a valid height.',
+																			});
+																			return;
+																		}
+
+																		field.onChange(heightInCm);
+																	}
+																}
+
+																form.clearErrors('height');
+																setHeightUnit('cm');
+															}}
+														>
+															cm
+														</Button>
+
+														<Button
+															type='button'
+															size='sm'
+															variant={
+																heightUnit === 'ft' ? 'default' : 'outline'
+															}
+															onClick={() => {
+																if (field.value != null) {
+																	const converted = cmToFeetInches(field.value);
+
+																	setFeetInput(String(converted.feet));
+																	setInchesInput(String(converted.inches));
+																} else {
+																	setFeetInput('');
+																	setInchesInput('');
+																}
+
+																setHeightUnit('ft');
+															}}
+														>
+															ft / in
+														</Button>
+													</div>
+												</div>
+
+												<FormControl>
+													{heightUnit === 'cm' ? (
+														<div className='flex items-center gap-2'>
+															<Input
+																type='number'
+																min={100}
+																max={250}
+																step={0.1}
+																placeholder='e.g. 165'
+																className='bg-white/50 border-black/10'
+																value={field.value ?? ''}
+																onChange={(e) =>
+																	field.onChange(
+																		e.target.value === ''
+																			? null
+																			: e.target.valueAsNumber,
+																	)
+																}
+															/>
+
+															<span className='text-sm text-gray-400'>cm</span>
+														</div>
+													) : (
+														<div className='flex items-center gap-2'>
+															<Input
+																type='number'
+																min={3}
+																max={8}
+																placeholder='5'
+																className='bg-white/50 border-black/10'
+																value={feetInput}
+																onChange={(e) => {
+																	const feet = e.target.value;
+
+																	setFeetInput(feet);
+
+																	if (feet === '' && inchesInput === '') {
+																		field.onChange(null);
+																		return;
+																	}
+
+																	field.onChange(
+																		feetInchesToCm(
+																			Number(feet || 0),
+																			Number(inchesInput || 0),
+																		),
+																	);
+																}}
+															/>
+
+															<span className='text-sm text-gray-400'>ft</span>
+
+															<Input
+																type='number'
+																min={0}
+																max={11.9}
+																step={0.1}
+																placeholder='7'
+																className='bg-white/50 border-black/10'
+																value={inchesInput}
+																onChange={(e) => {
+																	const inches = e.target.value;
+
+																	setInchesInput(inches);
+
+																	if (feetInput === '' && inches === '') {
+																		field.onChange(null);
+																		return;
+																	}
+
+																	field.onChange(
+																		feetInchesToCm(
+																			Number(feetInput || 0),
+																			Number(inches || 0),
+																		),
+																	);
+																}}
+															/>
+
+															<span className='text-sm text-gray-400'>in</span>
+														</div>
+													)}
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
+							{/* Editable - Languages (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='languages'
+									render={({ field }) => {
+										const selectedLanguages = field.value ?? [];
+
+										return (
+											<FormItem>
+												<FormLabel className='text-xs text-gray-400'>
+													Languages
+												</FormLabel>
+
+												<Popover
+													open={languagesOpen}
+													onOpenChange={setLanguagesOpen}
+												>
+													<PopoverTrigger asChild>
+														<FormControl>
+															<Button
+																type='button'
+																variant='outline'
+																className={cn(
+																	'w-full justify-between bg-white/50 border-black/10',
+																	selectedLanguages.length === 0 &&
+																		'text-gray-400',
+																)}
+															>
+																{selectedLanguages.length > 0
+																	? selectedLanguages
+																			.map(
+																				(value) =>
+																					languageOptions.find(
+																						(language) =>
+																							language.value === value,
+																					)?.label,
+																			)
+																			.filter(Boolean)
+																			.join(', ')
+																	: 'Select languages'}
+																<span className='ml-2 text-xs text-gray-400'>
+																	{selectedLanguages.length}
+																</span>
+															</Button>
+														</FormControl>
+													</PopoverTrigger>
+
+													<PopoverContent
+														className='p-0 bg-white border-black/10'
+														align='start'
+													>
+														<Command>
+															<CommandInput placeholder='Search languages...' />
+
+															<CommandList>
+																<CommandEmpty>No language found.</CommandEmpty>
+
+																<CommandGroup>
+																	{languageOptions.map((language) => {
+																		const isSelected =
+																			selectedLanguages.includes(
+																				language.value,
+																			);
+
+																		return (
+																			<CommandItem
+																				key={language.value}
+																				value={language.label}
+																				onSelect={() => {
+																					const nextValue = isSelected
+																						? selectedLanguages.filter(
+																								(value) =>
+																									value !== language.value,
+																							)
+																						: [
+																								...selectedLanguages,
+																								language.value,
+																							];
+
+																					field.onChange(nextValue);
+																				}}
+																			>
+																				<Check
+																					className={cn(
+																						'mr-2 h-4 w-4',
+																						isSelected
+																							? 'opacity-100'
+																							: 'opacity-0',
+																					)}
+																				/>
+																				{language.label}
+																			</CommandItem>
+																		);
+																	})}
+																</CommandGroup>
+															</CommandList>
+														</Command>
+													</PopoverContent>
+												</Popover>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
+							{/* Editable - Relationship Goals (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='relationshipGoals'
+									render={({ field }) => {
+										const selectedGoals = field.value ?? [];
+
+										return (
+											<FormItem className='md:col-span-2'>
+												<FormLabel className='text-xs text-gray-400'>
+													Relationship Goals
+													<span className='ml-2'>Select up to 2</span>
+												</FormLabel>
+
+												<FormControl>
+													<div className='flex flex-wrap gap-2'>
+														{relationshipGoalOptions.map((goal) => {
+															const isSelected = selectedGoals.includes(
+																goal.value,
+															);
+
+															return (
+																<Button
+																	key={goal.value}
+																	type='button'
+																	variant='outline'
+																	onClick={() => {
+																		const nextValue = isSelected
+																			? selectedGoals.filter(
+																					(value) => value !== goal.value,
+																				)
+																			: selectedGoals.length < 2
+																				? [...selectedGoals, goal.value]
+																				: selectedGoals;
+
+																		field.onChange(nextValue);
+																	}}
+																	className={cn(
+																		'rounded-full bg-white/50 border-black/10',
+																		isSelected &&
+																			'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																	)}
+																	disabled={
+																		!isSelected && selectedGoals.length >= 2
+																	}
+																>
+																	{isSelected && (
+																		<Check className='mr-2 h-4 w-4' />
+																	)}
+																	<span className='mr-1.5'>{goal.emoji}</span>
+																	{goal.label}
+																</Button>
+															);
+														})}
+													</div>
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
+							{/* Editable - Marital Status (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='maritalStatus'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Marital Status
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{maritalStatusOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={option.value}
+																type='button'
+																variant='outline'
+																onClick={() =>
+																	field.onChange(
+																		isSelected ? null : option.value,
+																	)
+																}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Wants Kids (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='wantsKids'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Wants Kids
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{wantKidsOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={option.value}
+																type='button'
+																variant='outline'
+																onClick={() =>
+																	field.onChange(
+																		isSelected ? null : option.value,
+																	)
+																}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Has Kids (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='hasKids'
+									render={({ field }) => (
+										<FormItem className='md:col-span-2'>
+											<FormLabel className='text-xs text-gray-400'>
+												Do you have children?
+											</FormLabel>
+
+											<FormControl>
+												<div className='flex flex-wrap gap-2'>
+													{hasKidsOptions.map((option) => {
+														const isSelected = field.value === option.value;
+
+														return (
+															<Button
+																key={String(option.value)}
+																type='button'
+																variant='outline'
+																onClick={() => field.onChange(option.value)}
+																className={cn(
+																	'rounded-full bg-white/50 border-black/10',
+																	isSelected &&
+																		'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																)}
+															>
+																<span className='mr-1.5'>{option.emoji}</span>
+																{option.label}
+															</Button>
+														);
+													})}
+												</div>
+											</FormControl>
+
+											<FormMessage className='text-sm text-red-400' />
+										</FormItem>
+									)}
+								/>
+							)}
+
+							{/* Editable - Interests (edit only) */}
+							{mode === 'edit' && (
+								<FormField
+									control={form.control}
+									name='interests'
+									render={({ field }) => {
+										const selectedInterests = field.value ?? [];
+
+										return (
+											<FormItem className='md:col-span-2'>
+												<div className='flex items-center justify-between'>
+													<FormLabel className='text-xs text-gray-400'>
+														Interests
+													</FormLabel>
+													<span className='text-xs text-gray-400'>
+														{selectedInterests.length}/5 selected
+													</span>
+												</div>
+
+												<FormControl>
+													<div className='space-y-5'>
+														{interestCategories.map((category) => (
+															<div key={category.value} className='space-y-2'>
+																{/* Category heading */}
+																<h3 className='text-sm font-medium text-gray-300'>
+																	{category.emoji} {category.label}
+																</h3>
+
+																{/* Interest options */}
+																<div className='flex flex-wrap gap-2'>
+																	{category.options.map((interest) => {
+																		const isSelected =
+																			selectedInterests.includes(
+																				interest.value,
+																			);
+
+																		return (
+																			<Button
+																				key={interest.value}
+																				type='button'
+																				variant='outline'
+																				disabled={
+																					!isSelected &&
+																					selectedInterests.length >= 5
+																				}
+																				onClick={() => {
+																					const nextValue = isSelected
+																						? selectedInterests.filter(
+																								(value) =>
+																									value !== interest.value,
+																							)
+																						: [
+																								...selectedInterests,
+																								interest.value,
+																							];
+
+																					field.onChange(nextValue);
+																				}}
+																				className={cn(
+																					'rounded-full bg-white/50 border-black/10',
+																					isSelected &&
+																						'bg-primary/10 border-primary/40 text-primary hover:bg-primary/15',
+																				)}
+																			>
+																				<span className='mr-1.5'>
+																					{interest.emoji}
+																				</span>
+																				{interest.label}
+																			</Button>
+																		);
+																	})}
+																</div>
+															</div>
+														))}
+													</div>
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
+								/>
+							)}
+
 							{/* Editable - City */}
 							<FormField
 								control={form.control}
@@ -331,7 +1010,10 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 											Country
 										</FormLabel>
 
-										<Popover open={open} onOpenChange={setOpen}>
+										<Popover
+											open={countriesOpen}
+											onOpenChange={setCountriesOpen}
+										>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
@@ -368,7 +1050,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																			shouldTouch: true,
 																			shouldValidate: true,
 																		});
-																		setOpen(false);
+																		setCountriesOpen(false);
 																	}}
 																>
 																	<Check
