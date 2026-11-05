@@ -85,6 +85,79 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 	const [countriesOpen, setCountriesOpen] = useState(false);
 	// To handle open and close select languages list
 	const [languagesOpen, setLanguagesOpen] = useState(false);
+	// To handle height unit
+	const [heightUnit, setHeightUnit] = useState<'cm' | 'ft'>('cm');
+	const [feetInput, setFeetInput] = useState('');
+	const [inchesInput, setInchesInput] = useState('');
+
+	// Convert cm to feet and inches
+	const cmToFeetInches = (cm: number) => {
+		// 1inch= 2.54cm
+		const totalInches = cm / 2.54;
+		// 1 foot = 12 inches
+		const feet = Math.floor(totalInches / 12);
+		// 残りのinchesを計算する
+		const inches = Math.round((totalInches % 12) * 10) / 10;
+
+		if (inches >= 12) {
+			return {
+				feet: feet + 1,
+				inches: 0,
+			};
+		}
+
+		return { feet, inches };
+	};
+
+	// Convert feet and inches to cm
+	const feetInchesToCm = (feet: number, inches: number) => {
+		const totalInches = feet * 12 + inches;
+		return Math.round(totalInches * 2.54 * 10) / 10;
+	};
+
+	const validateHeightInput = () => {
+		if (heightUnit === 'cm') {
+			return true;
+		}
+
+		// Both fields are empty: height is not specified
+		if (feetInput === '' && inchesInput === '') {
+			return true;
+		}
+
+		// Only one field is filled
+		if (feetInput === '' || inchesInput === '') {
+			form.setError('height', {
+				type: 'manual',
+				message: 'Please enter both feet and inches.',
+			});
+
+			return false;
+		}
+
+		const feet = Number(feetInput);
+		const inches = Number(inchesInput);
+
+		const heightInCm = feetInchesToCm(feet, inches);
+
+		if (
+			!Number.isFinite(feet) ||
+			!Number.isFinite(inches) ||
+			inches < 0 ||
+			inches >= 12 ||
+			heightInCm < 100 ||
+			heightInCm > 250
+		) {
+			form.setError('height', {
+				type: 'manual',
+				message: 'Please enter a valid height.',
+			});
+
+			return false;
+		}
+
+		return true;
+	};
 
 	const router = useRouter();
 
@@ -173,6 +246,11 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 	const onSubmit = async (data: MemberFormValues) => {
 		if (mode === 'create') {
 			return handleCreateSubmit(data as MemberCreateSchema);
+		}
+
+		// Validate ft/in input before saving
+		if (!validateHeightInput()) {
+			return;
 		}
 
 		return handleEditSubmit(data as MemberEditSchema);
@@ -325,32 +403,188 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 								<FormField
 									control={form.control}
 									name='height'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel className='text-xs text-gray-400'>
-												Height (cm)
-											</FormLabel>
-											<FormControl>
-												<Input
-													type='number'
-													min={100}
-													max={250}
-													step={0.1}
-													placeholder='e.g. 165'
-													className='bg-white/50 border-black/10'
-													value={field.value ?? ''}
-													onChange={(e) =>
-														field.onChange(
-															e.target.value === ''
-																? null
-																: e.target.valueAsNumber,
-														)
-													}
-												/>
-											</FormControl>
-											<FormMessage className='text-sm text-red-400' />
-										</FormItem>
-									)}
+									render={({ field }) => {
+										return (
+											<FormItem>
+												<div className='flex items-center justify-between'>
+													<FormLabel className='text-xs text-gray-400'>
+														Height
+													</FormLabel>
+
+													<div className='flex gap-1'>
+														<Button
+															type='button'
+															size='sm'
+															variant={
+																heightUnit === 'cm' ? 'default' : 'outline'
+															}
+															onClick={() => {
+																if (heightUnit === 'ft') {
+																	// Both fields are empty
+																	if (feetInput === '' && inchesInput === '') {
+																		field.onChange(null);
+																	}
+																	// Only one field is filled
+																	else if (
+																		feetInput === '' ||
+																		inchesInput === ''
+																	) {
+																		form.setError('height', {
+																			type: 'manual',
+																			message:
+																				'Please enter both feet and inches.',
+																		});
+																		return;
+																	}
+																	// Both fields are filled
+																	else {
+																		const feet = Number(feetInput);
+																		const inches = Number(inchesInput);
+
+																		const heightInCm = feetInchesToCm(
+																			feet,
+																			inches,
+																		);
+
+																		if (
+																			!Number.isFinite(feet) ||
+																			!Number.isFinite(inches) ||
+																			inches < 0 ||
+																			inches >= 12 ||
+																			heightInCm < 100 ||
+																			heightInCm > 250
+																		) {
+																			form.setError('height', {
+																				type: 'manual',
+																				message: 'Please enter a valid height.',
+																			});
+																			return;
+																		}
+
+																		field.onChange(heightInCm);
+																	}
+																}
+
+																form.clearErrors('height');
+																setHeightUnit('cm');
+															}}
+														>
+															cm
+														</Button>
+
+														<Button
+															type='button'
+															size='sm'
+															variant={
+																heightUnit === 'ft' ? 'default' : 'outline'
+															}
+															onClick={() => {
+																if (field.value != null) {
+																	const converted = cmToFeetInches(field.value);
+
+																	setFeetInput(String(converted.feet));
+																	setInchesInput(String(converted.inches));
+																} else {
+																	setFeetInput('');
+																	setInchesInput('');
+																}
+
+																setHeightUnit('ft');
+															}}
+														>
+															ft / in
+														</Button>
+													</div>
+												</div>
+
+												<FormControl>
+													{heightUnit === 'cm' ? (
+														<div className='flex items-center gap-2'>
+															<Input
+																type='number'
+																min={100}
+																max={250}
+																step={0.1}
+																placeholder='e.g. 165'
+																className='bg-white/50 border-black/10'
+																value={field.value ?? ''}
+																onChange={(e) =>
+																	field.onChange(
+																		e.target.value === ''
+																			? null
+																			: e.target.valueAsNumber,
+																	)
+																}
+															/>
+
+															<span className='text-sm text-gray-400'>cm</span>
+														</div>
+													) : (
+														<div className='flex items-center gap-2'>
+															<Input
+																type='number'
+																min={3}
+																max={8}
+																placeholder='5'
+																className='bg-white/50 border-black/10'
+																value={feetInput}
+																onChange={(e) => {
+																	const feet = e.target.value;
+
+																	setFeetInput(feet);
+
+																	if (feet === '' && inchesInput === '') {
+																		field.onChange(null);
+																		return;
+																	}
+
+																	field.onChange(
+																		feetInchesToCm(
+																			Number(feet || 0),
+																			Number(inchesInput || 0),
+																		),
+																	);
+																}}
+															/>
+
+															<span className='text-sm text-gray-400'>ft</span>
+
+															<Input
+																type='number'
+																min={0}
+																max={11.9}
+																step={0.1}
+																placeholder='7'
+																className='bg-white/50 border-black/10'
+																value={inchesInput}
+																onChange={(e) => {
+																	const inches = e.target.value;
+
+																	setInchesInput(inches);
+
+																	if (feetInput === '' && inches === '') {
+																		field.onChange(null);
+																		return;
+																	}
+
+																	field.onChange(
+																		feetInchesToCm(
+																			Number(feetInput || 0),
+																			Number(inches || 0),
+																		),
+																	);
+																}}
+															/>
+
+															<span className='text-sm text-gray-400'>in</span>
+														</div>
+													)}
+												</FormControl>
+
+												<FormMessage className='text-sm text-red-400' />
+											</FormItem>
+										);
+									}}
 								/>
 							)}
 
