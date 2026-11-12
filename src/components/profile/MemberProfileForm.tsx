@@ -497,7 +497,7 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 													</div>
 												</div>
 
-												<FormControl>
+												<FormControl className='mt-2'>
 													{heightUnit === 'cm' ? (
 														<div className='flex items-center gap-2'>
 															<Input
@@ -629,9 +629,6 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 																			.filter(Boolean)
 																			.join(', ')
 																	: 'Select languages'}
-																<span className='ml-2 text-xs text-gray-400'>
-																	{selectedLanguages.length}
-																</span>
 															</Button>
 														</FormControl>
 													</PopoverTrigger>
@@ -695,6 +692,101 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									}}
 								/>
 							)}
+
+							{/* Editable - City */}
+							<FormField
+								control={form.control}
+								name='city'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className='text-xs text-gray-400'>
+											City
+										</FormLabel>
+										<FormControl>
+											<Input
+												className='bg-white/50 border-black/10'
+												placeholder='City'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage className='text-sm text-red-400' />
+									</FormItem>
+								)}
+							/>
+
+							{/* Editable - Country */}
+							<FormField
+								control={form.control}
+								name='country'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className='text-xs text-gray-400'>
+											Country
+										</FormLabel>
+
+										<Popover
+											open={countriesOpen}
+											onOpenChange={setCountriesOpen}
+										>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant='outline'
+														className={cn(
+															'w-full justify-between bg-white/50 border-black/10',
+															!field.value && 'text-gray-400',
+														)}
+													>
+														{field.value
+															? countryOptions.find(
+																	(country) => country.label === field.value,
+																)?.label
+															: 'Select your country'}
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+
+											<PopoverContent className='p-0 bg-white border-black/10'>
+												<Command>
+													<CommandInput placeholder='Search country...' />
+
+													<CommandList>
+														<CommandEmpty>No country found.</CommandEmpty>
+
+														<CommandGroup>
+															{countryOptions.map((country) => (
+																<CommandItem
+																	key={country.value}
+																	value={country.label}
+																	onSelect={() => {
+																		form.setValue('country', country.label, {
+																			shouldDirty: true,
+																			shouldTouch: true,
+																			shouldValidate: true,
+																		});
+																		setCountriesOpen(false);
+																	}}
+																>
+																	<Check
+																		className={cn(
+																			'mr-2 h-4 w-4',
+																			field.value === country.label
+																				? 'opacity-100'
+																				: 'opacity-0',
+																		)}
+																	/>
+																	{country.label}
+																</CommandItem>
+															))}
+														</CommandGroup>
+													</CommandList>
+												</Command>
+											</PopoverContent>
+										</Popover>
+										<FormMessage className='text-sm text-red-400' />
+									</FormItem>
+								)}
+							/>
 
 							{/* Editable - Relationship Goals (edit only) */}
 							{mode === 'edit' && (
@@ -978,101 +1070,6 @@ const MemberProfileForm = ({ member, mode }: Props) => {
 									}}
 								/>
 							)}
-
-							{/* Editable - City */}
-							<FormField
-								control={form.control}
-								name='city'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className='text-xs text-gray-400'>
-											City
-										</FormLabel>
-										<FormControl>
-											<Input
-												className='bg-white/50 border-black/10'
-												placeholder='City'
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage className='text-sm text-red-400' />
-									</FormItem>
-								)}
-							/>
-
-							{/* Editable - Country */}
-							<FormField
-								control={form.control}
-								name='country'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className='text-xs text-gray-400'>
-											Country
-										</FormLabel>
-
-										<Popover
-											open={countriesOpen}
-											onOpenChange={setCountriesOpen}
-										>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant='outline'
-														className={cn(
-															'w-full justify-between bg-white/50 border-black/10',
-															!field.value && 'text-gray-400',
-														)}
-													>
-														{field.value
-															? countryOptions.find(
-																	(country) => country.label === field.value,
-																)?.label
-															: 'Select your country'}
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-
-											<PopoverContent className='p-0 bg-white border-black/10'>
-												<Command>
-													<CommandInput placeholder='Search country...' />
-
-													<CommandList>
-														<CommandEmpty>No country found.</CommandEmpty>
-
-														<CommandGroup>
-															{countryOptions.map((country) => (
-																<CommandItem
-																	key={country.value}
-																	value={country.label}
-																	onSelect={() => {
-																		form.setValue('country', country.label, {
-																			shouldDirty: true,
-																			shouldTouch: true,
-																			shouldValidate: true,
-																		});
-																		setCountriesOpen(false);
-																	}}
-																>
-																	<Check
-																		className={cn(
-																			'mr-2 h-4 w-4',
-																			field.value === country.label
-																				? 'opacity-100'
-																				: 'opacity-0',
-																		)}
-																	/>
-																	{country.label}
-																</CommandItem>
-															))}
-														</CommandGroup>
-													</CommandList>
-												</Command>
-											</PopoverContent>
-										</Popover>
-										<FormMessage className='text-sm text-red-400' />
-									</FormItem>
-								)}
-							/>
 						</div>
 
 						{/* Editable - Description */}
